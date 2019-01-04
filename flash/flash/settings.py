@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'comum',
     'usuario',
+    'friendship',
 ]
 
 MIDDLEWARE = [
@@ -136,4 +137,4 @@ STATIC_URL = '/static/'
 # URL Login/Logout
 LOGIN_URL="/login/"
 LOGOUT_URL="/logout/"
-LOGIN_REDIRECT_URL="/"
+LOGIN_REDIRECT_URL="/newsfeed/"
