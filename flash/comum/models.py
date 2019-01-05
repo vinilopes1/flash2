@@ -29,6 +29,11 @@ class Perfil(Base):
     telefone = models.CharField('Telefone', max_length=16, blank=False, null=False)
     data_nasc = models.DateField('Data de Nascimento', blank=False, null=False)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    foto_perfil = models.ImageField('Foto', upload_to='imagens/%Y/',default='default/default_foto.png',null=True,blank=True)
+    capa = models.ImageField('Capa', upload_to='imagens/%Y/',default='default/default_capa.jpg',null=True,blank=True)
+    qtd_amigos = models.IntegerField('Quantidade Amigos', default=0, blank=False, null=False)
+
+
 
     class Meta:
         verbose_name = 'Perfil'

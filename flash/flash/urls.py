@@ -14,15 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.urls import path,include
 from comum import views
+from django.conf import settings
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('usuario.urls')),
     path('', views.index ,name='index'),
     path('friendship/', include('friendship.urls')),
-    path('post/novo', views.novo_post, name='novo_post'),
+    path('new-post/', views.AdicionaPostView.as_view() , name = 'add_post'),
     path('newsfeed/add/<int:usuario_id>/', views.enviar_pedido, name='enviar_pedido'),
     path('newsfeed/accept/<int:solicitacao_id>/', views.aceitar_pedido, name='aceitar_pedido'),
     path('newsfeed/reject/<int:solicitacao_id>/', views.rejeitar_pedido, name='rejeitar_pedido'),
@@ -31,4 +34,4 @@ urlpatterns = [
     path('flash-friends/', views.exibir_flash_friends, name='exibir_flash_friends'),
     path('requests/', views.exibir_friend_requests, name='exibir_friends_requests'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

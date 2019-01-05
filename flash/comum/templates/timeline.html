@@ -106,14 +106,14 @@
     <!-- Timeline
     ================================================= -->
     <div class="timeline">
-        <div class="timeline-cover">
+        <div class="timeline-cover" style="background: url('{{user.perfil.capa.url}}');">
 
             <!--Timeline Menu for Large Screens-->
             <div class="timeline-nav-bar hidden-sm hidden-xs">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="profile-info">
-                            <img src="{% static 'images/users/user-13.jpg' %}" alt="" class="img-responsive profile-photo"/>
+                            <img src="{{user.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
                             <h3>{{usuario_logado.first_name}} {{usuario_logado.last_name}}</h3>
                             <p class="text-muted">@{{usuario_logado.username}}</p>
                         </div>
@@ -136,7 +136,7 @@
             <!--Timeline Menu for Small Screens-->
             <div class="navbar-mobile hidden-lg hidden-md">
                 <div class="profile-info">
-                    <img src="{% static 'images/users/user-13.jpg' %}" alt="" class="img-responsive profile-photo"/>
+                    <img src="{{user.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
                     <h4>{{usuario_logado.first_name}} {{usuario_logado.last_name}}</h4>
                     <p class="text-muted">@{{usuario_logado.username}}</p>
                 </div>
@@ -162,7 +162,7 @@
                         <div class="row">
                             <div class="col-md-7 col-sm-7">
                                 <div class="form-group">
-                                    <img src="{% static 'images/users/user-13.jpg' %}" alt="" class="profile-photo-md"/>
+                                    <img src="{{user.perfil.foto_perfil.url}}" alt="" class="profile-photo-md"/>
                                     <textarea name="texts" id="exampleTextarea" cols="30" rows="1" class="form-control"
                                               placeholder="Escreva o que você pensa ..."></textarea>
                                 </div>
@@ -195,7 +195,7 @@
                         <!-- Imagem de post !-->
                         <!-- <img src="images/post-images/12.jpg" alt="post-image" class="img-responsive post-image"/> !-->
                         <div class="post-container">
-                            <img src="{% static 'images/users/user-13.jpg' %}" alt="user" class="profile-photo-md pull-left"/>
+                            <img src="{{user.perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
                             <div class="post-detail">
                                 <div class="user-info">
                                     <h5><a href="timeline.html" class="profile-link">{{usuario_logado.first_name}}
@@ -204,6 +204,8 @@
                                 </div>
                                 <div class="reaction">
                                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
+                                    <a class="btn text-red"><i class="fa fa-trash"></i></a>
+
                                 </div>
                                 <div class="line-divider"></div>
                                 <div class="post-text">

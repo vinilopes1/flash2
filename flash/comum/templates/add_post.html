@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h3>Nova postagem: </h3>
-    <form method="post" class="post-form">
-        {% csrf_token %}
-        {{ form }}
+{% extends "newsfeed.html" %}
+
+    {% block add_post %}
+    <form method="post">
+        <div align="center">
+            {% csrf_token %}
+            {{ form.descricao }}
+            <br>{{ form.anexo }}
+            <br><button type="submit" class="save btn btn-default">Salvar</button>
+        </div>
     </form>
-    <button type="submit" class="save btn btn-default">Salvar</button>
-</body>
-</html>
+
+{% endblock %}
