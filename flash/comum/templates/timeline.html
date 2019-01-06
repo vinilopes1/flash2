@@ -1,6 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:django_popup_view_field="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,7 +39,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"/></a>
+                <a class="navbar-brand" href="index.html"><img src="{% static 'images/flash_logo.png' %}" alt="logo"/></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -106,16 +106,16 @@
     <!-- Timeline
     ================================================= -->
     <div class="timeline">
-        <div class="timeline-cover" style="background: url('{{user.perfil.capa.url}}');">
+        <div class="timeline-cover" style="background: url('{{usuario.perfil.capa.url}}');">
 
             <!--Timeline Menu for Large Screens-->
             <div class="timeline-nav-bar hidden-sm hidden-xs">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="profile-info">
-                            <img src="{{user.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
-                            <h3>{{usuario_logado.first_name}} {{usuario_logado.last_name}}</h3>
-                            <p class="text-muted">@{{usuario_logado.username}}</p>
+                            <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
+                            <h3>{{usuario.first_name}} {{usuario.last_name}}</h3>
+                            <p class="text-muted">@{{usuario.username}}</p>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -125,8 +125,12 @@
                             <li><a href="timeline-about.html">MyFlash</a></li>
                         </ul>
                         <ul class="follow-me list-inline">
-                            <li>
+                            {% if eh_amigo == True or user.id == usuario.id %}
                                 <button class="btn-primary">Ativo</button>
+                            {% else %}
+                                <a href="{% url 'enviar_pedido' usuario.id"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                            {% endif %}
+
                             </li>
                         </ul>
                     </div>
@@ -137,8 +141,8 @@
             <div class="navbar-mobile hidden-lg hidden-md">
                 <div class="profile-info">
                     <img src="{{user.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
-                    <h4>{{usuario_logado.first_name}} {{usuario_logado.last_name}}</h4>
-                    <p class="text-muted">@{{usuario_logado.username}}</p>
+                    <h4>{{usuario.first_name}} {{usuario.last_name}}</h4>
+                    <p class="text-muted">@{{usuario.username}}</p>
                 </div>
                 <div class="mobile-menu">
                     <ul class="list-inline">
@@ -158,53 +162,84 @@
 
                     <!-- Post Create Box
                     ================================================= -->
-                    <div class="create-post">
-                        <div class="row">
-                            <div class="col-md-7 col-sm-7">
-                                <div class="form-group">
-                                    <img src="{{user.perfil.foto_perfil.url}}" alt="" class="profile-photo-md"/>
-                                    <textarea name="texts" id="exampleTextarea" cols="30" rows="1" class="form-control"
-                                              placeholder="Escreva o que você pensa ..."></textarea>
+
+                        <div class="create-post">
+                            <div class="row">
+                                {% if usuario.id == user.id %}
+                                <div class="col-md-7 col-sm-7">
+                                    <div class="form-group">
+                                        <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="profile-photo-md"/>
+                                        <textarea name="texts" id="exampleTextarea" cols="30" rows="1" class="form-control"
+                                                  placeholder="Escreva o que você pensa ..."></textarea>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-5 col-sm-5">
-                                <div class="tools">
-                                    <ul class="publishing-tools list-inline">
-                                        <li><a href="#"><i class="ion-compose"></i></a></li>
-                                        <li><a href="#"><i class="ion-images"></i></a></li>
-                                        <li><a href="#"><i class="ion-ios-videocam"></i></a></li>
-                                        <li><a href="#"><i class="ion-map"></i></a></li>
-                                    </ul>
-                                    <button class="btn btn-primary pull-right">Publish</button>
+                                <div class="col-md-5 col-sm-5">
+                                    <div class="tools">
+                                        <ul class="publishing-tools list-inline">
+                                            <li><a href="#"><i class="ion-compose"></i></a></li>
+                                            <li><a href="#"><i class="ion-images"></i></a></li>
+                                            <li><a href="#"><i class="ion-ios-videocam"></i></a></li>
+                                            <li><a href="#"><i class="ion-map"></i></a></li>
+                                        </ul>
+                                        <button class="btn btn-primary pull-right">Publish</button>
+                                    </div>
                                 </div>
+                                {% endif %}
                             </div>
-                        </div>
-                    </div><!-- Post Create Box End-->
+                        </div><!-- Post Create Box End-->
+
 
                     <!-- Post Content
                     ================================================= -->
-                    {% for post in meus_posts %}
+                    {% if eh_amigo == False %}
+                        {% if usuario.id != user.id %}
+                        <div class="about-content-block">
+                        <div class="organization">
+                            <div class="work-info">
+                                <h5 align="justify"> Você e {{usuario.first_name}} não são amigos :(</h5>
+                                <h5> Que tal enviar uma solicitação de amizade para visualizar suas publicações ?</h5>
+                            </div>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
+                        {% endif %}
+                    {% endif %}
+                    {% if posts_usuario.0.id == None and eh_amigo == True %}
+                    <div class="about-content-block">
+                        <div class="organization">
+                            <div class="work-info">
+                                <h5> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
+                            </div>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% for post in posts_usuario %}
                     <div class="post-content">
 
                         <!--Post Date-->
                         <div class="post-date hidden-xs hidden-sm">
-                            <h5>{{usuario_logado.first_name}}</h5>
+                            <h5>{{usuario.first_name}}</h5>
                             <p class="text-grey">Sometimes ago</p>
                         </div><!--Post Date End-->
 
                         <!-- Imagem de post !-->
                         <!-- <img src="images/post-images/12.jpg" alt="post-image" class="img-responsive post-image"/> !-->
                         <div class="post-container">
-                            <img src="{{user.perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                            <img src="{{usuario.perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
                             <div class="post-detail">
                                 <div class="user-info">
-                                    <h5><a href="timeline.html" class="profile-link">{{usuario_logado.first_name}}
-                                        {{usuario_logado.last_name}}</a></h5>
+                                    <h5><a href="timeline.html" class="profile-link">{{usuario.first_name}}
+                                        {{usuario.last_name}}</a></h5>
                                     <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
                                 </div>
                                 <div class="reaction">
                                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
-                                    <a class="btn text-red"><i class="fa fa-trash"></i></a>
+                                    {%if request.user.id == usuario.id %}
+                                        <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i class="fa fa-trash"></i></a>
+                                    {% endif %}
 
                                 </div>
                                 <div class="line-divider"></div>
@@ -216,7 +251,21 @@
                             </div>
                         </div>
                     </div>
+                     <!-- Alerts -->
+                        <div id="MyModal" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">Publicação #1</div>
+                                        <div class="modal-body">Você deseja excluir essa publicação?</div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            <a href="{% url 'delete_post' post.id %}"><button type="button" class="btn btn-primary" >Save changes</button></a>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
                     {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -229,7 +278,7 @@
                 <div class="row">
                     <div class="footer-wrapper">
                         <div class="col-md-3 col-sm-3">
-                            <a href=""><img src="images/logo-black.png" alt="" class="footer-logo"/></a>
+                            <a href=""><img src="{% static 'images/flash_logo.png' %}" alt="" class="footer-logo"/></a>
                             <ul class="list-inline social-icons">
                                 <li><a href="#"><i class="icon ion-social-facebook"></i></a></li>
                                 <li><a href="#"><i class="icon ion-social-twitter"></i></a></li>
@@ -291,6 +340,8 @@
             <div class="spinner"></div>
         </div>
 
+
+
         <!-- Scripts
         ================================================= -->
         <script src="{% static 'js/jquery-3.1.1.min.js' %}"></script>
@@ -298,6 +349,5 @@
         <script src="{% static 'js/jquery.sticky-kit.min.js' %}"></script>
         <script src="{% static 'js/jquery.scrollbar.min.js' %}"></script>
         <script src="{% static 'js/script.js' %}"></script>
-
 </body>
 </html>

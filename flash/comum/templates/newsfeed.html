@@ -38,35 +38,28 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt="logo"/></a>
+                <a class="navbar-brand" href="index.html"><img src="{% static 'images/flash_logo.png' %}" alt="logo"/></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right main-menu">
-                    <li class="dropdown"><a href="index.html">Home</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Newsfeed <span><img src="images/down-arrow.png" alt=""/></span></a>
-                        <ul class="dropdown-menu newsfeed-home">
-                            <li><a href="newsfeed.html">Newsfeed</a></li>
-                            <li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>
-                            <li><a href="newsfeed-friends.html">My friends</a></li>
-                            <li><a href="newsfeed-messages.html">Chatroom</a></li>
-                            <li><a href="newsfeed-images.html">Images</a></li>
-                            <li><a href="newsfeed-videos.html">Videos</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">Timeline <span><img src="images/down-arrow.png" alt=""/></span></a>
-                        <ul class="dropdown-menu login">
-                            <li><a href="timeline.html">Timeline</a></li>
-                            <li><a href="timeline-about.html">Timeline About</a></li>
-                            <li><a href="timeline-album.html">Timeline Album</a></li>
-                            <li><a href="timeline-friends.html">Timeline Friends</a></li>
-                        </ul>
-                    </li>
+                    <li class="dropdown"><a href="index.html">NewsFeed</a></li>
+                    <li class="dropdown"><a href="index.html">Timeline</a></li>
+
+                    <!--<li class="dropdown">-->
+                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"-->
+                           <!--aria-expanded="false">Timeline <span><img src="images/down-arrow.png" alt=""/></span></a>-->
+                        <!--<ul class="dropdown-menu newsfeed-home">-->
+                            <!--<li><a href="newsfeed.html">Newsfeed</a></li>-->
+                            <!--<li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>-->
+                            <!--<li><a href="newsfeed-friends.html">My friends</a></li>-->
+                            <!--<li><a href="newsfeed-messages.html">Chatroom</a></li>-->
+                            <!--<li><a href="newsfeed-images.html">Images</a></li>-->
+                            <!--<li><a href="newsfeed-videos.html">Videos</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                    <li class="dropdown"><a href="index.html">FlashFriends</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle pages" data-toggle="dropdown" role="button"
                            aria-haspopup="true" aria-expanded="false">All Pages <span><img src="images/down-arrow.png"
@@ -226,7 +219,7 @@
                         <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
                         <div class="post-detail">
                             <div class="user-info">
-                                <h5><a href="timeline.html" class="profile-link">{{post.usuario}}</a></h5>
+                                <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
                                 <p class="text-muted">{{post.descricao}}</p>
                             </div>
                             <div class="reaction">
@@ -501,17 +494,22 @@
             ================================================= -->
             <div class="col-md-2 static">
                 <div class="suggestions" id="sticky-sidebar">
+                    {%if usuarios_nao_amigo.0.id == None %}
+                    <h4 class="grey">Encontre seus amigos</h4>
+                    <h6>Não existe mais amigos para solicitar. Logo traremos mais sugestões a você ;)</h6>
+                    {% else %}
                     <h4 class="grey">Encontre seus amigos</h4>
                     {% for usuario in usuarios_nao_amigo %}
                     <div class="follow-user">
                         <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="profile-photo-sm pull-left"/>
                         <div>
-                            <h5><a href="timeline.html">{{usuario.first_name}}
+                            <h5><a href="{% url 'exibir_usuario' usuario.id %}">{{usuario.first_name}}
                         {{usuario.last_name}}</a></h5>
                             <a href="{% url 'enviar_pedido' usuario.id %}" class="text-green">Add friend</a>
                         </div>
                     </div>
                     {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -525,7 +523,7 @@
         <div class="row">
             <div class="footer-wrapper">
                 <div class="col-md-3 col-sm-3">
-                    <a href=""><img src="images/logo-black.png" alt="" class="footer-logo"/></a>
+                    <a href=""><img src="{% static 'images/flash_logo.png' %}" alt="" class="footer-logo"/></a>
                     <ul class="list-inline social-icons">
                         <li><a href="#"><i class="icon ion-social-facebook"></i></a></li>
                         <li><a href="#"><i class="icon ion-social-twitter"></i></a></li>

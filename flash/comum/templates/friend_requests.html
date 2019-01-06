@@ -162,7 +162,14 @@
                     ================================================= -->
                     <h4 class="grey"><i class="ion-ios-briefcase-outline icon-in-title"></i> Solicitações de amizade
                             </h4>
-                    {% if minhas_solicitacacoes.0.id or minhas_solicitacoes.0.rejected == None %}
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% if minhas_solicitacoes.0.id == None or minhas_solicitacoes.0.rejected != None %}
                     <div class="about-content-block">
                         <div class="organization">
                             <div class="work-info">

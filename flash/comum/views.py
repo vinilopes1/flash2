@@ -8,6 +8,8 @@ from friendship.models import FriendshipRequest
 from django.utils import timezone
 from random import randint
 from django.contrib import messages
+from .forms import PostForm
+
 
 # Create your views here.
 
@@ -20,25 +22,27 @@ def exibir_newsfeed(request):
     qtd_amigos = quant_amigos(request)
     usuarios_nao_amigo, posts_amigos = [],[]
     for post in posts:
-        for amigo in amigos:
-            if post.usuario_id == amigo.id :
-                posts_amigos.append(post)
-        if post.usuario_id == request.user.id:
-            posts_amigos.append(post)
+         if post.usuario_id == request.user.id:
+             posts_amigos.append(post)
+         else:
+            for amigo in amigos:
+                if post.usuario_id == amigo.id:
+                    posts_amigos.append(post)
+    #print("Descricao = %s\n Autor: %s"%(posts_amigos[4].descricao,posts_amigos[4].usuario))
 
     for usuario in usuarios:
         if usuario not in amigos and usuario != request.user:
             if len(FriendshipRequest.objects.filter(from_user_id=request.user.id,to_user_id=usuario.id)) == 0 and len(FriendshipRequest.objects.filter(from_user_id=usuario.id,to_user_id=request.user.id)) == 0:
                 usuarios_nao_amigo.append(usuario)
 
-    return render(request, "newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo, 'posts_amigos': posts_amigos})
+    return render(request, "newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'posts_amigos': posts_amigos})
 
 @login_required(login_url='/login')
 def exibir_minha_timeline(request):
-    usuario_logado = request.user
-    meus_posts = Post.objects.filter(usuario_id=request.user.id).order_by('-criado_em')
+    usuario = request.user
+    posts_usuario = Post.objects.filter(usuario_id=request.user.id).order_by('-criado_em')
 
-    return render(request, "timeline.html", {'usuario_logado': usuario_logado, 'meus_posts': meus_posts})
+    return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario': posts_usuario})
 
 def index(request):
     form = PostForm()
@@ -65,10 +69,17 @@ class AdicionaPostView(View):
                         colecao_id=None,
                         comunidade_id=None,
                         usuario_id= request.user.id)
+
             post.save()
+            print(request.user.id)
             return redirect('/newsfeed')
 
         return render(request, 'newsfeed.html',{'form':form})
+
+def delete_post(request, post_id):
+    Post.objects.get(pk=post_id).delete()
+    messages.success(request, 'Sua publicação foi excluída!')
+    return redirect('/newsfeed')
 
 def lista_amigos(request):
     friends = Friend.objects.friends(request.user)
@@ -90,7 +101,8 @@ def enviar_pedido(request, usuario_id):
 def aceitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
     friend_request.accept()
-    return render(request,'newsfeed.html')
+    messages.success(request, 'Você e %s agora são amigos(a)!'%friend_request.from_user.first_name)
+    return redirect('/requests')
 
 
 def rejeitar_pedido(request, solicitacao_id):
@@ -128,5 +140,23 @@ def quant_amigos(request):
     qtd_amigos = 0
     for amizade in amizades:
         if amizade.to_user_id == request.user.id:
-            qtd_amigos+= 1
+            qtd_amigos += 1
     return qtd_amigos
+
+def exibir_usuario(request, usuario_id):
+    usuario = User.objects.get(id=usuario_id)
+    amigos = Friend.objects.friends(request.user)
+    posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
+    eh_amigo = False
+    for amigo in amigos:
+        if amigo.id == usuario_id:
+            eh_amigo = True
+            break
+
+    if eh_amigo or request.user.id == usuario_id:
+        return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario, 'eh_amigo': eh_amigo})
+    else:
+        posts_usuario = []
+        eh_amigo = False
+        return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario,'eh_amigo':eh_amigo})
+
