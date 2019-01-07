@@ -1,0 +1,22 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<div class="friend-list">
+    <div class="row">
+        {% for amigo in meus_amigos %}
+        <div class="col-md-6 col-sm-6">
+            <div class="friend-card">
+                <img src="{{amigo.perfil.capa.url}}" alt="profile-cover" class="img-responsive cover"/>
+                <div class="card-info">
+                    <img src="{{amigo.perfil.foto_perfil.url}}" alt="user" class="profile-photo-lg"/>
+                    <div class="friend-info">
+                        <a href="#" class="pull-right text-green">My Friend</a>
+                        <h5><a href="{% url 'exibir_usuario' amigo.id %}" class="profile-link">{{amigo.first_name}} {{amigo.last_name}}</a></h5>
+                        <p>@{{amigo}}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>

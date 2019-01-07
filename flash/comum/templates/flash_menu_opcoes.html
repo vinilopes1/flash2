@@ -1,0 +1,32 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<div class="profile-card">
+    <img src="{{user.perfil.foto_perfil.url}}" alt="user" class="profile-photo"/>
+    <h5><a href="{% url 'exibir_minha_timeline' %}" class="text-white">{{user.first_name}}
+        {{user.last_name}}</a></h5>
+    {% if qtd_amigos == 1 %}
+        <a href="#" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizade</a>
+    {% else %}
+        <a href="#" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizades</a>
+    {% endif %}
+</div><!--profile card ends-->
+<ul class="nav-news-feed">
+    <li><i class="icon ion-ios-paper"></i>
+        <div><a href="{% url 'exibir_newsfeed' %}">FlashFeed</a></div>
+    </li>
+    <li><i class="icon ion-ios-people"></i>
+        <div><a href="{% url 'exibir_friends_requests' %}">Solicitações Flash</a></div>
+    </li>
+    <li><i class="icon ion-ios-people-outline"></i>
+        <div><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></div>
+    </li>
+    <li><i class="icon ion-chatboxes"></i>
+        <div><a href="newsfeed-messages.html">Messages</a></div>
+    </li>
+    <li><i class="icon ion-images"></i>
+        <div><a href="newsfeed-images.html">Images</a></div>
+    </li>
+    <li><i class="icon ion-ios-videocam"></i>
+        <div><a href="newsfeed-videos.html">Videos</a></div>
+    </li>
+</ul><!--news-feed links ends-->

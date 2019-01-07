@@ -18,11 +18,11 @@ from django.contrib.auth import update_session_auth_hash
 @login_required(login_url='/login')
 def exibir_newsfeed(request):
     usuario_logado = request.user
-    usuarios = todos_usuarios(request)
     posts = Post.objects.all()
     amigos = lista_amigos(request)
     qtd_amigos = quant_amigos(request)
-    usuarios_nao_amigo, posts_amigos = [],[]
+    usuarios_nao_amigo = nao_amigo(request)
+    posts_amigos = []
     for post in posts:
          if post.usuario_id == request.user.id:
              posts_amigos.append(post)
@@ -32,28 +32,21 @@ def exibir_newsfeed(request):
                     posts_amigos.append(post)
     #print("Descricao = %s\n Autor: %s"%(posts_amigos[4].descricao,posts_amigos[4].usuario))
 
-    for usuario in usuarios:
-        if usuario not in amigos and usuario != request.user:
-            if len(FriendshipRequest.objects.filter(from_user_id=request.user.id,to_user_id=usuario.id)) == 0 and len(FriendshipRequest.objects.filter(from_user_id=usuario.id,to_user_id=request.user.id)) == 0:
-                usuarios_nao_amigo.append(usuario)
 
-    return render(request, "newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'posts_amigos': posts_amigos})
+    return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'posts_amigos': posts_amigos})
 
 @login_required(login_url='/login')
 def exibir_minha_timeline(request):
     usuario = request.user
     posts_usuario = Post.objects.filter(usuario_id=request.user.id).order_by('-criado_em')
 
-    return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario': posts_usuario})
+    return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario': posts_usuario})
 
-def index(request):
-    form = PostForm()
-    return render(request, 'index.html',{'form':form})
 
 class AdicionaPostView(View):
 
     def get(self, request):
-        return render(request, 'newsfeed.html')
+        return render(request, 'flash_newsfeed.html')
 
     def post(self,request):
         form = PostForm(request.POST)
@@ -73,10 +66,10 @@ class AdicionaPostView(View):
                         usuario_id= request.user.id)
 
             post.save()
-            print(request.user.id)
-            return redirect('/newsfeed')
+            print(request)
+            return redirect('/')
 
-        return render(request, 'newsfeed.html',{'form':form})
+        return render(request, 'flash_newsfeed.html',{'form':form})
 
 def delete_post(request, post_id):
     Post.objects.get(pk=post_id).delete()
@@ -98,7 +91,7 @@ def enviar_pedido(request, usuario_id):
         other_user,  # The recipient
         message='Olá! Eu gostaria que você fosse meu Flash Friend')
     messages.success(request, 'Sua solicitação de amizade foi enviada!')
-    return redirect('/newsfeed')
+    return redirect('/')
 
 def aceitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
@@ -110,7 +103,7 @@ def aceitar_pedido(request, solicitacao_id):
 def rejeitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
     friend_request.reject()
-    return render(request,'newsfeed.html')
+    return render(request,'flash_newsfeed.html')
 
 def exibir_flash_friends(request):
     meus_amigos = lista_amigos(request)
@@ -129,13 +122,14 @@ def exibir_flash_friends(request):
 
 def exibir_friend_requests(request):
     solicitacoes = FriendshipRequest.objects.filter(to_user=request.user)
-    print(solicitacoes)
+    qtd_amigos = quant_amigos(request)
     minhas_solicitacoes = []
+    usuarios_nao_amigo = nao_amigo(request)
     for solicitacao in solicitacoes:
         if solicitacao.rejected == None:
             minhas_solicitacoes.append(solicitacao)
 
-    return render(request, 'friend_requests.html',{'minhas_solicitacoes': minhas_solicitacoes})
+    return render(request, 'friend_requests.html',{'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo':usuarios_nao_amigo})
 
 def quant_amigos(request):
     amizades = Friend.objects.all()
@@ -156,11 +150,11 @@ def exibir_usuario(request, usuario_id):
             break
 
     if eh_amigo or request.user.id == usuario_id:
-        return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario, 'eh_amigo': eh_amigo})
+        return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario, 'eh_amigo': eh_amigo})
     else:
         posts_usuario = []
         eh_amigo = False
-        return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario,'eh_amigo':eh_amigo})
+        return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario,'eh_amigo':eh_amigo})
 
 def exibir_about(request):
     return render(request, 'sobre.html')
@@ -189,3 +183,15 @@ def change_password(request):
     return render(request, 'change_password.html', {
         'form': form
     })
+
+def nao_amigo(request):
+    usuarios = todos_usuarios(request)
+    amigos = lista_amigos(request)
+    usuarios_nao_amigo = []
+
+    for usuario in usuarios:
+        if usuario not in amigos and usuario != request.user:
+            if len(FriendshipRequest.objects.filter(from_user_id=request.user.id,to_user_id=usuario.id)) == 0 and len(FriendshipRequest.objects.filter(from_user_id=usuario.id,to_user_id=request.user.id)) == 0:
+                usuarios_nao_amigo.append(usuario)
+
+    return usuarios_nao_amigo

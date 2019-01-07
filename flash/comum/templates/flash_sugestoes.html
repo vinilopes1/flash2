@@ -1,0 +1,15 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<div class="suggestions" id="sticky-sidebar">
+    <h4 class="grey">Encontre seus amigos</h4>
+    {% for usuario in usuarios_nao_amigo %}
+    <div class="follow-user">
+        <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="profile-photo-sm pull-left"/>
+        <div>
+            <h5><a href="{% url 'exibir_usuario' usuario.id %}">{{usuario.first_name}}
+        {{usuario.last_name}}</a></h5>
+            <a href="{% url 'enviar_pedido' usuario.id %}" class="text-green">Add friend</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>

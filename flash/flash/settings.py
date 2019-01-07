@@ -150,4 +150,4 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "media_cdn")
 # URL Login/Logout
 LOGIN_URL="/login/"
 LOGOUT_URL="/logout/"
-LOGIN_REDIRECT_URL="/newsfeed/"
+LOGIN_REDIRECT_URL="/"

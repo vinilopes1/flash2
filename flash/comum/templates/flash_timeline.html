@@ -17,8 +17,14 @@
                 <div class="row">
                     <div class="col-md-3"></div>
                     <div class="col-md-7">
-
-                        {% include 'flash_add_post.html' %}
+                        {% if usuario.id == user.id %}
+                            {% include 'flash_add_post.html' %}
+                        {% else %}
+                            <div class="create-post">
+                                <div class="row">
+                                </div>
+                            </div>
+                        {% endif %}
 
                         {% if eh_amigo == False %}
                             {% if usuario.id != user.id %}
