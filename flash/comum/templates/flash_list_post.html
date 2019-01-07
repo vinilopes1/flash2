@@ -1,0 +1,31 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+{% for post in posts_amigos %}
+    <div class="post-content">
+        <!---<img src="images/post-images/1.jpg" alt="post-image" class="img-responsive post-image"/>-->
+        <div class="post-container">
+            <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            <div class="post-detail">
+                <div class="user-info">
+                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
+                    <p class="text-muted">{{post.descricao}}</p>
+                </div>
+                <div class="reaction">
+                    <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}}</a>
+                        {% if post.usuario.id == user.id %}
+                            <a class="btn text-red"><i class="fa fa-trash"></i></a>
+                        {% endif %}
+
+                </div>
+                <div class="line-divider"></div>
+                <div class="post-text">
+                    <p>{% for amigo in meus_amigos %}
+                        {{amigo}}
+                        {% endfor %}
+                        <i class="em em-anguished"></i> <i
+                                class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

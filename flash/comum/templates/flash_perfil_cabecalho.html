@@ -1,0 +1,48 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+<!--Template de cabeçalho de um perfil-->
+
+<!--Timeline Menu for Large Screens-->
+<div class="timeline-nav-bar hidden-sm hidden-xs">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="profile-info">
+                <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
+                <h3>{{usuario.first_name}} {{usuario.last_name}}</h3>
+                <p class="text-muted">@{{usuario.username}}</p>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <ul class="list-inline profile-menu">
+                <li><a href="timeline.html" class="active">Timeflash</a></li>
+                <li><a href="timeline-friends.html">Flash Friends</a></li>
+                <li><a href="timeline-about.html">MyFlash</a></li>
+            </ul>
+            <ul class="follow-me list-inline">
+                {% if eh_amigo == True or user.id == usuario.id %}
+                    <button class="btn-primary">Ativo</button>
+                {% else %}
+                    <a href="{% url 'enviar_pedido' usuario.id"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                {% endif %}
+
+                </li>
+            </ul>
+        </div>
+    </div>
+</div><!--Timeline Menu for Large Screens End-->
+
+<!--Timeline Menu for Small Screens-->
+<div class="navbar-mobile hidden-lg hidden-md">
+    <div class="profile-info">
+        <img src="{{user.perfil.foto_perfil.url}}" alt="" class="img-responsive profile-photo"/>
+        <h4>{{usuario.first_name}} {{usuario.last_name}}</h4>
+        <p class="text-muted">@{{usuario.username}}</p>
+    </div>
+    <div class="mobile-menu">
+        <ul class="list-inline">
+            <li><a href="timline.html" class="active">Timeline</a></li>
+            <li><a href="timeline-about.html">About</a></li>
+            <li><a href="timeline-friends.html">Friends</a></li>
+        </ul>
+        <button class="btn-primary">Add Friend</button>
+    </div>
+</div><!--Timeline Menu for Small Screens End-->
