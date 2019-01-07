@@ -18,10 +18,15 @@
                 <li><a href="timeline-about.html">MyFlash</a></li>
             </ul>
             <ul class="follow-me list-inline">
-                {% if eh_amigo == True or user.id == usuario.id %}
+                <li>
+                {% if usuario.id == user.id%}
                     <button class="btn-primary">Ativo</button>
                 {% else %}
-                    <a href="{% url 'enviar_pedido' usuario.id"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                    {% if eh_amigo == True %}
+                        <a href="{% url 'desfazer_amizade' usuario.id %}"> <button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button> </a>
+                    {% else %}
+                        <a href="{% url 'enviar_pedido' usuario.id %}"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                    {% endif %}
                 {% endif %}
 
                 </li>

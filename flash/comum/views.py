@@ -120,16 +120,17 @@ def exibir_flash_friends(request):
                 usuarios_nao_amigo.append(usuario)
     return render(request, 'flash_friends.html', {'meus_amigos': meus_amigos,'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo, 'usuario_logado': usuario_logado})
 
-def exibir_friend_requests(request):
+def exibir_friends_requests(request):
     solicitacoes = FriendshipRequest.objects.filter(to_user=request.user)
     qtd_amigos = quant_amigos(request)
     minhas_solicitacoes = []
+    usuario = User.objects.get(pk=3)
     usuarios_nao_amigo = nao_amigo(request)
     for solicitacao in solicitacoes:
         if solicitacao.rejected == None:
             minhas_solicitacoes.append(solicitacao)
 
-    return render(request, 'friend_requests.html',{'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo':usuarios_nao_amigo})
+    return render(request, 'flash_friends_requests.html',{'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos':qtd_amigos, 'usuarios_nao_amigo':usuarios_nao_amigo, 'usuario':usuario})
 
 def quant_amigos(request):
     amizades = Friend.objects.all()
@@ -141,19 +142,15 @@ def quant_amigos(request):
 
 def exibir_usuario(request, usuario_id):
     usuario = User.objects.get(id=usuario_id)
-    amigos = Friend.objects.friends(request.user)
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
     eh_amigo = False
-    for amigo in amigos:
-        if amigo.id == usuario_id:
-            eh_amigo = True
-            break
+    if Friend.objects.are_friends(request.user, usuario):
+        eh_amigo = True
 
     if eh_amigo or request.user.id == usuario_id:
         return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario, 'eh_amigo': eh_amigo})
     else:
         posts_usuario = []
-        eh_amigo = False
         return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario,'eh_amigo':eh_amigo})
 
 def exibir_about(request):
@@ -195,3 +192,8 @@ def nao_amigo(request):
                 usuarios_nao_amigo.append(usuario)
 
     return usuarios_nao_amigo
+
+def desfazer_amizade(request,usuario_id):
+    usuario = User.objects.get(pk=usuario_id)
+    Friend.objects.remove_friend(request.user, usuario)
+    return redirect('/usuario/%s'%usuario_id)
