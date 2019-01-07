@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from comum.models import Perfil
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
 
 
 def logar(request):
@@ -13,5 +14,6 @@ def logar(request):
     if user is not None:
         login(request, user)
         redirect('/index/')
-    else:
-        print("Não deu certo!")
+
+def change_password(request):
+    return HttpResponseRedirect('/account/password-reset')

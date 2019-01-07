@@ -9,6 +9,8 @@ from django.utils import timezone
 from random import randint
 from django.contrib import messages
 from .forms import PostForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 
 # Create your views here.
@@ -79,7 +81,7 @@ class AdicionaPostView(View):
 def delete_post(request, post_id):
     Post.objects.get(pk=post_id).delete()
     messages.success(request, 'Sua publicação foi excluída!')
-    return redirect('/newsfeed')
+    return redirect('/timeline')
 
 def lista_amigos(request):
     friends = Friend.objects.friends(request.user)
@@ -160,3 +162,30 @@ def exibir_usuario(request, usuario_id):
         eh_amigo = False
         return render(request, "timeline.html", {'usuario': usuario, 'posts_usuario':posts_usuario,'eh_amigo':eh_amigo})
 
+def exibir_about(request):
+    return render(request, 'sobre.html')
+
+def alterar_senha(request):
+    return render(request, 'alterar_senha.html')
+
+
+# class AlteraSenhaView(View):
+#
+#     def get(self, request):
+#         return render(request, 'timeline.html')
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('change_password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {
+        'form': form
+    })

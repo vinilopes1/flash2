@@ -35,5 +35,8 @@ urlpatterns = [
     path('timeline/', views.exibir_minha_timeline, name='exibir_minha_timeline'),
     path('flash-friends/', views.exibir_flash_friends, name='exibir_flash_friends'),
     path('requests/', views.exibir_friend_requests, name='exibir_friends_requests'),
+    path('about/', views.exibir_about, name='exibir_about'),
+    path('change-password/', views.alterar_senha, name='change_password'),
+    path('change-password/done', views.change_password, name='alterar_senha'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
