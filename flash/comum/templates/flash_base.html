@@ -39,40 +39,41 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html"><img src="{% static 'images/flash_logo.png' %}" alt="logo"/></a>
+                <a class="navbar-brand" href="{% url 'exibir_newsfeed' %}"><img src="{% static 'images/flash_logo.png' %}" alt="logo"/></a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right main-menu">
-                    <li class="dropdown"><a href="index.html">NewsFeed</a></li>
-                    <li class="dropdown"><a href="index.html">Timeline</a></li>
-                    <li class="dropdown"><a href="index.html">FlashFriends</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle pages" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="false">All Pages <span><img src="images/down-arrow.png"
-                                                                                           alt=""/></span></a>
-                        <ul class="dropdown-menu page-list">
-                            <li><a href="index.html">Landing Page</a></li>
-                            <li><a href="newsfeed.html">Newsfeed</a></li>
-                            <li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>
-                            <li><a href="newsfeed-friends.html">My friends</a></li>
-                            <li><a href="newsfeed-messages.html">Chatroom</a></li>
-                            <li><a href="newsfeed-images.html">Images</a></li>
-                            <li><a href="newsfeed-videos.html">Videos</a></li>
-                            <li><a href="timeline.html">Timeline</a></li>
-                            <li><a href="timeline-about.html">Timeline About</a></li>
-                            <li><a href="timeline-album.html">Timeline Album</a></li>
-                            <li><a href="timeline-friends.html">Timeline Friends</a></li>
-                            <li><a href="contact.html">Contact Us</a></li>
-                        </ul>
-                    </li>
+                    <li class="dropdown"><a href="{% url 'exibir_newsfeed' %}">FlashFeed</a></li>
+                    <li class="dropdown"><a href="{% url 'exibir_minha_timeline' %}">Minha Flashline</a></li>
+                    <li class="dropdown"><a href="{% url 'exibir_flash_friends' %}">FlashFriends</a></li>
+                    <!--<li class="dropdown">-->
+                        <!--<a href="#" class="dropdown-toggle pages" data-toggle="dropdown" role="button"-->
+                           <!--aria-haspopup="true" aria-expanded="false">All Pages <span><img src="images/down-arrow.png"-->
+                                                                                           <!--alt=""/></span></a>-->
+                        <!--<ul class="dropdown-menu page-list">-->
+                            <!--<li><a href="index.html">Landing Page</a></li>-->
+                            <!--<li><a href="newsfeed.html">Newsfeed</a></li>-->
+                            <!--<li><a href="newsfeed-people-nearby.html">Poeple Nearly</a></li>-->
+                            <!--<li><a href="newsfeed-friends.html">My friends</a></li>-->
+                            <!--<li><a href="newsfeed-messages.html">Chatroom</a></li>-->
+                            <!--<li><a href="newsfeed-images.html">Images</a></li>-->
+                            <!--<li><a href="newsfeed-videos.html">Videos</a></li>-->
+                            <!--<li><a href="timeline.html">Timeline</a></li>-->
+                            <!--<li><a href="timeline-about.html">Timeline About</a></li>-->
+                            <!--<li><a href="timeline-album.html">Timeline Album</a></li>-->
+                            <!--<li><a href="timeline-friends.html">Timeline Friends</a></li>-->
+                            <!--<li><a href="contact.html">Contact Us</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
                     <li class="dropdown"><a href="{% url 'logout' %}">Sair</a></li>
                 </ul>
-                <form class="navbar-form navbar-right hidden-sm">
+                <form class="navbar-form navbar-right hidden-sm" method="post" action="{% url 'buscar_usuario' %}">
+                    {% csrf_token %}
                     <div class="form-group">
                         <i class="icon ion-android-search"></i>
-                        <input type="text" class="form-control" placeholder="Search friends, photos, videos">
+                        <input type="text" class="form-control" placeholder="Buscar usuário" id="id_busca_usuario" name="busca_usuario">
                     </div>
                 </form>
             </div><!-- /.navbar-collapse -->
@@ -142,11 +143,11 @@
                     <!--</ul>-->
                 <!--</div>-->
                 <div class="col-md-3 col-sm-3">
-                    <h6>Contact Us</h6>
+                    <h6>Contato</h6>
                     <ul class="contact">
-                        <li><i class="icon ion-ios-telephone-outline"></i>+1 (234) 222 0754</li>
-                        <li><i class="icon ion-ios-email-outline"></i>info@thunder-team.com</li>
-                        <li><i class="icon ion-ios-location-outline"></i>228 Park Ave S NY, USA</li>
+                        <li><i class="icon ion-ios-telephone-outline"></i>+55 86 998285168</li>
+                        <li><i class="icon ion-ios-email-outline"></i>mvteam@gmail.com</li>
+                        <li><i class="icon ion-ios-location-outline"></i>Brasil</li>
                     </ul>
                 </div>
 
@@ -157,7 +158,7 @@
         </div>
     </div>
     <div class="copyright">
-        <p>Thunder Team © 2016. All rights reserved</p>
+        <p>MV Team © 2019. Todos os direitos reservados</p>
     </div>
 </footer>
 

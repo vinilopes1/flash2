@@ -1,0 +1,22 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+{% extends "flash_base.html" %}
+
+{% block title %}
+    Friend List | Your Friend List
+{% endblock title %}
+
+{% block body_container %}
+    <!-- Newsfeed Common Side Bar Left-->
+    <div class="col-md-3 static">
+        {% include 'flash_menu_opcoes.html' %}
+    </div>
+
+    <div class="col-md-9">
+        {% include 'flash_list_friends_search.html' %}
+    </div>
+
+
+
+{% endblock body_container %}
+

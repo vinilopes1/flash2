@@ -1,0 +1,35 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+<div class="about-content-block">
+    <div class="organization">
+        <div class="work-info">
+            <h5> Sua busca obteve {{qtd_result}} resultado(s).</h5>
+        </div>
+        <br/>
+        <br/>
+    </div>
+</div>
+<div class="friend-list">
+    <div class="row">
+        {% for usuario in resultados %}
+        <div class="col-md-6 col-sm-6">
+            <div class="friend-card">
+                <img src="{{usuario.perfil.capa.url}}" alt="profile-cover" class="img-responsive cover"/>
+                <div class="card-info">
+                    <img src="{{usuario.perfil.foto_perfil.url}}" alt="user" class="profile-photo-lg"/>
+                    <div class="friend-info">
+                        {% for bloqueado in bloqueados %}
+                        {% if bloqueado.id == usuario.id %}
+                        <a href="#" class="pull-right text-red">Usuário Bloqueado</a>
+                        {% endif %}
+                        {% endfor %}
+                        <h5><a href="{% url 'exibir_usuario' usuario.id %}" class="profile-link">{{usuario.first_name}}
+                            {{usuario.last_name}}</a></h5>
+                        <p>@{{usuario}}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>

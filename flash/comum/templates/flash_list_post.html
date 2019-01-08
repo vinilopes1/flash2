@@ -7,7 +7,11 @@
             <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
             <div class="post-detail">
                 <div class="user-info">
-                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
+                    {% if post.usuario.id == user.id %}
+                        <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}} </a></h5>
+                    {% else %}
+                        <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
+                    {% endif %}
                     <p class="text-muted">{{post.descricao}}</p>
                 </div>
                 <div class="reaction">

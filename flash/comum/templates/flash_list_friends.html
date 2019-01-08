@@ -9,7 +9,11 @@
                 <div class="card-info">
                     <img src="{{amigo.perfil.foto_perfil.url}}" alt="user" class="profile-photo-lg"/>
                     <div class="friend-info">
-                        <a href="#" class="pull-right text-green">My Friend</a>
+                        {% for bloqueado in bloqueados %}
+                            {% if bloqueado.id == amigo.id %}
+                                <a href="#" class="pull-right text-red">Usuário Bloqueado</a>
+                            {% endif %}
+                        {% endfor %}
                         <h5><a href="{% url 'exibir_usuario' amigo.id %}" class="profile-link">{{amigo.first_name}} {{amigo.last_name}}</a></h5>
                         <p>@{{amigo}}</p>
                     </div>
