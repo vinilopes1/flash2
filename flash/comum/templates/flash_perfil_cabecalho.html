@@ -13,9 +13,9 @@
         </div>
         <div class="col-md-9">
             <ul class="list-inline profile-menu">
-                <li><a href="timeline.html" class="active">Timeflash</a></li>
+                <li><a href="timeline.html" >Timeflash</a></li>
                 <li><a href="timeline-friends.html">Flash Friends</a></li>
-                <li><a href="timeline-about.html">MyFlash</a></li>
+                <li><a href="{% url 'exibir_about' usuario.id %}" class="active">MyFlash</a></li>
                 {% if bloqueado == False and eh_amigo %}
                     <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>
                 {% endif %}

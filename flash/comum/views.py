@@ -12,7 +12,6 @@ from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
-
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -29,9 +28,12 @@ def exibir_newsfeed(request):
             posts_amigos.append(post)
         else:
             for amigo in amigos:
-                for bloqueado in bloqueados:
-                    if post.usuario_id == amigo.id and post.usuario.id != bloqueado.id:
-                        posts_amigos.append(post)
+                if post.usuario_id == amigo.id:
+                    posts_amigos.append(post)
+
+            for bloqueado in bloqueados:
+                if post.usuario.id == bloqueado.id:
+                    posts_amigos.remove(post)
 
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
@@ -187,30 +189,34 @@ def exibir_usuario(request, usuario_id):
                        'bloqueado': bloqueado})
 
 
-def exibir_about(request):
-    return render(request, 'sobre.html')
+def exibir_about(request, usuario_id):
+    usuario = User.objects.get(pk=usuario_id)
+    return render(request, 'flash_sobre.html', {'usuario': usuario})
 
 
 def alterar_senha(request):
-    return render(request, 'alterar_senha.html')
+    return render(request, 'flash_alterar_senha.html')
 
 
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
+        form.error_messages = {'password_mismatch': "Os campos para a nova senha não coincidem.",
+                               'password_incorrect': 'Sua senha antiga está incorreta. Por favor, insira novamente.'}
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
-            return redirect('change_password')
+            messages.success(request, 'Sua senha foi atualizada com sucesso!')
+            return redirect('/change-password/')
         else:
-            messages.error(request, 'Please correct the error below.')
+            return render(request, 'flash_alterar_senha.html', {
+                'form': form
+            })
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'change_password.html', {
+    return render(request, 'flash_alterar_senha.html', {
         'form': form
     })
-
 
 def nao_amigo(request):
     usuarios = todos_usuarios(request)
@@ -259,7 +265,6 @@ def buscar_usuario(request):
                 pesquisa) or usuario.username.__contains__(pesquisa):
             resultados.append(usuario)
 
-    print(resultados)
     return render(request, 'flash_friends_search.html',
                   {'resultados': resultados, 'bloqueados': bloqueados, 'usuario_logado': usuario_logado,
-                   'qtd_amigos': qtd_amigos, 'qtd_result':len(resultados)})
+                   'qtd_amigos': qtd_amigos, 'qtd_result': len(resultados)})

@@ -34,7 +34,7 @@ urlpatterns = [
     path('timeline/', views.exibir_minha_timeline, name='exibir_minha_timeline'),
     path('flash-friends/', views.exibir_flash_friends, name='exibir_flash_friends'),
     path('requests/', views.exibir_friends_requests, name='exibir_friends_requests'),
-    path('about/', views.exibir_about, name='exibir_about'),
+    path('about/<int:usuario_id>', views.exibir_about, name='exibir_about'),
     path('change-password/', views.alterar_senha, name='change_password'),
     path('change-password/done/', views.change_password, name='alterar_senha'),
     path('desfazer-amizade/<int:usuario_id>/', views.desfazer_amizade, name="desfazer_amizade"),
@@ -43,4 +43,4 @@ urlpatterns = [
     path('search/',views.buscar_usuario, name='buscar_usuario'),
     path('search/results', views.buscar_usuario, name='buscar_usuario_results'),
 
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
