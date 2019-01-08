@@ -5,6 +5,9 @@ from .models import Post
 class PostForm(forms.Form):
 
     descricao = forms.CharField(required=True)
+    foto = forms.ImageField(required=False)
+    video = forms.FileField(required=False)
+
 
 class CriarPerfilForm(forms.Form):
 

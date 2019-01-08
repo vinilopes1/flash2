@@ -22,6 +22,28 @@
           rel='stylesheet' type='text/css'>
     <!--Favicon-->
     <link rel="shortcut icon" type="image/png" href="images/fav.png"/>
+    <style>
+        <!--#custom-button {-->
+            <!--padding: 10px;-->
+            <!--color: white;-->
+            <!--background-color: #009578;-->
+            <!--border: 1px solid #000;-->
+            <!--border-radius: 5px;-->
+            <!--cursor: pointer;-->
+        <!--}-->
+
+        <!--#custom-button:hover {-->
+            <!--background-color: #00b28f;-->
+        <!--}-->
+
+        #custom-text {
+            margin-left: 10px;
+            font-family: sans-serif;
+            color: #aaa;
+        }
+
+
+    </style>
 </head>
 <body>
 
@@ -175,5 +197,41 @@
 <script src="{% static 'js/jquery.sticky-kit.min.js' %}"></script>
 <script src="{% static 'js/jquery.scrollbar.min.js' %}"></script>
 <script src="{% static 'js/script.js' %}"></script>
+<script>
+const realFileBtnImg = document.getElementById("id_foto");
+const realFileBtnVid = document.getElementById("id_video");
+const customBtnImg = document.getElementById("custom-button-img");
+const customBtnVid = document.getElementById("custom-button-vid");
+const customTxt = document.getElementById("custom-text");
+
+customBtnImg.addEventListener("click", function() {
+  realFileBtnImg.click();
+});
+
+customBtnVid.addEventListener("click", function() {
+  realFileBtnVid.click();
+});
+
+realFileBtnImg.addEventListener("change", function() {
+  if (realFileBtnImg.value) {
+    customTxt.innerHTML = realFileBtnImg.value.match(
+      /[\/\\]([\w\d\s\.\-\(\)]+)$/
+    )[1];
+  } else {
+    customTxt.innerHTML = "No file chosen, yet.";
+  }
+});
+
+realFileBtnVid.addEventListener("change", function() {
+  if (realFileBtnVid.value) {
+    customTxt.innerHTML = realFileBtnVid.value.match(
+      /[\/\\]([\w\d\s\.\-\(\)]+)$/
+    )[1];
+  } else {
+    customTxt.innerHTML = "No file chosen, yet.";
+  }
+});
+
+</script>
 </body>
 </html>

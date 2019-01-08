@@ -50,7 +50,8 @@ class Perfil(Base):
 class Post(Base):
 
     descricao =  models.CharField('Descrição', max_length=1000, blank=True, null=True)
-    anexo = models.FileField('Arquivo', upload_to='arquivos/%Y/', null=True,blank=True)
+    foto = models.ImageField('Foto', upload_to='arquivos/%Y/posts/', null=True,blank=True)
+    video = models.FileField('Vídeo', upload_to='arquivos/%Y/posts/', null=True, blank=True)
     aplausos = models.IntegerField('Aplausos', default=0, blank=False, null=False)
     editado = models.BooleanField('Editado', default=False, blank=False, null=False)
     compartilhado = models.BooleanField('Compartilhado', default=False, blank=False, null=False)

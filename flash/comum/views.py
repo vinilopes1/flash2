@@ -11,7 +11,7 @@ from django.contrib import messages
 from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-
+import os
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -47,6 +47,13 @@ def exibir_minha_timeline(request):
 
     return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario': posts_usuario})
 
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('../media_cdn/arquivos/2019/posts'):
+        os.mkdir('../media_cdn/arquivos/2019/posts/')
+
+    with open('../media_cdn/arquivos/2019/posts/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
 
 class AdicionaPostView(View):
 
@@ -54,28 +61,55 @@ class AdicionaPostView(View):
         return render(request, 'flash_newsfeed.html')
 
     def post(self, request):
-        form = PostForm(request.POST)
+        form = PostForm(request.POST,request.FILES)
 
         if (form.is_valid()):
             dados = form.data
-
-            post = Post(descricao=dados['descricao'],
-                        criado_em=timezone.now(),
-                        atualizado_em=timezone.now(),
-                        anexo=None,
-                        aplausos=randint(0, 100),
-                        editado=False,
-                        compartilhado=False,
-                        colecao_id=None,
-                        comunidade_id=None,
-                        usuario_id=request.user.id)
+            print(str(request.FILES)[19])
+            if str(request.FILES)[19] == 'f':
+                post = Post(descricao=dados['descricao'],
+                            criado_em=timezone.now(),
+                            atualizado_em=timezone.now(),
+                            aplausos=randint(0, 100),
+                            foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
+                            video=None,
+                            editado=False,
+                            compartilhado=False,
+                            colecao_id=None,
+                            comunidade_id=None,
+                            usuario_id=request.user.id)
+                handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
+            elif str(request.FILES)[19] == 'v':
+                    post = Post(descricao=dados['descricao'],
+                                criado_em=timezone.now(),
+                                atualizado_em=timezone.now(),
+                                aplausos=randint(0, 100),
+                                video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
+                                foto=None,
+                                editado=False,
+                                compartilhado=False,
+                                colecao_id=None,
+                                comunidade_id=None,
+                                usuario_id=request.user.id)
+                    handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
+            else:
+                post = Post(descricao=dados['descricao'],
+                            criado_em=timezone.now(),
+                            atualizado_em=timezone.now(),
+                            aplausos=randint(0, 100),
+                            editado=False,
+                            compartilhado=False,
+                            colecao_id=None,
+                            comunidade_id=None,
+                            usuario_id=request.user.id)
+                messages.success(request, 'Seu post foi publicado com êxito.')
 
             post.save()
             print(request)
             return redirect('/')
 
-        return render(request, 'flash_newsfeed.html', {'form': form})
-
+        messages.error(request,'Seu post NÃO foi publicado com êxito.')
+        return redirect('/')
 
 def delete_post(request, post_id):
     Post.objects.get(pk=post_id).delete()

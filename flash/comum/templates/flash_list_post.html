@@ -1,24 +1,48 @@
 <!--NOVO TAMPLATE (MAYELLE)-->
-
-{% for post in posts_amigos %}
+{% if post_amigos.0.id == None %}
+<div class="about-content-block">
+    <div class="organization">
+        <div class="work-info">
+            <h5 align="center">Vamos lá, publique, adicione amigos, vamos movimentar seu FlashFeed :)</h5>
+        </div>
+        <br/>
+        <br/>
+    </div>
+</div>
+{% else %}
+    {% for post in posts_amigos %}
     <div class="post-content">
-        <!---<img src="images/post-images/1.jpg" alt="post-image" class="img-responsive post-image"/>-->
         <div class="post-container">
             <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
             <div class="post-detail">
                 <div class="user-info">
                     {% if post.usuario.id == user.id %}
-                        <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}} </a></h5>
+                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}} </a></h5>
                     {% else %}
-                        <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
+                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}} </a></h5>
                     {% endif %}
                     <p class="text-muted">{{post.descricao}}</p>
                 </div>
                 <div class="reaction">
                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}}</a>
-                        {% if post.usuario.id == user.id %}
-                            <a class="btn text-red"><i class="fa fa-trash"></i></a>
-                        {% endif %}
+                    {% if post.usuario.id == user.id %}
+                    <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
+                            class="fa fa-trash"></i></a>
+                    <div id="MyModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">Publicação #1</div>
+                                <div class="modal-body">Você deseja excluir essa publicação?</div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <a href="{% url 'delete_post' post.id %}">
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
 
                 </div>
                 <div class="line-divider"></div>
@@ -31,5 +55,16 @@
                 </div>
             </div>
         </div>
+         {% if post.foto %}
+        <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+        {% endif %}
+        {% if post.video %}
+        <video class="post-video" controls>
+            <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+        </video>
+
+        {% endif %}
     </div>
-{% endfor %}
+
+    {% endfor %}
+{% endif %}

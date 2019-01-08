@@ -3,107 +3,120 @@
 {% extends "flash_base.html" %}
 
 {% block title %}
-    TimeFlash | Meu perfil flash
+TimeFlash | Meu perfil flash
 {% endblock title%}
 
 {% block body_container %}
-    <div class="container">
+<div class="container">
 
-        <div class="timeline">
-            <div class="timeline-cover" style="background: url('{{usuario.perfil.capa.url}}');">
-                {% include 'flash_perfil_cabecalho.html' %}
-            </div>
-            <div id="page-contents">
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-7">
-                        {% if usuario.id == user.id %}
-                            {% include 'flash_add_post.html' %}
-                        {% else %}
-                            <div class="create-post">
-                                <div class="row">
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        {% if eh_amigo == False %}
-                            {% if usuario.id != user.id %}
-                                <div class="about-content-block">
-                                    <div class="organization">
-                                        <div class="work-info">
-                                            <h5 align="justify"> Você e {{usuario.first_name}} não são amigos :(</h5>
-                                            <h5> Que tal enviar uma solicitação de amizade para visualizar suas publicações ?</h5>
-                                        </div>
-                                        <br/>
-                                        <br/>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                        {% if posts_usuario.0.id == None and eh_amigo == True %}
-                            <div class="about-content-block">
-                                <div class="organization">
-                                    <div class="work-info">
-                                        <h5> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
-                                    </div>
-                                    <br/>
-                                    <br/>
-                                </div>
-                            </div>
-                        {% else %}
-                            {% for post in posts_usuario %}
-                                <div class="post-content">
-
-                                    <!--Post Date-->
-                                    <div class="post-date hidden-xs hidden-sm">
-                                        <h5>{{usuario.first_name}}</h5>
-                                        <p class="text-grey">Sometimes ago</p>
-                                    </div><!--Post Date End-->
-
-                                    <!-- Imagem de post !-->
-                                    <!-- <img src="images/post-images/12.jpg" alt="post-image" class="img-responsive post-image"/> !-->
-                                    <div class="post-container">
-                                        <img src="{{usuario.perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
-                                        <div class="post-detail">
-                                            <div class="user-info">
-                                                <h5><a href="timeline.html" class="profile-link">{{usuario.first_name}}
-                                                    {{usuario.last_name}}</a></h5>
-                                                <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
-                                            </div>
-                                            <div class="reaction">
-                                                <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
-                                                {%if request.user.id == usuario.id %}
-                                                    <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i class="fa fa-trash"></i></a>
-                                                {% endif %}
-
-                                            </div>
-                                            <div class="line-divider"></div>
-                                            <div class="post-text">
-                                                <p>{{post.descricao}} <i
-                                                        class="em em-anguished"></i> <i class="em em-anguished"></i> <i
-                                                        class="em em-anguished"></i></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Alerts -->
-                                <div id="MyModal" class="modal fade" role="dialog">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">Publicação #1</div>
-                                            <div class="modal-body">Você deseja excluir essa publicação?</div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <a href="{% url 'delete_post' post.id %}"><button type="button" class="btn btn-primary" >Save changes</button></a>
-                                        </div>
-                                    </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+    <div class="timeline">
+        <div class="timeline-cover" style="background: url('{{usuario.perfil.capa.url}}');">
+            {% include 'flash_perfil_cabecalho.html' %}
+        </div>
+        <div id="page-contents">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-7">
+                    {% if usuario.id == user.id %}
+                    {% include 'flash_add_post.html' %}
+                    {% else %}
+                    <div class="create-post">
+                        <div class="row">
+                        </div>
                     </div>
+                    {% endif %}
+
+                    {% if eh_amigo == False %}
+                    {% if usuario.id != user.id %}
+                    <div class="about-content-block">
+                        <div class="organization">
+                            <div class="work-info">
+                                <h5 align="justify"> Você e {{usuario.first_name}} não são amigos :(</h5>
+                                <h5> Que tal enviar uma solicitação de amizade para visualizar suas publicações ?</h5>
+                            </div>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    {% if posts_usuario.0.id == None and eh_amigo == True %}
+                    <div class="about-content-block">
+                        <div class="organization">
+                            <div class="work-info">
+                                <h5> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
+                            </div>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
+                    {% else %}
+                    {% for post in posts_usuario %}
+                    <div class="post-content">
+                        {% if post.foto %}
+                        <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                        {% endif %}
+                        {% if post.video %}
+                        <video class="post-video" controls>
+                            <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+                        </video>
+
+                        {% endif %}
+                        <!--Post Date-->
+                        <div class="post-date hidden-xs hidden-sm">
+                            <h5>{{usuario.first_name}}</h5>
+                            <p class="text-grey">Sometimes ago</p>
+                        </div><!--Post Date End-->
+
+                        <!-- Imagem de post !-->
+                        <!-- <img src="images/post-images/12.jpg" alt="post-image" class="img-responsive post-image"/> !-->
+                        <div class="post-container">
+                            <img src="{{usuario.perfil.foto_perfil.url}}" alt="user"
+                                 class="profile-photo-md pull-left"/>
+                            <div class="post-detail">
+                                <div class="user-info">
+                                    <h5><a href="timeline.html" class="profile-link">{{usuario.first_name}}
+                                        {{usuario.last_name}}</a></h5>
+                                    <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
+                                </div>
+                                <div class="reaction">
+                                    <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
+                                    {%if request.user.id == usuario.id %}
+                                    <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
+                                            class="fa fa-trash"></i></a>
+                                    {% endif %}
+
+                                </div>
+                                <div class="line-divider"></div>
+                                <div class="post-text">
+                                    <p>{{post.descricao}} <i
+                                            class="em em-anguished"></i> <i class="em em-anguished"></i> <i
+                                            class="em em-anguished"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="MyModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">Publicação #1</div>
+                                <div class="modal-body">Você deseja excluir essa publicação?</div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <a href="{% url 'delete_post' post.id %}">
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock body_container %}
+<!-- Alerts -->
+

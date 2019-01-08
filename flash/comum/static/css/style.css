@@ -1549,8 +1549,18 @@ ul.album-photos li img{
 
 .contact-us ul.social-icons{
   margin-top: 20px;
+
+
+/* Esconde o input */
+input[type='file'] {
+    display: none;
 }
 
+/* Aparência que terá o seletor de arquivo */
+label {
+  border-radius: 5px;
+  cursor: pointer;
+  }
 
 /*==================================================
   Site Footer

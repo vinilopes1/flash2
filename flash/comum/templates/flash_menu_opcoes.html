@@ -5,9 +5,9 @@
     <h5><a href="{% url 'exibir_minha_timeline' %}" class="text-white">{{user.first_name}}
         {{user.last_name}}</a></h5>
     {% if qtd_amigos == 1 %}
-        <a href="#" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizade</a>
+        <a href="{% url 'exibir_flash_friends' %}" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizade</a>
     {% else %}
-        <a href="#" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizades</a>
+        <a href="{% url 'exibir_flash_friends' %}" class="text-white"><i class="ion ion-android-person-add"></i> {{qtd_amigos}} amizades</a>
     {% endif %}
 </div><!--profile card ends-->
 <ul class="nav-news-feed">

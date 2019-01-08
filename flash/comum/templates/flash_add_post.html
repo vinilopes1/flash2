@@ -1,7 +1,9 @@
+{% load staticfiles %}
 <!--NOVO TAMPLATE (MAYELLE)-->
 
 <!--BODY BOX DE NOVO POSTAGEM-->
-<form method="post" action="{% url 'add_post'%}">
+
+<form method="post" action="{% url 'add_post'%}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="create-post">
         <div class="row">
@@ -15,13 +17,20 @@
             <div class="col-md-5 col-sm-5">
                 <div class="tools">
                     <ul class="publishing-tools list-inline">
-                        <li><a href="#"><i class="ion-compose"></i></a></li>
-                        <li><a href="#"><i class="ion-images"></i></a></li>
-                        <li><a href="#"><i class="ion-ios-videocam"></i></a></li>
-                        <li><a href="#"><i class="ion-map"></i></a></li>
+                        <li>
+                           <input type="file" id="id_foto" name="foto" style="display: none;"/>
+                            <span id="custom-button-img"><img src="{% static 'images/icon_gallery.png' %}"></span>
+                        </li>
+                    </ul>
+                    <ul class="publishing-tools list-inline">
+                        <li>
+                            <input type="file" id="id_video" name="video" style="display: none;"/>
+                            <span id="custom-button-vid"><img src="{% static 'images/icon_video.png' %}"></span>
+                        </li>
                     </ul>
                     <button class="btn btn-primary pull-right">Publish</button>
                 </div>
+                <span id="custom-text">Nenhum arquivo selecionado.</span>
             </div>
         </div>
     </div><!-- Post Create Box End-->
