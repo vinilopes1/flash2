@@ -1,0 +1,37 @@
+{% extends "flash_base.html" %}
+
+{% block title %}
+    Flash Settings
+{% endblock title %}
+
+{% block body_container %}
+
+    <div class="col-md-3 static">
+            {% include 'flash_menu_opcoes.html' %}
+    </div>
+
+    <div class="col-md-6">
+            <!--Alerts-->
+            {% include 'flash_alert_msg.html' %}
+
+            <!-- Lista de Usuários-->
+            {% if user.is_superuser %}
+                {% include 'flash_list_user.html' %}
+            {% else %}
+                <div class="about-content-block">
+                    <div class="organization">
+                        <div class="work-info">
+                            <h5> Você não é um Super Usuário.</h5>
+                        </div>
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+            {% endif %}
+    </div>
+
+    <!-- Newsfeed Common Side Bar Right-->
+    <div class="col-md-3 static">
+    </div>
+
+{% endblock body_container %}

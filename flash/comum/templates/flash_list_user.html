@@ -1,0 +1,23 @@
+{% for perfil in perfis %}
+    <div class="post-content">
+        <div class="post-container">
+            <img src="{{perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            <div class="post-detail">
+                <div class="user-info">
+
+                    <h5>{{perfil.usuario.first_name}}</h5>
+                    <p class="text-muted">
+                        @{{perfil.usuario}}
+                    </p>
+                    <div class="line-divider">
+                        {% if perfil.usuario.is_superuser %}
+                            <a href="{% url 'definir_usuario_comum' perfil.id %}"> Tornar um Usuario Comum?</a>
+                        {% else %}
+                            <a href="{% url 'definir_super_usuario' perfil.id %}"> Tornar um Super Usuário?</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
