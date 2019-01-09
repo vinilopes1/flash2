@@ -1,5 +1,5 @@
 <!--NOVO TAMPLATE (MAYELLE)-->
-{% if post_amigos.0.id == None %}
+{% if posts_amigos.0.usuario == None %}
 <div class="about-content-block">
     <div class="organization">
         <div class="work-info">
@@ -62,9 +62,7 @@
         <video class="post-video" controls>
             <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
         </video>
-
         {% endif %}
     </div>
-
     {% endfor %}
 {% endif %}

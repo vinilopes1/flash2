@@ -44,7 +44,12 @@ TimeFlash | Meu perfil flash
                     <div class="about-content-block">
                         <div class="organization">
                             <div class="work-info">
-                                <h5> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
+                                {% if usuario.id == user.id %}
+                                    <h5 align="center"> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
+                                {% else %}
+                                    <h5 align="center"> {{usuario.first_name}} não tem publicações em seu perfil. </h5>
+                                {% endif %}
+
                             </div>
                             <br/>
                             <br/>

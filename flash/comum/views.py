@@ -21,19 +21,14 @@ def exibir_newsfeed(request):
     amigos = lista_amigos(request)
     qtd_amigos = quant_amigos(request)
     usuarios_nao_amigo = nao_amigo(request)
-    bloqueados = Block.objects.blocking(request.user)
     posts_amigos = []
     for post in posts:
         if post.usuario_id == request.user.id:
             posts_amigos.append(post)
         else:
             for amigo in amigos:
-                if post.usuario_id == amigo.id:
+                if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo, request.user) == False:
                     posts_amigos.append(post)
-
-            for bloqueado in bloqueados:
-                if post.usuario.id == bloqueado.id:
-                    posts_amigos.remove(post)
 
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
@@ -159,6 +154,10 @@ def exibir_flash_friends(request):
     qtd_amigos = quant_amigos(request)
 
     bloqueados = Block.objects.blocking(request.user)
+
+    for amigo in amigos:
+        if Block.objects.is_blocked(amigo, request.user):
+            meus_amigos.remove(amigo)
 
     for usuario in usuarios:
         if usuario not in amigos and usuario != request.user:
@@ -291,13 +290,15 @@ def buscar_usuario(request):
     usuarios = todos_usuarios(request)
     resultados = []
     bloqueados = Block.objects.blocking(request.user)
+    bloqueios = Block.objects.all()
     usuario_logado = request.user
     qtd_amigos = quant_amigos(request)
 
     for usuario in usuarios:
         if usuario.first_name.__contains__(pesquisa) or usuario.last_name.__contains__(
                 pesquisa) or usuario.username.__contains__(pesquisa):
-            resultados.append(usuario)
+            if Block.objects.is_blocked(usuario, request.user) == False:
+                resultados.append(usuario)
 
     return render(request, 'flash_friends_search.html',
                   {'resultados': resultados, 'bloqueados': bloqueados, 'usuario_logado': usuario_logado,
