@@ -1,0 +1,22 @@
+<!-- Login Form -->
+<div class="sign-up-form">
+    <a href="{% url 'login' %}" class="logo"><img src="flash/comum/static/images/flash_logo.png" alt="Friend Finder"/></a>
+    <h2 class="text-white">Encontre seus amigos</h2>
+    <div class="line-divider"></div>
+    <div class="form-wrapper">
+        <p class="signup-text">Entre e conheça pessoas de todo o mundo</p>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <input type="text" class="form-control" name="username" id="id_username" placeholder="Digite seu nome de usuário">
+            </fieldset>
+            <fieldset class="form-group">
+                <input type="password" class="form-control" name="password" id="id_password" placeholder="Digite sua senha">
+            </fieldset>
+            <a href="{% url 'reset-password' %}"><p>Esqueci minha senha</p></a>
+            <button class="btn-secondary" type="submit">Entrar</button>
+        </form>
+    </div>
+    <a href="{% url 'add_user' %}">Não possui cadastro? Crie sua conta!</a>
+    <img class="form-shadow" src="images/bottom-shadow.png" alt="" />
+</div><!-- Sign Up Form End -->

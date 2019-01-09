@@ -1,0 +1,65 @@
+<div class="google-maps">
+      <div id="map" class="map contact-map"></div>
+</div>
+
+<div id="page-contents">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="contact-us">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-7">
+                            <h4 class="grey">Cadastre-se:</h4>
+                            <form class="contact-form" method="post" action="{% url 'add_user' %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <i class="icon ion-person"></i>
+                                    <input id="id_first_name" type="text" name="first_name" class="form-control"
+                                           placeholder="Primeiro nome *" required="required"
+                                           data-error="Phone is required.">
+                                </div>
+                                <div class="form-group">
+                                    <i class="icon ion-person"></i>
+                                    <input id="id_last_name" type="text" name="last_name" class="form-control"
+                                           placeholder="Segundo nome *" required="required"
+                                           data-error="Please,leave us a message.">
+                                </div>
+                                <div class="form-group">
+                                    <i class="icon ion-email"></i>
+                                    <input id="id_email" type="text" name="email" class="form-control"
+                                           placeholder="Digite seu email *" required="required"
+                                           data-error="Email is required.">
+                                </div>
+                                <div class="form-group">
+                                    <i class="icon ion-at"></i>
+                                    <input id="id_username" type="text" name="username" class="form-control"
+                                           placeholder="Digite seu nome de usuário *" required="required"
+                                           data-error="Name is required.">
+                                </div>
+                                <div class="form-group">
+                                    <i class="icon ion-key"></i>
+                                    <input id="id_password" type="password" name="password" class="form-control"
+                                           placeholder="Digite sua senha *" required="required"
+                                           data-error="Email is required.">
+                                </div>
+                                <div align="center" class="form-group">
+                                    <button class="btn-primary">Cadastrar</button>
+                                </div>
+
+                            </form>
+                            <div align="center" class="form-group">
+                                <a href="{% url 'login' %}">Já tenho um cadastro. Realizar Login.</a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-5">
+                            <h4 class="grey">Reach Us</h4>
+                            <div class="reach"><span class="phone-icon"><i class="icon ion-android-call"></i></span><p>+1 (234) 222 0754</p></div>
+                            <div class="reach"><span class="phone-icon"><i class="icon ion-email"></i></span><p>info@thunder-team.com</p></div>
+                            <div class="reach"><span class="phone-icon"><i class="icon ion-ios-location"></i></span><p>228 Park Ave S NY, USA</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
