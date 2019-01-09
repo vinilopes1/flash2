@@ -26,7 +26,7 @@ urlpatterns = [
     path('', views.exibir_newsfeed, name='exibir_newsfeed'),
     path('friendship/', include('friendship.urls')),
     path('new-post/', views.AdicionaPostView.as_view() , name = 'add_post'),
-    path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('delete-post/<string>/<int:post_id>/', views.delete_post, name='delete_post'),
     path('usuario/<int:usuario_id>/', views.exibir_usuario, name='exibir_usuario'),
     path('newsfeed/add/<int:usuario_id>/', views.enviar_pedido, name='enviar_pedido'),
     path('newsfeed/accept/<int:solicitacao_id>/', views.aceitar_pedido, name='aceitar_pedido'),

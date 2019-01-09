@@ -59,7 +59,6 @@ class Post(Base):
     colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='colecoes')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
 
-
 class Comentario(Base):
 
     descricao = models.CharField('Descricao', max_length=256, blank=False, null=False)

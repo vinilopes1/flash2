@@ -31,12 +31,12 @@
                     <div id="MyModal" class="modal fade" role="dialog">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header">Publicação #1</div>
+                                <div class="modal-header">Publicação #{{post.id}}</div>
                                 <div class="modal-body">Você deseja excluir essa publicação?</div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <a href="{% url 'delete_post' post.id %}">
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                    <a href="{% url 'delete_post' 'dn' post.id  %}">
+                                        <button type="button" class="btn btn-primary">Deletar publicação</button>
                                     </a>
                                 </div>
                             </div>

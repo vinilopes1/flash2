@@ -18,6 +18,7 @@ TimeFlash | Meu perfil flash
                 <div class="col-md-3"></div>
                 <div class="col-md-7">
                     {% if usuario.id == user.id %}
+                    {% include 'flash_alert_msg.html' %}
                     {% include 'flash_add_post.html' %}
                     {% else %}
                     <div class="create-post">
@@ -58,15 +59,6 @@ TimeFlash | Meu perfil flash
                     {% else %}
                     {% for post in posts_usuario %}
                     <div class="post-content">
-                        {% if post.foto %}
-                        <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
-                        {% endif %}
-                        {% if post.video %}
-                        <video class="post-video" controls>
-                            <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
-                        </video>
-
-                        {% endif %}
                         <!--Post Date-->
                         <div class="post-date hidden-xs hidden-sm">
                             <h5>{{usuario.first_name}}</h5>
@@ -100,16 +92,25 @@ TimeFlash | Meu perfil flash
                                 </div>
                             </div>
                         </div>
+                        {% if post.foto %}
+                        <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                        {% endif %}
+                        {% if post.video %}
+                        <video class="post-video" controls>
+                            <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+                        </video>
+
+                        {% endif %}
                     </div>
                     <div id="MyModal" class="modal fade" role="dialog">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <div class="modal-header">Publicação #1</div>
+                                <div class="modal-header">Publicação #{{post.id}}</div>
                                 <div class="modal-body">Você deseja excluir essa publicação?</div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <a href="{% url 'delete_post' post.id %}">
-                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                    <a href="{% url 'delete_post' 'dt' post.id  %}">
+                                        <button type="button" class="btn btn-primary">Deletar publicação</button>
                                     </a>
                                 </div>
                             </div>

@@ -57,10 +57,8 @@ class AdicionaPostView(View):
 
     def post(self, request):
         form = PostForm(request.POST,request.FILES)
-
         if (form.is_valid()):
             dados = form.data
-            print(str(request.FILES)[19])
             if str(request.FILES)[19] == 'f':
                 post = Post(descricao=dados['descricao'],
                             criado_em=timezone.now(),
@@ -106,10 +104,13 @@ class AdicionaPostView(View):
         messages.error(request,'Seu post NÃO foi publicado com êxito.')
         return redirect('/')
 
-def delete_post(request, post_id):
+def delete_post(request,string , post_id):
     Post.objects.get(pk=post_id).delete()
     messages.success(request, 'Sua publicação foi excluída!')
-    return redirect('/timeline')
+    if string == 'dt':
+        return redirect('/timeline')
+    else:
+        return redirect('/')
 
 
 def lista_amigos(request):
@@ -290,7 +291,6 @@ def buscar_usuario(request):
     usuarios = todos_usuarios(request)
     resultados = []
     bloqueados = Block.objects.blocking(request.user)
-    bloqueios = Block.objects.all()
     usuario_logado = request.user
     qtd_amigos = quant_amigos(request)
 

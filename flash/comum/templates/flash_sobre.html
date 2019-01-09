@@ -70,8 +70,10 @@
                             {{usuario.last_login}}
                     </div>
                 </div>
-                <button class="btn btn-primary" style="background-color: #f7020e">Editar descrição</button>
-                <a href="{% url 'change_password' %}"><button class="btn btn-primary">Alterar senha</button></a>
+                {% if usuario.id == user.id %}
+                    <button class="btn btn-primary" style="background-color: #f7020e">Editar descrição</button>
+                    <a href="{% url 'change_password' %}"><button class="btn btn-primary">Alterar senha</button></a>
+                {% endif %}
             </div>
         </div>
     </div>
