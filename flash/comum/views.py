@@ -11,6 +11,7 @@ from django.contrib import messages
 from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
 import os
 # Create your views here.
 
@@ -121,6 +122,11 @@ def lista_amigos(request):
 def todos_usuarios(request):
     usuarios = User.objects.all()
     return usuarios
+
+
+def todos_perfis(request):
+    perfis = Perfil.objects.all()
+    return perfis
 
 
 def enviar_pedido(request, usuario_id):
@@ -303,3 +309,31 @@ def buscar_usuario(request):
     return render(request, 'flash_friends_search.html',
                   {'resultados': resultados, 'bloqueados': bloqueados, 'usuario_logado': usuario_logado,
                    'qtd_amigos': qtd_amigos, 'qtd_result': len(resultados)})
+
+def exibir_flash_settings(request):
+    perfis = todos_perfis(request)
+    usuarios_nao_amigo = nao_amigo(request)
+    qtd_amigos = quant_amigos(request)
+    return render(request, 'flash_settings.html',{'perfis': perfis , 'qtd_amigos': qtd_amigos,
+                                                   'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+
+def definir_super_usuario(request, usuario_id):
+    user = User.objects.get(pk=usuario_id)
+    user.is_superuser = True
+    user.save()
+    perfis = todos_perfis(request)
+    usuarios_nao_amigo = nao_amigo(request)
+    qtd_amigos = quant_amigos(request)
+    return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
+                                                   'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+
+
+def definir_usuario_comum(request, usuario_id):
+    user = User.objects.get(pk=usuario_id)
+    user.is_superuser = False
+    user.save()
+    perfis = todos_perfis(request)
+    usuarios_nao_amigo = nao_amigo(request)
+    qtd_amigos = quant_amigos(request)
+    return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
+                                                   'usuarios_nao_amigo': usuarios_nao_amigo[:6]})

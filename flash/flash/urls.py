@@ -42,5 +42,8 @@ urlpatterns = [
     path('desbloquear/<int:usuario_id>/', views.desbloquear_usuario, name="desbloquear_usuario"),
     path('search/',views.buscar_usuario, name='buscar_usuario'),
     path('search/results', views.buscar_usuario, name='buscar_usuario_results'),
+    path('settings/',views.exibir_flash_settings, name='exibir_flash_settings'),
+    path('settings/super-usuario/<int:usuario_id>',views.definir_super_usuario, name='definir_super_usuario'),
+    path('settings/usuario-comum/<int:usuario_id>',views.definir_usuario_comum, name='definir_usuario_comum'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

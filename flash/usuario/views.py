@@ -43,7 +43,7 @@ class CadastraPerfilView(View):
                         email = dados['email'],
                         password=senha,
                         last_login = timezone.now(),
-                        is_superuser = True,
+                        is_superuser = False,
                         is_staff = True,
                         is_active = True,
                         date_joined = timezone.now())
