@@ -1,0 +1,22 @@
+{% extends "flash_base.html" %}
+
+{% block title %}
+    Flash Settings
+{% endblock title %}
+
+{% block body_container %}
+
+    <div class="col-md-3 static">
+            {% include 'flash_menu_opcoes.html' %}
+    </div>
+
+    <div class="col-md-6">
+            {% include 'flash_list_post.html' %}
+    </div>
+
+    <!-- Newsfeed Common Side Bar Right-->
+    <div class="col-md-3 static">
+        {% include 'flash_sugestoes.html' %}
+    </div>
+
+{% endblock body_container %}
