@@ -1,6 +1,7 @@
 <!-- Login Form -->
+{% load staticfiles %}
 <div class="sign-up-form">
-    <a href="{% url 'login' %}" class="logo"><img src="flash/comum/static/images/flash_logo.png" alt="Friend Finder"/></a>
+    <a href="{% url 'login' %}" class="logo"><img src="{% static 'images/flash_logo.png' %}" alt="Friend Finder"/></a>
     <h2 class="text-white">Encontre seus amigos</h2>
     <div class="line-divider"></div>
     <div class="form-wrapper">

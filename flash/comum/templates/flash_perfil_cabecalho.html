@@ -14,7 +14,7 @@
         <div class="col-md-9">
             {% if usuario.id == user.id %}
                 <ul class="list-inline profile-menu">
-                    <li><a href="{% url 'exibir_minha_timeline' %}" >Timeflash</a></li>
+                    <li><a href="{% url 'exibir_minha_timeline' %}">Timeflash</a></li>
                     <li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>
                     <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
                     {% if bloqueado == False and eh_amigo %}
@@ -23,7 +23,7 @@
                 </ul>
             {% else %}
                 <ul class="list-inline profile-menu">
-                    <li><a href="{% url 'exibir_usuario' usuario.id %}" >Timeflash</a></li>
+                    <li><a href="{% url 'exibir_usuario' usuario.id %}">Timeflash</a></li>
                     <!--<li><a href="timeline-friends.html">Flash Friends</a></li>-->
                     <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
                     {% if bloqueado == False and eh_amigo %}
@@ -32,23 +32,37 @@
                 </ul>
             {% endif %}
             <ul class="follow-me list-inline">
-                <li>
+            <li>
                 {% if usuario.id == user.id%}
-                    <button class="btn-primary">Ativo</button>
+                    <a href="" data-toggle="modal" data-target="#DesativarAlert">
+                        <button class="btn-primary">Ativo</button>
+                    </a>
                 {% else %}
                     {% if eh_amigo == True %}
                         {% if bloqueado %}
-                            <a href="{% url 'desbloquear_usuario' usuario.id %}"> <button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button> </a>
+                            <a href="{% url 'desbloquear_usuario' usuario.id %}">
+                                <button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button>
+                            </a>
                         {% else %}
-                            <a href="{% url 'desfazer_amizade' usuario.id %}"> <button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button> </a>
+                            <a href="{% url 'desfazer_amizade' usuario.id %}">
+                                <button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button>
+                            </a>
                         {% endif %}
                     {% else %}
-                        <a href="{% url 'enviar_pedido' usuario.id %}"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                        {% if solicitei %}
+                            <a href="#">
+                                <button class="btn-primary" style="background-color: #ddd; color: black;">Solicitação já enviada
+                                </button>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'enviar_pedido' usuario.id %}">
+                                <button class="btn-primary">Adicionar aos Flash Friends</button>
+                            </a>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
-
-                </li>
-            </ul>
+            </li>
+        </ul>
         </div>
     </div>
 </div><!--Timeline Menu for Large Screens End-->
@@ -62,42 +76,56 @@
     </div>
     <div class="mobile-menu">
         {% if usuario.id == user.id %}
-                <ul class="list-inline profile-menu">
-                    <li><a href="{% url 'exibir_minha_timeline' %}" >Timeflash</a></li>
-                    <li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>
-                    <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
-                    {% if bloqueado == False and eh_amigo %}
-                        <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>
-                    {% endif %}
-                </ul>
-            {% else %}
-                <ul class="list-inline profile-menu">
-                    <li><a href="{% url 'exibir_usuario' usuario.id %}" >Timeflash</a></li>
-                    <!--<li><a href="timeline-friends.html">Flash Friends</a></li>-->
-                    <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
-                    {% if bloqueado == False and eh_amigo %}
-                        <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>
-                    {% endif %}
-                </ul>
-            {% endif %}
-            <ul class="follow-me list-inline">
-                <li>
+            <ul class="list-inline profile-menu">
+                <li><a href="{% url 'exibir_minha_timeline' %}">Timeflash</a></li>
+                <li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>
+                <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
+                {% if bloqueado == False and eh_amigo %}
+                    <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>
+                {% endif %}
+            </ul>
+        {% else %}
+            <ul class="list-inline profile-menu">
+                <li><a href="{% url 'exibir_usuario' usuario.id %}">Timeflash</a></li>
+                <!--<li><a href="timeline-friends.html">Flash Friends</a></li>-->
+                <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
+                {% if bloqueado == False and eh_amigo %}
+                    <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+        <ul class="follow-me list-inline">
+            <li>
                 {% if usuario.id == user.id%}
-                    <button class="btn-primary">Ativo</button>
+                    <a href="" data-toggle="modal" data-target="#DesativarAlert">
+                        <button class="btn-primary">Ativo</button>
+                    </a>
                 {% else %}
                     {% if eh_amigo == True %}
                         {% if bloqueado %}
-                            <a href="{% url 'desbloquear_usuario' usuario.id %}"> <button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button> </a>
+                            <a href="{% url 'desbloquear_usuario' usuario.id %}">
+                                <button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button>
+                            </a>
                         {% else %}
-                            <a href="{% url 'desfazer_amizade' usuario.id %}"> <button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button> </a>
+                            <a href="{% url 'desfazer_amizade' usuario.id %}">
+                                <button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button>
+                            </a>
                         {% endif %}
                     {% else %}
-                        <a href="{% url 'enviar_pedido' usuario.id %}"><button class="btn-primary">Adicionar aos Flash Friends</button></a>
+                        {% if solicitei %}
+                            <a href="#">
+                                <button class="btn-primary" style="background-color: #ddd; color: black;">Solicitação já enviada
+                                </button>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'enviar_pedido' usuario.id %}">
+                                <button class="btn-primary">Adicionar aos Flash Friends</button>
+                            </a>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
-
-                </li>
-            </ul>
+            </li>
+        </ul>
     </div>
 </div>
 <div id="BlockAlert" class="modal fade" role="dialog">
@@ -113,4 +141,18 @@
             </div>
         </div>
     </div>
-</div><!--Timeline Menu for Small Screens End-->
+</div>
+<div id="DesativarAlert" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Desativar</div>
+            <div class="modal-body">Você realmente deseja desativar seu perfil?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <a href="{% url 'desativar_perfil' %}">
+                    <button type="button" class="btn btn-primary">Salvar alterações</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,7 +8,7 @@
         <div>
             <h5><a href="{% url 'exibir_usuario' usuario.id %}">{{usuario.first_name}}
         {{usuario.last_name}}</a></h5>
-            <a href="{% url 'enviar_pedido' usuario.id %}" class="text-green">Add friend</a>
+                <a href="{% url 'enviar_pedido' usuario.id %}" class="text-green">Adicionar aos amigos</a>
         </div>
     </div>
     {% endfor %}

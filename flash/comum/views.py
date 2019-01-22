@@ -13,6 +13,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 import os
+import operator
+
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -30,6 +32,7 @@ def exibir_newsfeed(request):
             for amigo in amigos:
                 if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo, request.user) == False:
                     posts_amigos.append(post)
+    posts_amigos = sorted(posts_amigos,key=Post.get_id,reverse=True)
 
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
@@ -205,6 +208,12 @@ def exibir_usuario(request, usuario_id):
     eh_amigo = False
     estou_bloqueado = False
     bloqueado = False
+    solicitei = False
+    solicitacoes = Friend.objects.unrejected_requests(usuario)
+    for solicitacao in solicitacoes:
+        if solicitacao.from_user.id == request.user.id:
+            solicitei = True
+
     if Friend.objects.are_friends(request.user, usuario):
         eh_amigo = True
 
@@ -221,12 +230,12 @@ def exibir_usuario(request, usuario_id):
     if eh_amigo:
         return render(request, "flash_timeline.html",
                       {'usuario': usuario, 'posts_usuario': posts_usuario, 'eh_amigo': eh_amigo,
-                       'bloqueado': bloqueado})
+                       'bloqueado': bloqueado, 'solicitei':solicitei})
     else:
         posts_usuario = []
         return render(request, "flash_timeline.html",
                       {'usuario': usuario, 'posts_usuario': posts_usuario, 'eh_amigo': eh_amigo,
-                       'bloqueado': bloqueado})
+                       'bloqueado': bloqueado, 'solicitei':solicitei})
 
 
 def exibir_about(request, usuario_id):
@@ -245,7 +254,7 @@ def change_password(request):
                                'password_incorrect': 'Sua senha antiga está incorreta. Por favor, insira novamente.'}
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'Sua senha foi atualizada com sucesso!')
             return redirect('/change-password/')
         else:
@@ -337,3 +346,10 @@ def definir_usuario_comum(request, usuario_id):
     qtd_amigos = quant_amigos(request)
     return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+
+
+def desativar_perfil(request):
+    usuario = User.objects.get(pk=request.user.id)
+    usuario.is_active = False
+    usuario.save()
+    return redirect('logout')
