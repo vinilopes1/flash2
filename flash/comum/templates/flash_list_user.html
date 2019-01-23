@@ -9,49 +9,33 @@
                     <p class="text-muted">
                         @{{perfil.usuario}}
                     </p>
-                    <div>
-
-                        <table>
-
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        {% if perfil.usuario.is_superuser %}
-                                            <a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="fa fa-user"></i> Definir como Usuário Comum?</a>
-                                        {% else %}
-                                            <a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i> Definir como Super Usuário?</a>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="#"> <i class="glyphicon glyphicon-edit"></i> Gerenciar Posts?</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="#"> <i class="fa fa-users"></i> Gerenciar Amigos?</a>
-                                    </td>
-                                    <td>
-                                        {% if perfil.usuario.is_active %}
-                                            <a href="#"><i class="fa fa-user"></i> Ativar Perfil?</a>
-                                        {% else %}
-                                            <a href="#"><i class="fa fa-user-o"></i> Desativar Perfil?</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            </tbody>
-
-                        </table>
-                        <!--<ul class="contact">-->
-
-                            <!--{% if perfil.usuario.is_superuser %}-->
-                                <!--<li><a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="fa fa-user"></i> Definir como Usuário Comum?</a></li>-->
-                            <!--{% else %}-->
-                                <!--<li><a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i> Definir como Super Usuário?</a></li>-->
-                            <!--{% endif %}-->
-                            <!--<li><a href="#"> <i class="glyphicon glyphicon-edit"></i> Gerenciar Posts?</a></li>-->
-                            <!--<li><a href="#"> <i class="fa fa-users"></i> Gerenciar Amigos?</a></li>-->
-                            <!---->
-                        <!--</ul>-->
+                    <div align="center">
+                        <ul class="list-inline">
+                            {% if perfil.usuario.is_superuser %}
+                                <li><button type="button" title="Tornar Usuário Comum" class="btn btn-default btn-lg">
+                                  <a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="glyphicon glyphicon-user"></i></a>
+                                </button></li>
+                            {% else %}
+                                <li><button type="button" title="Tornar Super Usuário" class="btn btn-default btn-lg">
+                                  <a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i></a>
+                                </button></li>
+                            {% endif %}
+                            <li><button type="button" title="Gerenciar Posts" class="btn btn-default btn-lg">
+                              <a href="{% url 'gerenciar_posts' perfil.id %}"><i class="glyphicon glyphicon-edit"></i></a>
+                            </button></li>
+                            <li><button type="button" title="Gerenciar Amigos" class="btn btn-default btn-lg">
+                              <a href="#"><i class="fa fa-users"></i></a>
+                            </button></li>
+                            {% if perfil.usuario.is_active %}
+                                <li><button type="button" title="Ativar Perfil" class="btn btn-default btn-lg">
+                                  <a href="#"><i class="glyphicon glyphicon-check"></i></a>
+                                </button></li>
+                            {% else %}
+                                <li><button type="button" title="Desativar Perfil" class="btn btn-default btn-lg">
+                                  <a href="#"><i class="glyphicon glyphicon-unchecked"></i></a>
+                                </button></li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
             </div>

@@ -364,3 +364,9 @@ def desativar_perfil(request):
     usuario.is_active = False
     usuario.save()
     return redirect('logout')
+
+
+def gerenciar_posts(request, usuario_id):
+    usuario = User.objects.get(pk=usuario_id)
+    posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
+    return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario})

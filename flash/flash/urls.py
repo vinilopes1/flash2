@@ -46,5 +46,6 @@ urlpatterns = [
     path('settings/super-usuario/<int:usuario_id>',views.definir_super_usuario, name='definir_super_usuario'),
     path('settings/usuario-comum/<int:usuario_id>',views.definir_usuario_comum, name='definir_usuario_comum'),
     path('desativar-perfil/', views.desativar_perfil, name='desativar_perfil'),
+    path('settings/posts/usuario/<int:usuario_id>', views.gerenciar_posts, name='gerenciar_posts'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

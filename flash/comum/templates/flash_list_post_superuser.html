@@ -1,0 +1,76 @@
+
+<div class="create-post">
+    <div class="row">
+    </div>
+</div>
+{% if posts_usuario.0.id == None %}
+<div class="about-content-block">
+    <div class="organization">
+        <div class="work-info">
+            {% if usuario.id == user.id %}
+                <h5 align="center"> Você não tem publicações em seu perfil.</h5>
+            {% else %}
+                <h5 align="center"> {{usuario.first_name}} não tem publicações em seu perfil. </h5>
+            {% endif %}
+        </div>
+        <br/>
+        <br/>
+    </div>
+</div>
+{% else %}
+    {% for post in posts_usuario %}
+        <div class="post-content">
+
+            <div class="post-date hidden-xs hidden-sm">
+                <h5>{{usuario.first_name}}</h5>
+                <p class="text-grey">Sometimes ago</p>
+            </div>
+            <div class="post-container">
+                <img src="{{usuario.perfil.foto_perfil.url}}" alt="user"
+                     class="profile-photo-md pull-left"/>
+                <div class="post-detail">
+                    <div class="user-info">
+                        <h5><a href="timeline.html" class="profile-link">{{usuario.first_name}}
+                            {{usuario.last_name}}</a></h5>
+                        <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
+                    </div>
+                    <div class="reaction">
+                        <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
+
+                        <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
+                                class="fa fa-trash"></i></a>
+
+                    </div>
+                    <div class="line-divider"></div>
+                    <div class="post-text">
+                        <p>{{post.descricao}} <i
+                                class="em em-anguished"></i> <i class="em em-anguished"></i> <i
+                                class="em em-anguished"></i></p>
+                    </div>
+                </div>
+            </div>
+                {% if post.foto %}
+                    <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                {% endif %}
+                {% if post.video %}
+                    <video class="post-video" controls>
+                        <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+                    </video>
+                {% endif %}
+            </div>
+            <div id="MyModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">Publicação #{{post.id}}</div>
+                        <div class="modal-body">Você deseja excluir essa publicação?</div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <a href="{% url 'delete_post' 'dt' post.id  %}">
+                                <button type="button" class="btn btn-primary">Deletar publicação</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    {% endfor %}
+{% endif %}
