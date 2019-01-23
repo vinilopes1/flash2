@@ -119,8 +119,13 @@ def delete_post(request,string , post_id):
 
 
 def lista_amigos(request):
-    friends = Friend.objects.friends(request.user)
-    return friends
+    #friends = Friend.objects.friends(request.user)
+    minhas_amizades = Friend.objects.filter(from_user=request.user)
+    amigos =[]
+    for amizade in minhas_amizades:
+        if amizade.to_user.is_active == True:
+            amigos.append(amizade.to_user)
+    return amigos
 
 
 def todos_usuarios(request):
@@ -167,14 +172,15 @@ def exibir_flash_friends(request):
     bloqueados = Block.objects.blocking(request.user)
 
     for amigo in amigos:
-        if Block.objects.is_blocked(amigo, request.user) or amigo.is_active == False:
+        if Block.objects.is_blocked(amigo, request.user):
             meus_amigos.remove(amigo)
 
     for usuario in usuarios:
         if usuario not in amigos and usuario != request.user:
             if len(FriendshipRequest.objects.filter(from_user_id=request.user.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0:
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
+
     return render(request, 'flash_friends.html',
                   {'meus_amigos': meus_amigos, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
                    'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
