@@ -17,3 +17,5 @@ class CriarPerfilForm(forms.Form):
     password = forms.CharField(required=True)
     email = forms.EmailField(required=True)
 
+
+

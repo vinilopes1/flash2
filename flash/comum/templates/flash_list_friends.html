@@ -15,12 +15,6 @@
                             {% endif %}
                         {% endfor %}
 
-                        <a href="#" class="pull-right text-red">{{amigo.is_active}}</a>
-
-                        <!--{% if amigo.is_active == False %}-->
-                            <!--<a href="#" class="pull-right text-red">Perfil Desativado</a>-->
-                        <!--{% endif %}-->
-
                         <h5><a href="{% url 'exibir_usuario' amigo.id %}" class="profile-link">{{amigo.first_name}} {{amigo.last_name}}</a></h5>
                         <p>@{{amigo}}</p>
                     </div>

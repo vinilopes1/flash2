@@ -15,6 +15,15 @@
                 <input type="password" class="form-control" name="password" id="id_password" placeholder="Digite sua senha">
             </fieldset>
             <a href="{% url 'reset-password' %}"><p>Esqueci minha senha</p></a>
+            {% for message in messages %}
+
+            <div class="alert alert-danger">
+                <a class="close" href="#" data-dismiss="alert">×</a>
+
+                {{ message }}
+
+            </div>
+            {% endfor %}
             <button class="btn-secondary" type="submit">Entrar</button>
         </form>
     </div>

@@ -30,7 +30,8 @@ def exibir_newsfeed(request):
             posts_amigos.append(post)
         else:
             for amigo in amigos:
-                if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo, request.user) == False:
+                if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo,
+                                                                            request.user) == False and post.usuario.usuario.is_active == True:
                     posts_amigos.append(post)
     posts_amigos = sorted(posts_amigos,key=Post.get_id,reverse=True)
 
@@ -166,7 +167,7 @@ def exibir_flash_friends(request):
     bloqueados = Block.objects.blocking(request.user)
 
     for amigo in amigos:
-        if Block.objects.is_blocked(amigo, request.user):
+        if Block.objects.is_blocked(amigo, request.user) or amigo.is_active == False:
             meus_amigos.remove(amigo)
 
     for usuario in usuarios:
@@ -185,7 +186,7 @@ def exibir_friends_requests(request):
     minhas_solicitacoes = []
     usuarios_nao_amigo = nao_amigo(request)
     for solicitacao in solicitacoes:
-        if solicitacao.rejected == None:
+        if solicitacao.rejected == None and solicitacao.from_user.is_active == True:
             minhas_solicitacoes.append(solicitacao)
 
     return render(request, 'flash_friends_requests.html',
@@ -210,6 +211,10 @@ def exibir_usuario(request, usuario_id):
     bloqueado = False
     solicitei = False
     solicitacoes = Friend.objects.unrejected_requests(usuario)
+    if usuario.is_active == False:
+        messages.error(request, 'Usuário não encontrado.')
+        return redirect('/')
+
     for solicitacao in solicitacoes:
         if solicitacao.from_user.id == request.user.id:
             solicitei = True
@@ -275,7 +280,7 @@ def nao_amigo(request):
     for usuario in usuarios:
         if usuario not in amigos and usuario != request.user:
             if len(FriendshipRequest.objects.filter(from_user_id=request.user.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0:
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return usuarios_nao_amigo
@@ -312,7 +317,7 @@ def buscar_usuario(request):
     for usuario in usuarios:
         if usuario.first_name.__contains__(pesquisa) or usuario.last_name.__contains__(
                 pesquisa) or usuario.username.__contains__(pesquisa):
-            if Block.objects.is_blocked(usuario, request.user) == False:
+            if Block.objects.is_blocked(usuario, request.user) == False and usuario.is_active == True:
                 resultados.append(usuario)
 
     return render(request, 'flash_friends_search.html',

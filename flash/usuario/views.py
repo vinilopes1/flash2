@@ -3,21 +3,53 @@ from django.views.generic.base import View
 from django.contrib.auth.models import User
 from comum.models import Perfil
 from django.shortcuts import redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login as auth_login
 from django.http import HttpResponseRedirect
 from comum.forms import CriarPerfilForm
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.hashers import check_password
+
+# def logar(request):
+#     username = request.POST['username']
+#     password = request.POST['password']
+#     user = authenticate(request, username=username, password=password)
+#     if user is not None:
+#         # usuario = User.objects.get(username=username)
+#         # usuario.is_active = True
+#         # usuario.save()
+#         login(request, user)
+#         redirect('/index/')
+#     else:
+#         messages.error(request, 'username or password not correct')
+#         return redirect('login')
+
+def login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request.POST)
+        username = request.POST['username']
+        password = request.POST['password']
+        usuario = User.objects.get(username=username)
+        match_check = check_password(password,usuario.password)
+        if not match_check:
+            messages.error(request, 'Usuário e/ou senha incorretos')
+            return redirect('login')
+        else:
+            if usuario.is_active == False:
+                usuario.is_active = True
+                messages.success(request, 'O seu perfil foi reativado com sucesso!')
+                usuario.save()
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('/')
 
 
-
-def logar(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        redirect('/index/')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
 def change_password(request):
     return HttpResponseRedirect('/account/password-reset')
