@@ -10,16 +10,48 @@
                         @{{perfil.usuario}}
                     </p>
                     <div>
-                        <ul class="contact">
 
-                            {% if perfil.usuario.is_superuser %}
-                                <li><a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="fa fa-user"></i> Definir como Usuário Comum?</a></li>
-                            {% else %}
-                                <li><a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i> Definir como Super Usuário?</a></li>
-                            {% endif %}
-                            <li><a href="#"> <i class="fa fa-file-text-o"></i> Gerenciar Posts?</a></li>
-                            <li><a href="#"> <i class="fa fa-users"></i> Gerenciar Amigos?</a></li>
-                        </ul>
+                        <table>
+
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {% if perfil.usuario.is_superuser %}
+                                            <a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="fa fa-user"></i> Definir como Usuário Comum?</a>
+                                        {% else %}
+                                            <a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i> Definir como Super Usuário?</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="#"> <i class="glyphicon glyphicon-edit"></i> Gerenciar Posts?</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="#"> <i class="fa fa-users"></i> Gerenciar Amigos?</a>
+                                    </td>
+                                    <td>
+                                        {% if perfil.usuario.is_active %}
+                                            <a href="#"><i class="fa fa-user"></i> Ativar Perfil?</a>
+                                        {% else %}
+                                            <a href="#"><i class="fa fa-user-o"></i> Desativar Perfil?</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                        <!--<ul class="contact">-->
+
+                            <!--{% if perfil.usuario.is_superuser %}-->
+                                <!--<li><a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="fa fa-user"></i> Definir como Usuário Comum?</a></li>-->
+                            <!--{% else %}-->
+                                <!--<li><a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i> Definir como Super Usuário?</a></li>-->
+                            <!--{% endif %}-->
+                            <!--<li><a href="#"> <i class="glyphicon glyphicon-edit"></i> Gerenciar Posts?</a></li>-->
+                            <!--<li><a href="#"> <i class="fa fa-users"></i> Gerenciar Amigos?</a></li>-->
+                            <!---->
+                        <!--</ul>-->
                     </div>
                 </div>
             </div>
