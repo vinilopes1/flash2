@@ -1,0 +1,21 @@
+{% extends "flash_base.html" %}
+
+{% block title %}
+    Flash Settings
+{% endblock title %}
+
+{% block body_container %}
+
+    <div class="row">
+        <div class="col-md-3 static">
+            {% include 'flash_menu_opcoes.html' %}
+        </div>
+        <div class="col-md-6">
+            {% include 'flash_list_friends_requests.html' %}
+        </div>
+        <div class="col-md-3 static">
+            {% include 'flash_sugestoes.html' %}
+        </div>
+    </div>
+
+{% endblock body_container %}

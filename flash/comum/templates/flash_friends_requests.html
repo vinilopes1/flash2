@@ -17,57 +17,12 @@
                     {% include 'flash_menu_opcoes.html' %}
                 </div>
                 <div class="col-md-6">
-
-                    <!-- About
-                    ================================================= -->
-                    <h4 class="grey"><i class="ion-ios-briefcase-outline icon-in-title"></i> Solicitações de amizade
-                            </h4>
-                    {% if messages %}
-                    <ul class="messages">
-                        {% for message in messages %}
-                        <li class="{{ message.tags }}">{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% if minhas_solicitacoes.0.id == None or minhas_solicitacoes.0.rejected != None %}
-                    <div class="about-content-block">
-                        <div class="organization">
-                            <div class="work-info">
-                                <h5> Não há solicitações de amizades pendentes.</h5>
-                            </div>
-                            <br/>
-                            <br/>
-                        </div>
-                    </div>
-                    {% else %}
-                    {% for solicitacao in minhas_solicitacoes %}
-                    <img src="{{solicitacao.from_user.perfil.foto_perfil.url}}" alt=""
-                         class="profile-photo-md pull-left"/>
-                    <div class="about-content-block">
-                        <div class="organization">
-                            <div class="work-info">
-                                <h5> {{solicitacao.from_user.first_name}} {{solicitacao.from_user.last_name}}</h5>
-                                <p> {{solicitacao.message}}</p>
-                                <ul class="follow-me list-inline">
-                                    <li>
-                                        <a href="{% url 'aceitar_pedido' solicitacao.id %}"
-                                           class="text-green">Aceitar</a>
-                                        <a href="{% url 'rejeitar_pedido' solicitacao.id %}"
-                                           class="text-red">Rejeitar</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <br/>
-                            <br/>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    </div>
-                <div class="col-md-3">
-                        {% include 'flash_sugestoes.html' %}
-                    </div>
+                    {% include 'flash_list_friends_requests.html' %}
                 </div>
+                <div class="col-md-3">
+                    {% include 'flash_sugestoes.html' %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

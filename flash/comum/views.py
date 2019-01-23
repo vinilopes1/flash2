@@ -21,9 +21,9 @@ import operator
 def exibir_newsfeed(request):
     usuario_logado = request.user
     posts = Post.objects.all()
-    amigos = lista_amigos(request)
-    qtd_amigos = quant_amigos(request)
-    usuarios_nao_amigo = nao_amigo(request)
+    amigos = lista_amigos(request.user)
+    qtd_amigos = quant_amigos(request.user)
+    usuarios_nao_amigo = nao_amigo(request.user)
     posts_amigos = []
     for post in posts:
         if post.usuario_id == request.user.id:
@@ -114,13 +114,15 @@ def delete_post(request,string , post_id):
     messages.success(request, 'Sua publicação foi excluída!')
     if string == 'dt':
         return redirect('/timeline')
+    elif string == 'su':
+        return redirect('/settings')
     else:
         return redirect('/')
 
 
-def lista_amigos(request):
+def lista_amigos(usuario):
     #friends = Friend.objects.friends(request.user)
-    minhas_amizades = Friend.objects.filter(from_user=request.user)
+    minhas_amizades = Friend.objects.filter(from_user=usuario)
     amigos =[]
     for amizade in minhas_amizades:
         if amizade.to_user.is_active == True:
@@ -128,7 +130,7 @@ def lista_amigos(request):
     return amigos
 
 
-def todos_usuarios(request):
+def todos_usuarios():
     usuarios = User.objects.all()
     return usuarios
 
@@ -162,12 +164,12 @@ def rejeitar_pedido(request, solicitacao_id):
 
 
 def exibir_flash_friends(request):
-    meus_amigos = lista_amigos(request)
-    usuarios = todos_usuarios(request)
-    amigos = lista_amigos(request)
+    meus_amigos = lista_amigos(request.user)
+    usuarios = todos_usuarios()
+    amigos = lista_amigos(request.user)
     usuarios_nao_amigo = []
     usuario_logado = request.user
-    qtd_amigos = quant_amigos(request)
+    qtd_amigos = quant_amigos(request.user)
 
     bloqueados = Block.objects.blocking(request.user)
 
@@ -188,9 +190,9 @@ def exibir_flash_friends(request):
 
 def exibir_friends_requests(request):
     solicitacoes = FriendshipRequest.objects.filter(to_user=request.user)
-    qtd_amigos = quant_amigos(request)
+    qtd_amigos = quant_amigos(request.user)
     minhas_solicitacoes = []
-    usuarios_nao_amigo = nao_amigo(request)
+    usuarios_nao_amigo = nao_amigo(request.user)
     for solicitacao in solicitacoes:
         if solicitacao.rejected == None and solicitacao.from_user.is_active == True:
             minhas_solicitacoes.append(solicitacao)
@@ -200,11 +202,11 @@ def exibir_friends_requests(request):
                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
 
-def quant_amigos(request):
+def quant_amigos(usuario):
     amizades = Friend.objects.all()
     qtd_amigos = 0
     for amizade in amizades:
-        if amizade.to_user_id == request.user.id:
+        if amizade.to_user_id == usuario.id:
             qtd_amigos += 1
     return qtd_amigos
 
@@ -278,15 +280,15 @@ def change_password(request):
         'form': form
     })
 
-def nao_amigo(request):
-    usuarios = todos_usuarios(request)
-    amigos = lista_amigos(request)
+def nao_amigo(user):
+    usuarios = todos_usuarios()
+    amigos = lista_amigos(user)
     usuarios_nao_amigo = []
 
     for usuario in usuarios:
-        if usuario not in amigos and usuario != request.user:
-            if len(FriendshipRequest.objects.filter(from_user_id=request.user.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0 and usuario.is_active == True:
+        if usuario not in amigos and usuario != user:
+            if len(FriendshipRequest.objects.filter(from_user_id=user.id, to_user_id=usuario.id)) == 0 and len(
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return usuarios_nao_amigo
@@ -314,11 +316,11 @@ def buscar_usuario(request):
     form = PostForm(request.POST)
     dados = form.data
     pesquisa = dados['busca_usuario']
-    usuarios = todos_usuarios(request)
+    usuarios = todos_usuarios()
     resultados = []
     bloqueados = Block.objects.blocking(request.user)
     usuario_logado = request.user
-    qtd_amigos = quant_amigos(request)
+    qtd_amigos = quant_amigos(request.user)
 
     for usuario in usuarios:
         if usuario.first_name.__contains__(pesquisa) or usuario.last_name.__contains__(
@@ -332,8 +334,8 @@ def buscar_usuario(request):
 
 def exibir_flash_settings(request):
     perfis = todos_perfis(request)
-    usuarios_nao_amigo = nao_amigo(request)
-    qtd_amigos = quant_amigos(request)
+    usuarios_nao_amigo = nao_amigo(request.user)
+    qtd_amigos = quant_amigos(request.user)
     return render(request, 'flash_settings.html',{'perfis': perfis , 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
@@ -342,8 +344,8 @@ def definir_super_usuario(request, usuario_id):
     user.is_superuser = True
     user.save()
     perfis = todos_perfis(request)
-    usuarios_nao_amigo = nao_amigo(request)
-    qtd_amigos = quant_amigos(request)
+    usuarios_nao_amigo = nao_amigo(request.user)
+    qtd_amigos = quant_amigos(request.user)
     return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
@@ -353,8 +355,8 @@ def definir_usuario_comum(request, usuario_id):
     user.is_superuser = False
     user.save()
     perfis = todos_perfis(request)
-    usuarios_nao_amigo = nao_amigo(request)
-    qtd_amigos = quant_amigos(request)
+    usuarios_nao_amigo = nao_amigo(request.user)
+    qtd_amigos = quant_amigos(request.user)
     return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
@@ -370,3 +372,46 @@ def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
     return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario})
+
+def gerenciar_flash_friends(request, usuario_id):
+    usuario_gerenciado = User.objects.get(pk=usuario_id)
+    meus_amigos = lista_amigos(usuario_gerenciado)
+    usuarios = todos_usuarios()
+    amigos = lista_amigos(usuario_gerenciado)
+    usuarios_nao_amigo = []
+    usuario_logado = request.user
+    qtd_amigos = quant_amigos(usuario_gerenciado)
+
+    bloqueados = Block.objects.blocking(usuario_gerenciado)
+
+    for amigo in amigos:
+        if Block.objects.is_blocked(amigo, usuario_gerenciado):
+            meus_amigos.remove(amigo)
+
+    for usuario in usuarios:
+        if usuario not in amigos and usuario != usuario_gerenciado:
+            if len(FriendshipRequest.objects.filter(from_user_id=usuario_gerenciado.id, to_user_id=usuario.id)) == 0 and len(
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=usuario_gerenciado.id)) == 0 and usuario.is_active == True:
+                usuarios_nao_amigo.append(usuario)
+
+    return render(request, 'flash_gerenciar_amigos.html',
+                  {'meus_amigos': meus_amigos, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
+                   'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
+
+
+
+def gerenciar_friends_requests(request, usuario_id):
+
+    usuario_gerenciado = User.objects.get(pk=usuario_id)
+    solicitacoes = FriendshipRequest.objects.filter(to_user=usuario_gerenciado)
+    qtd_amigos = quant_amigos(usuario_gerenciado)
+    minhas_solicitacoes = []
+    usuarios_nao_amigo = nao_amigo(usuario_gerenciado)
+    for solicitacao in solicitacoes:
+        if solicitacao.rejected == None and solicitacao.from_user.is_active == True:
+            minhas_solicitacoes.append(solicitacao)
+
+    return render(request, 'flash_gerenciar_solicitacoes.html',
+                  {'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos': qtd_amigos,
+                   'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+

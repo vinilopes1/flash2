@@ -4,7 +4,6 @@
             <img src="{{perfil.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
             <div class="post-detail">
                 <div class="user-info">
-
                     <h5><a href="{% url 'exibir_usuario' perfil.usuario.id %}" class="profile-link">{{perfil.usuario.first_name}} {{perfil.usuario.last_name}}</a></h5>
                     <p class="text-muted">
                         @{{perfil.usuario}}
@@ -12,28 +11,31 @@
                     <div align="center">
                         <ul class="list-inline">
                             {% if perfil.usuario.is_superuser %}
-                                <li><button type="button" title="Tornar Usuário Comum" class="btn btn-default btn-lg">
-                                  <a href="{% url 'definir_usuario_comum' perfil.id %}"><i class="glyphicon glyphicon-user"></i></a>
-                                </button></li>
+                                <li><a href="{% url 'definir_usuario_comum' perfil.id %}"><button type="button" title="Tornar Usuário Comum" class="btn btn-default btn-lg">
+                                  <i class="glyphicon glyphicon-user"></i>
+                                </button></a></li>
                             {% else %}
-                                <li><button type="button" title="Tornar Super Usuário" class="btn btn-default btn-lg">
-                                  <a href="{% url 'definir_super_usuario' perfil.id %}"><i class="fa fa-user-o"></i></a>
-                                </button></li>
+                                <li><a href="{% url 'definir_super_usuario' perfil.id %}"><button type="button" title="Tornar Super Usuário" class="btn btn-default btn-lg">
+                                  <i class="fa fa-user-o"></i>
+                                </button></a></li>
                             {% endif %}
-                            <li><button type="button" title="Gerenciar Posts" class="btn btn-default btn-lg">
-                              <a href="{% url 'gerenciar_posts' perfil.id %}"><i class="glyphicon glyphicon-edit"></i></a>
-                            </button></li>
-                            <li><button type="button" title="Gerenciar Amigos" class="btn btn-default btn-lg">
-                              <a href="#"><i class="fa fa-users"></i></a>
-                            </button></li>
+                            <li><a href="{% url 'gerenciar_posts' perfil.id %}"><button type="button" title="Gerenciar Posts" class="btn btn-default btn-lg">
+                              <i class="glyphicon glyphicon-edit"></i>
+                            </button></a></li>
+                            <li><a href="{% url 'gerenciar_amigos' perfil.id %}"><button type="button" title="Gerenciar Amigos" class="btn btn-default btn-lg">
+                              <i class="fa fa-users"></i>
+                            </button></a></li>
+                            <li><a href="{% url 'gerenciar_solicitacoes' perfil.id %}"><button type="button" title="Gerenciar Solicitações de amizade" class="btn btn-default btn-lg">
+                              <i class="fa fa-users"></i>
+                            </button></a></li>
                             {% if perfil.usuario.is_active %}
-                                <li><button type="button" title="Ativar Perfil" class="btn btn-default btn-lg">
-                                  <a href="#"><i class="glyphicon glyphicon-check"></i></a>
-                                </button></li>
+                                <li><a href="#"><button type="button" title="Ativar Perfil" class="btn btn-default btn-lg">
+                                  <i class="glyphicon glyphicon-check"></i>
+                                </button></a></li>
                             {% else %}
-                                <li><button type="button" title="Desativar Perfil" class="btn btn-default btn-lg">
-                                  <a href="#"><i class="glyphicon glyphicon-unchecked"></i></a>
-                                </button></li>
+                                <li><a href="#"><button type="button" title="Desativar Perfil" class="btn btn-default btn-lg">
+                                  <i class="glyphicon glyphicon-unchecked"></i>
+                                </button></a></li>
                             {% endif %}
                         </ul>
                     </div>
