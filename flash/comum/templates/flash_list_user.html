@@ -29,7 +29,7 @@
                               <i class="icon ion-ios-people"></i>
                             </button></a></li>
                             {% if perfil.usuario.is_active %}
-                                <li><a href="" data-toggle="modal" data-target="#SuperUserDesativarAlert"><button type="button" title="Desativar Perfil" class="btn btn-default btn-lg">
+                                <li><a href="{% url 'superuser_desativar_perfil' perfil.id %}"><button type="button" title="Desativar Perfil" class="btn btn-default btn-lg">
                                   <i class="glyphicon glyphicon-off"></i>
                                 </button></a></li>
                             {% else %}
@@ -39,20 +39,6 @@
                             {% endif %}
                         </ul>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="SuperUserDesativarAlert" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">Desativar Perfil</div>
-                <div class="modal-body">Você realmente deseja desativar este perfil?</div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                    <a href="{% url 'superuser_desativar_perfil' perfil.id %}">
-                        <button type="button" class="btn btn-primary">Salvar alterações</button>
-                    </a>
                 </div>
             </div>
         </div>
