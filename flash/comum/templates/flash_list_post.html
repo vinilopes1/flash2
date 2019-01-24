@@ -1,5 +1,5 @@
 <!--NOVO TAMPLATE (MAYELLE)-->
-{% if posts_amigos.0.usuario == None %}
+{% if posts.0.usuario == None %}
 <div class="about-content-block">
     <div class="organization">
         <div class="work-info">
@@ -10,7 +10,7 @@
     </div>
 </div>
 {% else %}
-    {% for post in posts_amigos %}
+    {% for post in posts %}
     <div class="post-content">
         <div class="post-container">
             <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>

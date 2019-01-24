@@ -2,7 +2,7 @@
 
 <div class="friend-list">
     <div class="row">
-        {% for amigo in meus_amigos %}
+        {% for amigo in usuarios %}
         <div class="col-md-6 col-sm-6">
             <div class="friend-card">
                 <img src="{{amigo.perfil.capa.url}}" alt="profile-cover" class="img-responsive cover"/>
@@ -23,5 +23,7 @@
 
         </div>
         {% endfor %}
+
     </div>
 </div>
+{% include 'flash_friends_pagination.html' %}

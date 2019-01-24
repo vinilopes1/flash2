@@ -1,0 +1,17 @@
+<div class="row" align="center">
+    <nav class="pgn">
+        <ul class="pagination">
+            {% if posts.has_previous %}
+            <li class="page-item"><a class="page_link" href="?page=1">Prev</a></li>
+            <li class="page-item"><a class="page_link" href="?page={{ posts.previous_page_number }}">{{posts.previous_page_number}}</a>
+            </li>
+            {%endif%}
+            <li class="page-item active"><span class="page_link">{{posts.number}}</span></li>
+            {% if posts.has_next %}
+            <li class="page-item"><a class="page_link" href="?page={{posts.next_page_number}}">{{posts.next_page_number}}</a>
+            </li>
+            <li class="page-item"><a class="page_link" href="?page={{posts.paginator.num_pages}}">Next</a></li>
+            {%endif%}
+        </ul>
+    </nav>
+</div>

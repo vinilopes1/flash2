@@ -13,51 +13,50 @@ TimeFlash | Meu perfil flash
         <div class="timeline-cover" style="background: url('{{usuario.perfil.capa.url}}');">
             {% include 'flash_perfil_cabecalho.html' %}
         </div>
-        <div id="page-contents">
-            <div class="row">
+            <div id="page-contents">
+                <div class="row">
                 <div class="col-md-3"></div>
                 <div class="col-md-7">
                     {% if usuario.id == user.id %}
-                    {% include 'flash_alert_msg.html' %}
-                    {% include 'flash_add_post.html' %}
+                        {% include 'flash_alert_msg.html' %}
+                        {% include 'flash_add_post.html' %}
                     {% else %}
-                    <div class="create-post">
-                        <div class="row">
+                        <div class="create-post">
+                            <div class="row">
+                            </div>
                         </div>
-                    </div>
                     {% endif %}
 
-                    {% if eh_amigo == False %}
-                    {% if usuario.id != user.id %}
-                    <div class="about-content-block">
-                        <div class="organization">
-                            <div class="work-info">
-                                <h5 align="justify"> Você e {{usuario.first_name}} não são amigos :(</h5>
-                                <h5> Que tal enviar uma solicitação de amizade para visualizar suas publicações ?</h5>
+                    {% if eh_amigo == False and usuario.id != user.id %}
+                        <div class="about-content-block">
+                            <div class="organization">
+                                <div class="work-info">
+                                    <h5 align="justify"> Você e {{usuario.first_name}} não são amigos :(</h5>
+                                    <h5> Que tal enviar uma solicitação de amizade para visualizar suas publicações ?</h5>
+                                </div>
+                                <br/>
+                                <br/>
                             </div>
-                            <br/>
-                            <br/>
                         </div>
-                    </div>
                     {% endif %}
-                    {% endif %}
-                    {% if posts_usuario.0.id == None and eh_amigo == True %}
-                    <div class="about-content-block">
-                        <div class="organization">
-                            <div class="work-info">
-                                {% if usuario.id == user.id %}
-                                    <h5 align="center"> Você não tem publicações em seu perfil. Vamos, lá faça uma publicação agora :)</h5>
-                                {% else %}
+                    {% if posts.0.id == None and eh_amigo == True %}
+                        <div class="about-content-block">
+                            <div class="organization">
+                                <div class="work-info">
+                                    {% if usuario.id == user.id %}
+                                    <h5 align="center"> Você não tem publicações em seu perfil. Vamos, lá faça uma
+                                        publicação agora :)</h5>
+                                    {% else %}
                                     <h5 align="center"> {{usuario.first_name}} não tem publicações em seu perfil. </h5>
-                                {% endif %}
+                                    {% endif %}
 
+                                </div>
+                                <br/>
+                                <br/>
                             </div>
-                            <br/>
-                            <br/>
                         </div>
-                    </div>
                     {% else %}
-                    {% for post in posts_usuario %}
+                    {% for post in posts %}
                     <div class="post-content">
                         <!--Post Date-->
                         <div class="post-date hidden-xs hidden-sm">
@@ -102,6 +101,7 @@ TimeFlash | Meu perfil flash
 
                         {% endif %}
                     </div>
+
                     <div id="MyModal" class="modal fade" role="dialog">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -118,6 +118,8 @@ TimeFlash | Meu perfil flash
                     </div>
                     {% endfor %}
                     {% endif %}
+                    <!-- Paginação -->
+                {% include 'flash_posts_pagination.html' %}
                 </div>
             </div>
         </div>

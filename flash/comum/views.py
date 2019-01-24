@@ -7,25 +7,26 @@ from friendship.models import Friend, Follow, Block
 from friendship.models import FriendshipRequest
 from django.utils import timezone
 from random import randint
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib import messages
 from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 import os
-import operator
 
 # Create your views here.
 
 @login_required(login_url='/login')
 def exibir_newsfeed(request):
     usuario_logado = request.user
-    posts = Post.objects.all()
+    posts_all = Post.objects.all()
     amigos = lista_amigos(request.user)
     qtd_amigos = quant_amigos(request.user)
     usuarios_nao_amigo = nao_amigo(request.user)
     posts_amigos = []
-    for post in posts:
+
+    for post in posts_all:
         if post.usuario_id == request.user.id:
             posts_amigos.append(post)
         else:
@@ -33,19 +34,40 @@ def exibir_newsfeed(request):
                 if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo,
                                                                             request.user) == False and post.usuario.usuario.is_active == True:
                     posts_amigos.append(post)
-    posts_amigos = sorted(posts_amigos,key=Post.get_id,reverse=True)
+    posts_amigos = sorted(posts_amigos, key=Post.get_id, reverse=True)
+
+    paginator = Paginator(posts_amigos, 10)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        posts = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        posts = paginator.page(paginator.num_pages)
 
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
-                                                   'posts_amigos': posts_amigos})
+                                                   'posts': posts})
 
 
 @login_required(login_url='/login')
 def exibir_minha_timeline(request):
     usuario = request.user
     posts_usuario = Post.objects.filter(usuario_id=request.user.id).order_by('-criado_em')
+    paginator = Paginator(posts_usuario, 10)
 
-    return render(request, "flash_timeline.html", {'usuario': usuario, 'posts_usuario': posts_usuario})
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        posts = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request, "flash_timeline.html", {'usuario': usuario, 'posts': posts})
 
 def handle_uploaded_file(file, filename):
     if not os.path.exists('../media_cdn/arquivos/2019/posts'):
@@ -160,8 +182,8 @@ def aceitar_pedido(request, solicitacao_id):
 def rejeitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
     friend_request.reject()
+    FriendshipRequest.delete(friend_request)
     return render(request, 'flash_newsfeed.html')
-
 
 def exibir_flash_friends(request):
     meus_amigos = lista_amigos(request.user)
@@ -170,7 +192,7 @@ def exibir_flash_friends(request):
     usuarios_nao_amigo = []
     usuario_logado = request.user
     qtd_amigos = quant_amigos(request.user)
-
+    paginator = Paginator(meus_amigos, 10)
     bloqueados = Block.objects.blocking(request.user)
 
     for amigo in amigos:
@@ -182,9 +204,17 @@ def exibir_flash_friends(request):
             if len(FriendshipRequest.objects.filter(from_user_id=request.user.id, to_user_id=usuario.id)) == 0 and len(
                     FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        usuarios = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        usuarios = paginator.page(paginator.num_pages)
 
     return render(request, 'flash_friends.html',
-                  {'meus_amigos': meus_amigos, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
+                  {'usuarios': usuarios, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
                    'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
 
 
@@ -219,6 +249,8 @@ def exibir_usuario(request, usuario_id):
     bloqueado = False
     solicitei = False
     solicitacoes = Friend.objects.unrejected_requests(usuario)
+    paginator = Paginator(posts_usuario, 10)
+
     if usuario.is_active == False:
         messages.error(request, 'Usuário não encontrado.')
         return redirect('/')
@@ -241,13 +273,24 @@ def exibir_usuario(request, usuario_id):
         return redirect('/')
 
     if eh_amigo:
+
+        try:
+            page = int(request.GET.get('page', '1'))
+        except ValueError:
+            page = 1
+        try:
+            posts = paginator.page(page)
+        except (EmptyPage, InvalidPage):
+            posts = paginator.page(paginator.num_pages)
+
         return render(request, "flash_timeline.html",
-                      {'usuario': usuario, 'posts_usuario': posts_usuario, 'eh_amigo': eh_amigo,
+                      {'usuario': usuario, 'posts': posts, 'eh_amigo': eh_amigo,
                        'bloqueado': bloqueado, 'solicitei':solicitei})
     else:
-        posts_usuario = []
+        posts = []
+
         return render(request, "flash_timeline.html",
-                      {'usuario': usuario, 'posts_usuario': posts_usuario, 'eh_amigo': eh_amigo,
+                      {'usuario': usuario, 'posts': posts, 'eh_amigo': eh_amigo,
                        'bloqueado': bloqueado, 'solicitei':solicitei})
 
 

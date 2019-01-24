@@ -29,7 +29,9 @@
     <li><i class="icon ion-ios-videocam"></i>
         <div><a href="newsfeed-videos.html">Videos</a></div>
     </li>
-    <li><i class="icon ion-gear-b"></i>
-        <div><a href="{% url 'exibir_flash_settings' %}">Configurações</a></div>
-    </li>
+    {% if user.is_superuser %}
+        <li><i class="icon ion-gear-b"></i>
+            <div><a href="{% url 'exibir_flash_settings' %}">Configurações</a></div>
+        </li>
+    {% endif %}
 </ul><!--news-feed links ends-->
