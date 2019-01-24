@@ -49,5 +49,7 @@ urlpatterns = [
     path('settings/posts/usuario/<int:usuario_id>', views.gerenciar_posts, name='gerenciar_posts'),
     path('settings/friends/usuario/<int:usuario_id>', views.gerenciar_flash_friends, name='gerenciar_amigos'),
     path('settings/requests/usuario/<int:usuario_id>', views.gerenciar_friends_requests, name='gerenciar_solicitacoes'),
+    path('settings/desativar-perfil/<int:usuario_id>', views.superuser_desativar_perfil, name='superuser_desativar_perfil'),
+    path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

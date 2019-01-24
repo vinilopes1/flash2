@@ -415,3 +415,15 @@ def gerenciar_friends_requests(request, usuario_id):
                   {'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos': qtd_amigos,
                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
+def superuser_desativar_perfil(request, usuario_id):
+    usuario = User.objects.get(pk=usuario_id)
+    usuario.is_active = False
+    usuario.save()
+    return redirect('/settings')
+
+
+def superuser_ativar_perfil(request, usuario_id):
+    usuario = User.objects.get(pk=usuario_id)
+    usuario.is_active = True
+    usuario.save()
+    return redirect('/settings')
