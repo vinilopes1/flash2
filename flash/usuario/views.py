@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.contrib.auth.models import User
@@ -57,11 +58,14 @@ def change_password(request):
 def add_user(request):
     return render(request,'flash_add_user.html')
 
+
+
 class CadastraPerfilView(View):
 
     def get(self, request):
         return render(request, 'flash_add_user.html')
 
+    @transaction.atomic(using=None, savepoint=True)
     def post(self,request):
         form = CriarPerfilForm(request.POST)
         print(form)

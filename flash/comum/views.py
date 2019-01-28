@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render, redirect
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
@@ -179,6 +180,7 @@ def aceitar_pedido(request, solicitacao_id):
     return redirect('/requests')
 
 
+@transaction.atomic(using=None, savepoint=True)
 def rejeitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
     friend_request.reject()
