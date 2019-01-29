@@ -420,8 +420,8 @@ def gerenciar_posts(request, usuario_id):
 
 def gerenciar_flash_friends(request, usuario_id):
     usuario_gerenciado = User.objects.get(pk=usuario_id)
-    meus_amigos = lista_amigos(usuario_gerenciado)
-    usuarios = todos_usuarios()
+    usuarios = lista_amigos(usuario_gerenciado)
+    users = todos_usuarios()
     amigos = lista_amigos(usuario_gerenciado)
     usuarios_nao_amigo = []
     usuario_logado = request.user
@@ -431,16 +431,16 @@ def gerenciar_flash_friends(request, usuario_id):
 
     for amigo in amigos:
         if Block.objects.is_blocked(amigo, usuario_gerenciado):
-            meus_amigos.remove(amigo)
+            usuarios.remove(amigo)
 
-    for usuario in usuarios:
+    for usuario in users:
         if usuario not in amigos and usuario != usuario_gerenciado:
             if len(FriendshipRequest.objects.filter(from_user_id=usuario_gerenciado.id, to_user_id=usuario.id)) == 0 and len(
                     FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=usuario_gerenciado.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return render(request, 'flash_gerenciar_amigos.html',
-                  {'meus_amigos': meus_amigos, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
+                  {'usuarios': usuarios, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
                    'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
 
 
