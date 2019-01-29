@@ -11,6 +11,11 @@
             {% include 'flash_menu_opcoes.html' %}
         </div>
         <div class="col-md-6">
+            <div class="create-post">
+                <div class="row">
+                    <h3 align="center">Solicitações de {{usuario.first_name}} {{usuario.last_name}}</h3>
+                </div>
+            </div>
             {% include 'flash_list_friends_requests.html' %}
         </div>
         <div class="col-md-3 static">

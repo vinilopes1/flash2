@@ -1,6 +1,7 @@
 
 <div class="create-post">
     <div class="row">
+        <h3 align="center">Postagens de {{usuario.first_name}} {{usuario.last_name}}</h3>
     </div>
 </div>
 {% if posts_usuario.0.id == None %}
@@ -21,10 +22,6 @@
     {% for post in posts_usuario %}
         <div class="post-content">
 
-            <div class="post-date hidden-xs hidden-sm">
-                <h5>{{usuario.first_name}}</h5>
-                <p class="text-grey">Sometimes ago</p>
-            </div>
             <div class="post-container">
                 <img src="{{usuario.perfil.foto_perfil.url}}" alt="user"
                      class="profile-photo-md pull-left"/>

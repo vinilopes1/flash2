@@ -413,13 +413,15 @@ def desativar_perfil(request):
 
 def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
+    qtd_amigos = quant_amigos(request.user)
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
-    return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario})
+    return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario,
+                                                                   'qtd_amigos': qtd_amigos})
 
 def gerenciar_flash_friends(request, usuario_id):
     usuario_gerenciado = User.objects.get(pk=usuario_id)
-    meus_amigos = lista_amigos(usuario_gerenciado)
-    usuarios = todos_usuarios()
+    usuarios = lista_amigos(usuario_gerenciado)
+    todos_users = todos_usuarios()
     amigos = lista_amigos(usuario_gerenciado)
     usuarios_nao_amigo = []
     usuario_logado = request.user
@@ -429,39 +431,40 @@ def gerenciar_flash_friends(request, usuario_id):
 
     for amigo in amigos:
         if Block.objects.is_blocked(amigo, usuario_gerenciado):
-            meus_amigos.remove(amigo)
+            usuarios.remove(amigo)
 
-    for usuario in usuarios:
+    for usuario in todos_users:
         if usuario not in amigos and usuario != usuario_gerenciado:
             if len(FriendshipRequest.objects.filter(from_user_id=usuario_gerenciado.id, to_user_id=usuario.id)) == 0 and len(
                     FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=usuario_gerenciado.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return render(request, 'flash_gerenciar_amigos.html',
-                  {'meus_amigos': meus_amigos, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
-                   'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
+                  {'usuarios': usuarios, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo[:6],
+                   'usuario_logado': usuario_logado, 'bloqueados': bloqueados, 'usuario': usuario_gerenciado})
 
 
 
 def gerenciar_friends_requests(request, usuario_id):
 
-    usuario_gerenciado = User.objects.get(pk=usuario_id)
-    solicitacoes = FriendshipRequest.objects.filter(to_user=usuario_gerenciado)
-    qtd_amigos = quant_amigos(usuario_gerenciado)
+    usuario = User.objects.get(pk=usuario_id)
+    solicitacoes = FriendshipRequest.objects.filter(to_user=usuario)
+    qtd_amigos = quant_amigos(request.user)
     minhas_solicitacoes = []
-    usuarios_nao_amigo = nao_amigo(usuario_gerenciado)
+    usuarios_nao_amigo = nao_amigo(request.user)
     for solicitacao in solicitacoes:
         if solicitacao.rejected == None and solicitacao.from_user.is_active == True:
             minhas_solicitacoes.append(solicitacao)
 
     return render(request, 'flash_gerenciar_solicitacoes.html',
                   {'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos': qtd_amigos,
-                   'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+                   'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'usuario':usuario})
 
 def superuser_desativar_perfil(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     usuario.is_active = False
     usuario.save()
+    messages.success(request, 'O perfil selecionado foi desativado com sucesso!')
     return redirect('/settings')
 
 
@@ -469,4 +472,5 @@ def superuser_ativar_perfil(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     usuario.is_active = True
     usuario.save()
+    messages.success(request, 'O perfil selecionado foi ativado com sucesso!')
     return redirect('/settings')
