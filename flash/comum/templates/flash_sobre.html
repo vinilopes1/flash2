@@ -17,10 +17,8 @@
             <div class="col-md-3"></div>
             <div class="col-md-7">
 
-                <!-- About
-                ================================================= -->
-
                 <div class="about-profile">
+
                     <div class="about-content-block">
                         <h4 class="grey"><i class="ion-ios-information-outline icon-in-title"></i>Descrição</h4>
                         <p>Sem descrição.</p>
@@ -69,9 +67,10 @@
                         <h4 class="grey"><i class="ion-ios-chatbubble-outline icon-in-title"></i>Último acesso em</h4>
                             {{usuario.last_login}}
                     </div>
+
                 </div>
                 {% if usuario.id == user.id %}
-                    <button class="btn btn-primary" style="background-color: #f7020e">Editar descrição</button>
+                    <a href="{% url 'edit_perfil' %}"><button class="btn btn-primary">Editar Perfil</button></a>
                     <a href="{% url 'change_password' %}"><button class="btn btn-primary">Alterar senha</button></a>
                 {% endif %}
             </div>

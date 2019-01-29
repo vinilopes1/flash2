@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
 from django.contrib.auth.models import User
 from comum.models import Perfil
@@ -63,9 +63,9 @@ def add_user(request):
 class CadastraPerfilView(View):
 
     def get(self, request):
-        return render(request, 'flash_add_user.html')
+        return render(request, 'flash_add_user.html' )
 
-    @transaction.atomic(using=None, savepoint=True)
+    @transaction.atomic()
     def post(self,request):
         form = CriarPerfilForm(request.POST)
         print(form)
@@ -99,3 +99,52 @@ class CadastraPerfilView(View):
             return redirect('/login/')
 
         return render(request, 'login.html',{'form':form})
+
+class EditaPerfilView(View):
+
+    def get(self, request):
+        usuario_logado = User.objects.get(pk=request.user.id)
+        return render(request, 'flash_edit_perfil.html', {'usuario': usuario_logado})
+
+    @transaction.atomic()
+    def post(self,request):
+        perfil_logado = Perfil.objects.get(pk = request.user.id)
+        if request.method == "POST":
+            form = CriarPerfilForm(request.POST, instance=perfil_logado)
+            if(form.is_valid()):
+                dados = form.data
+                senha = make_password("%s"%dados['password'])
+                foto_perfil = 'imagens/2019/default_foto.png'
+                foto_capa = 'imagens/2019/default_capa.jpg'
+                if dados['foto_perfil'] !=  None:
+                    foto_perfil =dados['foto_perfil']
+                if dados ['foto_capa'] != None:
+                    foto_capa = dados['foto_capa']
+
+                usuario = User(username = dados['username'],
+                            first_name = dados['first_name'],
+                            last_name = dados['last_name'],
+                            email = dados['email'],
+                            password=senha,
+                            last_login = timezone.now(),
+                            is_superuser = False,
+                            is_staff = True,
+                            is_active = True,
+                            date_joined = timezone.now())
+                usuario.save()
+
+                perfil = Perfil(data_nasc=timezone.now(),
+                            criado_em=timezone.now(),
+                            atualizado_em=timezone.now(),
+                            sexo='F',
+                            telefone='32194422',
+                            foto_perfil= foto_perfil,
+                            capa= foto_capa,
+                            usuario_id= usuario.id)
+
+                perfil.save()
+                return redirect('/about/%s' % perfil_logado.id)
+        else:
+            form = CriarPerfilForm(instance=perfil_logado)
+
+        return render(request, 'flash_edit_perfil.html',{'form':form})

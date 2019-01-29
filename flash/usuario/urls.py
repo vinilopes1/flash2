@@ -15,5 +15,5 @@ urlpatterns = [
     path('account/password-reset/confirm/<uidb64>/<token>/',password_reset_confirm , name='password_reset_confirm'),
     path('account/password-reset/complete/', password_reset_complete, name='password_reset_complete'),
     path('account/add-user/', views_usuario.CadastraPerfilView.as_view(),name='add_user'),
-
+    path('account/edit-user/', views_usuario.EditaPerfilView.as_view(),name='edit_perfil'),
 ]
