@@ -16,6 +16,7 @@ class CriarPerfilForm(forms.Form):
     last_name = forms.CharField(required=True)
     password = forms.CharField(required=True)
     email = forms.EmailField(required=True)
-
+    # foto_perfil = forms.FileField()
+    # foto_capa = forms.FileField()
 
 
