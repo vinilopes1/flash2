@@ -13,6 +13,7 @@ from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
+from django.db import transaction
 import os
 
 # Create your views here.
@@ -133,7 +134,7 @@ class AdicionaPostView(View):
 
 def delete_post(request,string , post_id):
     Post.objects.get(pk=post_id).delete()
-    messages.success(request, 'Sua publicação foi excluída!')
+    messages.success(request, 'A publicação foi excluída!')
     if string == 'dt':
         return redirect('/timeline')
     elif string == 'su':
@@ -178,7 +179,7 @@ def aceitar_pedido(request, solicitacao_id):
     messages.success(request, 'Você e %s agora são amigos(a)!' % friend_request.from_user.first_name)
     return redirect('/requests')
 
-
+@transaction.atomic(using=None, savepoint=True)
 def rejeitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
     friend_request.reject()
@@ -414,18 +415,20 @@ def desativar_perfil(request):
 def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     qtd_amigos = quant_amigos(request.user)
+    usuarios_nao_amigo = nao_amigo(request.user)
+
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
     return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario,
-                                                                   'qtd_amigos': qtd_amigos})
+                                                                   'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo})
 
 def gerenciar_flash_friends(request, usuario_id):
     usuario_gerenciado = User.objects.get(pk=usuario_id)
     usuarios = lista_amigos(usuario_gerenciado)
     todos_users = todos_usuarios()
     amigos = lista_amigos(usuario_gerenciado)
-    usuarios_nao_amigo = []
+    usuarios_nao_amigo = nao_amigo(request.user)
     usuario_logado = request.user
-    qtd_amigos = quant_amigos(usuario_gerenciado)
+    qtd_amigos = quant_amigos(request.user)
 
     bloqueados = Block.objects.blocking(usuario_gerenciado)
 
@@ -474,3 +477,7 @@ def superuser_ativar_perfil(request, usuario_id):
     usuario.save()
     messages.success(request, 'O perfil selecionado foi ativado com sucesso!')
     return redirect('/settings')
+
+
+def exibir_colecao(request):
+    return render(request, 'flash_colecao.html')

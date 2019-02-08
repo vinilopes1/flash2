@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'comum',
     'usuario',
     'friendship',
+    'rest_framework',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

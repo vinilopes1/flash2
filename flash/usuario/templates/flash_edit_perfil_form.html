@@ -1,11 +1,11 @@
 <h3><i class="glyphicon glyphicon-pencil"></i> Editar informações de perfil</h3>
 <div class="about-content-block">
-    <form class="contact-form" method="POST" action="{% url 'edit_perfil' %}">
+    <form class="contact-form" name="myform" method="POST" action="{% url 'edit_perfil' %}" enctype="multipart/form-data">
         {% csrf_token %}
 
         <label>Foto do Perfil: </label>
         <div class="form-group">
-            <div class="profile-info" align="center">
+            <div class="profile-info" align="left">
                 <img src="{{user.perfil.foto_perfil.url}}" alt="foto perfil" class="img-responsive profile-photo"/>
                 <input type="file" id="id_foto_perfil" name="foto_perfil" value="{{ user.perfil.foto_perfil.url }}">
             </div>
@@ -13,7 +13,7 @@
 
         <label>Foto da Capa: </label>
         <div class="form-group">
-            <div class="profile-info" align="center">
+            <div class="profile-info" align="left">
                 <img src="{{user.perfil.capa.url}}" alt="foto perfil" class="img-responsive profile-photo"/>
                 <input  type="file" id="id_foto_capa" name="foto_capa" value="{{ user.perfil.capa.url }}">
             </div>
@@ -33,23 +33,30 @@
                    placeholder="Segundo nome *" required="required"
                    data-error="Please,leave us a message." value="{{ user.last_name }}">
         </div>
-        <label>Email: </label>
+        <label>Telefone: </label>
         <div class="form-group">
-            <i class="icon ion-email"></i>
-            <input id="id_email" type="text" name="email" class="form-control"
-                   placeholder="Digite seu email *" required="required"
-                   data-error="Email is required." value="{{ user.email }}" >
+            <i class="icon ion-person"></i>
+            <input id="id_telefone" type="text" name="telefone" class="form-control"
+                   placeholder="Telefone" required="required"
+                   data-error="Please,leave us a message." value="{{ user.perfil.telefone }}">
         </div>
-        <label>Nome de Usuário: </label>
-        <div class="form-group">
-            <i class="icon ion-at"></i>
-            <input id="id_username" type="text" name="username" class="form-control"
-                   placeholder="Digite seu nome de usuário *" required="required"
-                   data-error="Name is required." value="{{ user.username }}" >
-        </div>
+        <!--<label>Email: </label>-->
+        <!--<div class="form-group">-->
+            <!--<i class="icon ion-email"></i>-->
+            <!--<input id="id_email" type="text" name="email" class="form-control"-->
+                   <!--placeholder="Digite seu email *" required="required"-->
+                   <!--data-error="Email is required." value="{{ user.email }}" >-->
+        <!--</div>-->
+        <!--<label>Nome de Usuário: </label>-->
+        <!--<div class="form-group">-->
+            <!--<i class="icon ion-at"></i>-->
+            <!--<input id="id_username" type="text" name="username" class="form-control"-->
+                   <!--placeholder="Digite seu nome de usuário *" required="required"-->
+                   <!--data-error="Name is required." value="{{ user.username }}" >-->
+        <!--</div>-->
 
         <div class="form-group">
-            <button class="btn-primary">Salvar</button>
+            <button class="btn-primary" >Salvar</button>
         </div>
     </form>
 
