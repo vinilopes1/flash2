@@ -19,4 +19,10 @@ class CriarPerfilForm(forms.Form):
     # foto_perfil = forms.FileField()
     # foto_capa = forms.FileField()
 
+class EditarPerfilForm(forms.Form):
 
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+    telefone = forms.CharField(required=True)
+    foto_perfil = forms.ImageField(required=False)
+    foto_capa = forms.ImageField(required=False)

@@ -17,10 +17,25 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path,include
 from comum import views
+from api_flash import views as api_views
 from django.conf import settings
 
 
 urlpatterns = [
+    #API
+    path('api/v1/', api_views.ApiRoot.as_view(), name=api_views.ApiRoot.name),
+    path('api/v1/posts/',api_views.PostList.as_view(), name=api_views.PostList.name),
+    path('api/v1/posts/<int:pk>', api_views.PostDetail.as_view(), name=api_views.PostDetail.name),
+    path('api/v1/perfil/', api_views.PerfilList.as_view(), name=api_views.PerfilList.name),
+    path('api/v1/perfil/<int:pk>', api_views.PerfilDetail.as_view(), name=api_views.PerfilDetail.name),
+    path('api/v1/usuarios/', api_views.UserList.as_view(), name=api_views.UserList.name),
+    path('api/v1/usuarios/<int:pk>', api_views.UserDetail.as_view(), name=api_views.UserDetail.name),
+    path('api/v1/colecoes/', api_views.ColecaoList.as_view(), name=api_views.ColecaoList.name),
+    path('api/v1/colecoes/<int:pk>', api_views.ColecaoDetail.as_view(), name=api_views.ColecaoDetail.name),
+    path('api/v1/comunidades/', api_views.ComunidadeList.as_view(), name=api_views.ComunidadeList.name),
+    path('api/v1/comunidades/<int:pk>', api_views.ComunidadeDetail.as_view(),name=api_views.ComunidadeDetail.name),
+
+    #WEB
     path('admin/', admin.site.urls),
     path('', include('usuario.urls')),
     path('', views.exibir_newsfeed, name='exibir_newsfeed'),
@@ -51,5 +66,6 @@ urlpatterns = [
     path('settings/requests/usuario/<int:usuario_id>', views.gerenciar_friends_requests, name='gerenciar_solicitacoes'),
     path('settings/desativar-perfil/<int:usuario_id>', views.superuser_desativar_perfil, name='superuser_desativar_perfil'),
     path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
+    path('colecao/',views.exibir_colecao, name='exibir_colecao'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

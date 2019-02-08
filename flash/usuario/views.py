@@ -6,12 +6,13 @@ from comum.models import Perfil
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.http import HttpResponseRedirect
-from comum.forms import CriarPerfilForm
+from comum.forms import CriarPerfilForm,EditarPerfilForm
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password
+import os
 
 # def logar(request):
 #     username = request.POST['username']
@@ -65,7 +66,7 @@ class CadastraPerfilView(View):
     def get(self, request):
         return render(request, 'flash_add_user.html' )
 
-    @transaction.atomic()
+    @transaction.atomic(using=None, savepoint=True)
     def post(self,request):
         form = CriarPerfilForm(request.POST)
         print(form)
@@ -93,12 +94,14 @@ class CadastraPerfilView(View):
                         telefone='32194422',
                         foto_perfil='imagens/2019/default_foto.png',
                         capa='imagens/2019/default_capa.jpg',
-                        usuario_id= usuario.id)
+                        usuario_id=usuario.id)
 
             perfil.save()
             return redirect('/login/')
 
-        return render(request, 'login.html',{'form':form})
+        messages.error(request,'Algo deu errado, preencha corretamente seus dados.')
+
+        return render(request, 'flash_add_user.html',{'form':form})
 
 class EditaPerfilView(View):
 
@@ -106,45 +109,43 @@ class EditaPerfilView(View):
         usuario_logado = User.objects.get(pk=request.user.id)
         return render(request, 'flash_edit_perfil.html', {'usuario': usuario_logado})
 
-    @transaction.atomic()
+    @transaction.atomic(using=None, savepoint=True)
     def post(self,request):
-        perfil_logado = Perfil.objects.get(pk = request.user.id)
+        usuario_logado = User.objects.get(id=request.user.id)
+        perfil_logado = Perfil.objects.get(id=request.user.id)
         if request.method == "POST":
-            form = CriarPerfilForm(request.POST, instance=perfil_logado)
+            form = EditarPerfilForm(request.POST,request.FILES)
+            dados = form.data
             if(form.is_valid()):
-                dados = form.data
-                senha = make_password("%s"%dados['password'])
-                foto_perfil = 'imagens/2019/default_foto.png'
-                foto_capa = 'imagens/2019/default_capa.jpg'
-                if dados['foto_perfil'] !=  None:
-                    foto_perfil =dados['foto_perfil']
-                if dados ['foto_capa'] != None:
-                    foto_capa = dados['foto_capa']
+                if request.FILES:
+                    print(str(request.FILES))
 
-                usuario = User(username = dados['username'],
-                            first_name = dados['first_name'],
-                            last_name = dados['last_name'],
-                            email = dados['email'],
-                            password=senha,
-                            last_login = timezone.now(),
-                            is_superuser = False,
-                            is_staff = True,
-                            is_active = True,
-                            date_joined = timezone.now())
-                usuario.save()
+                    if str(request.FILES)[24] == 'p':
+                        perfil_logado.foto_perfil = "imagens/2019/%s"%(str(request.FILES['foto_perfil']))
+                        handle_uploaded_file(request.FILES['foto_perfil'], str(request.FILES['foto_perfil']))
 
-                perfil = Perfil(data_nasc=timezone.now(),
-                            criado_em=timezone.now(),
-                            atualizado_em=timezone.now(),
-                            sexo='F',
-                            telefone='32194422',
-                            foto_perfil= foto_perfil,
-                            capa= foto_capa,
-                            usuario_id= usuario.id)
 
-                perfil.save()
-                return redirect('/about/%s' % perfil_logado.id)
+                    elif str(request.FILES)[24] == 'c':
+                        perfil_logado.capa = "imagens/2019/%s" % (str(request.FILES['foto_capa']))
+                        handle_uploaded_file(request.FILES['foto_capa'], str(request.FILES['foto_capa']))
+
+
+                usuario_logado.first_name = dados['first_name']
+                usuario_logado.last_name = dados['last_name']
+                perfil_logado.telefone = dados['telefone']
+                usuario_logado.save()
+                perfil_logado.save()
+
+            return redirect('/about/%s' % usuario_logado.id)
         else:
-            form = CriarPerfilForm(instance=perfil_logado)
+            form = EditarPerfilForm(instance=usuario_logado)
 
         return render(request, 'flash_edit_perfil.html',{'form':form})
+
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('../media_cdn/imagens/2019/'):
+        os.mkdir('../media_cdn/imagens/2019/')
+
+    with open('../media_cdn/imagens/2019/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)

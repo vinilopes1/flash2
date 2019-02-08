@@ -57,7 +57,7 @@ class Post(Base):
     editado = models.BooleanField('Editado', default=False, blank=False, null=False)
     compartilhado = models.BooleanField('Compartilhado', default=False, blank=False, null=False)
     usuario = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='posts')
-    colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='colecoes')
+    colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
 
     def get_id(self):
@@ -96,6 +96,9 @@ class Colecao(Base):
     descricao = models. CharField('Descrição', max_length=255, null=False, blank=False)
     autor = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='minhas_colecoes')
     seguidores = models.ManyToManyField(Perfil, related_name='seguidores')
+
+    def __str__(self):
+        return self.titulo
 
 
 class Comunidade(Base):
