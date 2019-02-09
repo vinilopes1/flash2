@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path,include
 from comum import views
-from api_flash import views as api_views
+from api import views as api_views
 from django.conf import settings
 
 
