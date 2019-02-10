@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from friendship.models import Friend
 
 
 class Base(models.Model):
@@ -41,6 +41,10 @@ class Perfil(Base):
     def __str__(self):
         return "%s %s" % (self.nome(), self.sobrenome())
 
+    def qtd_amigos(self):
+        qtd_amigos = Friend.objects.friends(self.usuario)
+        return qtd_amigos.__len__()
+
     def nome(self):
         return self.usuario.first_name
 
@@ -56,7 +60,7 @@ class Post(Base):
     aplausos = models.IntegerField('Aplausos', default=0, blank=False, null=False)
     editado = models.BooleanField('Editado', default=False, blank=False, null=False)
     compartilhado = models.BooleanField('Compartilhado', default=False, blank=False, null=False)
-    usuario = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='posts')
+    usuario = models.ForeignKey(Perfil, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
 

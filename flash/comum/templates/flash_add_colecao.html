@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<!--BODY BOX DE NOVO POSTAGEM-->
+<h5 align="center">Crie aqui uma nova coleção</h5>
+<form method="post" action="{% url 'add_colecao'%}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="create-post">
+        <div class="row">
+            <div class="col-md-7 col-sm-7">
+                <div class="form-group">
+                    <img src="{{user.perfil.foto_perfil.url}}" alt="" class="profile-photo-md"/>
+                    <textarea name="titulo" id="id_titulo" cols="30" rows="1" class="form-control"
+                              placeholder="Digite o título da coleção"></textarea>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <div class="tools">
+                    <ul class="publishing-tools list-inline">
+                        <li>
+                           <input type="file" id="id_foto" name="foto" style="display: none;"/>
+                            <span id="custom-button-img"><img src="{% static 'images/icon_gallery.png' %}"></span>
+                        </li>
+                    </ul>
+                    <!--<ul class="publishing-tools list-inline">-->
+                        <!--<li>-->
+                            <!--<input type="file" id="id_video" name="video" style="display: none;"/>-->
+                            <!--<span id="custom-button-vid"><img src="{% static 'images/icon_video.png' %}"></span>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                    <button class="btn btn-primary pull-right">Criar</button>
+                </div>
+                <span id="custom-text">Selecione a foto de perfil.</span>
+            </div>
+        </div>
+    </div><!-- Post Create Box End-->
+</form>
+
+

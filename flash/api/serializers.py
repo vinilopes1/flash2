@@ -19,6 +19,7 @@ class PerfilSerializer(serializers.ModelSerializer):
             'foto_perfil',
             'capa',
             'usuario',
+            'qtd_amigos'
         )
 
 class PostSerializer(serializers.ModelSerializer):
@@ -33,6 +34,10 @@ class PostSerializer(serializers.ModelSerializer):
         )
 
 class ColecaoSerializer(serializers.ModelSerializer):
+    foto_perfil = serializers.CharField()
+    capa = serializers.CharField()
+    posts = PostSerializer(many=True,read_only=True)
+    seguidores = PerfilSerializer(many=True,read_only=True)
     class Meta:
         model = Colecao
         fields = (

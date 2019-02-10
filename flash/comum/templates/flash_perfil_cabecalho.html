@@ -15,6 +15,7 @@
             {% if usuario.id == user.id %}
                 <ul class="list-inline profile-menu">
                     <li><a href="{% url 'exibir_minha_timeline' %}">Timeflash</a></li>
+                    <li><a href="{% url 'exibir_minhas_colecoes' %}">Minhas Coleções</a></li>
                     <li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>
                     <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
                     {% if bloqueado == False and eh_amigo %}
@@ -24,7 +25,6 @@
             {% else %}
                 <ul class="list-inline profile-menu">
                     <li><a href="{% url 'exibir_usuario' usuario.id %}">Timeflash</a></li>
-                    <!--<li><a href="timeline-friends.html">Flash Friends</a></li>-->
                     <li><a href="{% url 'exibir_about' usuario.id %}" class="active">Sobre</a></li>
                     {% if bloqueado == False and eh_amigo %}
                         <li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>

@@ -9,12 +9,13 @@
                 <div class="card-info">
                     <img src="{{colecao.foto_perfil}}" alt="user" class="profile-photo-lg"/>
                     <div class="friend-info">
-                        <!--{% for bloqueado in bloqueados %}-->
-                            <!--{% if bloqueado.id == amigo.id %}-->
-                                <!--<a href="#" class="pull-right text-red">Usuário Bloqueado</a>-->
-                            <!--{% endif %}-->
-                        <!--{% endfor %}-->
-
+                        {% if colecao.autor == user.id %}
+                            <h5 class="pull-right text-red">Administrador</h5>
+                        {% else %}
+                            {% if user.id in colecao.seguidores %}
+                                <h5 class="pull-right text-red">Seguindo</h5>
+                            {% endif %}
+                        {% endif %}
                         <h5><a href="{% url 'exibir_colecao' colecao.id %}" class="profile-link">{{colecao.titulo}}</a></h5>
                         <p>@{{colecao.nome_autor}}</p>
                     </div>

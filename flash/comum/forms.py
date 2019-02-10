@@ -8,6 +8,11 @@ class PostForm(forms.Form):
     foto = forms.ImageField(required=False)
     video = forms.FileField(required=False)
 
+class ColecaoForm(forms.Form):
+
+    titulo = forms.CharField(required=True)
+    foto = forms.ImageField(required=True)
+
 
 class CriarPerfilForm(forms.Form):
 
