@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
-from comum.models import User, Post, Perfil
+from comum.models import User, Post, Perfil, Colecao
 from friendship.models import Friend, Follow, Block
 from friendship.models import FriendshipRequest
 from django.utils import timezone
@@ -14,6 +14,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from django.db import transaction
+import requests, json
 import os
 
 # Create your views here.
@@ -35,6 +36,17 @@ def exibir_newsfeed(request):
                 if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo,
                                                                             request.user) == False and post.usuario.usuario.is_active == True:
                     posts_amigos.append(post)
+
+    for post in posts_all:
+        if post.colecao is not None and post not in posts_amigos:
+            colecao = Colecao.objects.get(pk=post.colecao.id)
+            seguidores = colecao.seguidores.all()
+            for seguidor in seguidores:
+                if request.user.id == seguidor.id:
+                    posts_amigos.append(post)
+            # if post.colecao.seguidores:
+            #     posts_amigos.append(post)
+
     posts_amigos = sorted(posts_amigos, key=Post.get_id, reverse=True)
 
     paginator = Paginator(posts_amigos, 10)
@@ -478,6 +490,102 @@ def superuser_ativar_perfil(request, usuario_id):
     messages.success(request, 'O perfil selecionado foi ativado com sucesso!')
     return redirect('/settings')
 
+##MÓDULO API##
 
-def exibir_colecao(request):
-    return render(request, 'flash_colecao.html')
+def exibir_colecoes(request):
+    url = 'http://127.0.0.1:8000/api/v1/colecoes/'
+    colecoes = requests.get(url).json()
+    return render(request,'flash_colecoes.html',{'colecoes': colecoes})
+
+def exibir_colecao(request,colecao_id):
+    posts_colecao = []
+    seguindo = False
+    colecao = colecao_id
+    url = 'http://127.0.0.1:8000/api/v1/colecoes/%s'%colecao
+    colecao = requests.get(url).json()
+    for id in colecao['posts']:
+        post = Post.objects.get(pk=id)
+        posts_colecao.append(post)
+
+    if request.user.id in colecao['seguidores']:
+        seguindo = True
+
+    #print(usuarios[0])
+    # data = {'username':'teste22',
+    #         'password': 'qwe123',
+    #         'first_name': 'Teste',
+    #         'last_name': '123'}
+
+    #print(data)
+    #requests.post(url,data=data)
+
+    return render(request, 'flash_colecao.html',{'posts': posts_colecao, 'colecao':colecao, 'seguindo': seguindo})
+
+class AdicionaPostColecaoView(View):
+
+    def get(self, request):
+        return render(request, 'flash_colecao.html')
+
+    def post(self, request):
+        url = 'http://127.0.0.1:8000/api/v1/posts/'
+        form = PostForm(request.POST,request.FILES)
+
+        if (form.is_valid()):
+            dados = form.data
+            data = {'descricao':'%s'%dados['descricao'],
+                    'usuario': request.user.id,
+                    'colecao': '%s'%dados['colecao']}
+            requests.post(url=url,data=data)
+            #  if str(request.FILES)[19] == 'f':
+            #     post = Post(descricao=dados['descricao'],
+            #                 criado_em=timezone.now(),
+            #                 atualizado_em=timezone.now(),
+            #                 aplausos=randint(0, 100),
+            #                 foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
+            #                 video=None,
+            #                 editado=False,
+            #                 compartilhado=False,
+            #                 colecao_id=None,
+            #                 comunidade_id=None,
+            #                 usuario_id=request.user.id)
+            #     handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
+            # elif str(request.FILES)[19] == 'v':
+            #         post = Post(descricao=dados['descricao'],
+            #                     criado_em=timezone.now(),
+            #                     atualizado_em=timezone.now(),
+            #                     aplausos=randint(0, 100),
+            #                     video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
+            #                     foto=None,
+            #                     editado=False,
+            #                     compartilhado=False,
+            #                     colecao_id=None,
+            #                     comunidade_id=None,
+            #                     usuario_id=request.user.id)
+            #         handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
+            # else:
+            #     post = Post(descricao=dados['descricao'],
+            #                 criado_em=timezone.now(),
+            #                 atualizado_em=timezone.now(),
+            #                 aplausos=randint(0, 100),
+            #                 editado=False,
+            #                 compartilhado=False,
+            #                 colecao_id=None,
+            #                 comunidade_id=None,
+            #                 usuario_id=request.user.id)
+            messages.success(request, 'Seu post foi publicado com êxito.')
+
+            print(request)
+            return redirect('/')
+
+        messages.error(request,'Seu post NÃO foi publicado com êxito.')
+        return redirect('/')
+
+def seguir_colecao(request, colecao_id):
+    colecao = Colecao.objects.get(pk=colecao_id)
+    colecao.seguidores.add(request.user.id)
+    return redirect('/colecao/%s'%colecao_id)
+
+def deixar_seguir_colecao(request, colecao_id):
+    colecao = Colecao.objects.get(pk=colecao_id)
+    colecao.seguidores.remove(request.user.id)
+    return redirect('/colecao/%s'%colecao_id)

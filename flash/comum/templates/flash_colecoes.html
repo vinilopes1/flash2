@@ -1,0 +1,26 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+{% extends "flash_base.html" %}
+
+{% block title %}
+    Coleções
+{% endblock title %}
+
+{% block body_container %}
+    <!-- Newsfeed Common Side Bar Left-->
+    <div class="col-md-3 static">
+        {% include 'flash_menu_opcoes.html' %}
+    </div>
+
+    <div class="col-md-7">
+        {% include 'flash_list_colecao.html' %}
+    </div>
+
+    <div class="col-md-2 static">
+        {% include 'flash_sugestoes.html' %}
+    </div>
+
+
+
+
+{% endblock body_container %}

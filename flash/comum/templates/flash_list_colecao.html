@@ -1,0 +1,29 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<div class="friend-list">
+    <div class="row">
+        {% for colecao in colecoes %}
+        <div class="col-md-6 col-sm-6">
+            <div class="friend-card">
+                <img src="{{colecao.capa}}" alt="profile-cover" class="img-responsive cover"/>
+                <div class="card-info">
+                    <img src="{{colecao.foto_perfil}}" alt="user" class="profile-photo-lg"/>
+                    <div class="friend-info">
+                        <!--{% for bloqueado in bloqueados %}-->
+                            <!--{% if bloqueado.id == amigo.id %}-->
+                                <!--<a href="#" class="pull-right text-red">Usuário Bloqueado</a>-->
+                            <!--{% endif %}-->
+                        <!--{% endfor %}-->
+
+                        <h5><a href="{% url 'exibir_colecao' colecao.id %}" class="profile-link">{{colecao.titulo}}</a></h5>
+                        <p>@{{colecao.nome_autor}}</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% include 'flash_friends_pagination.html' %}

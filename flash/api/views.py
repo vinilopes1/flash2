@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import generics
 from comum.models import Post,Perfil,Comunidade,Colecao
-from api.migrations.serializers import *
+from .serializers import *
 
 class ApiRoot(generics.GenericAPIView):
     name = 'api-root'

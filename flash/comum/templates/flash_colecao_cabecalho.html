@@ -1,0 +1,205 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+<!--Template de cabeçalho de um perfil-->
+
+<!--Timeline Menu for Large Screens-->
+<div class="timeline-nav-bar hidden-sm hidden-xs">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="profile-info">
+                <img src="{{colecao.foto_perfil}}" alt="" class="img-responsive profile-photo"/>
+                <h3>{{colecao.titulo}}</h3>
+                <p class="text-muted">@{{colecao.nome_autor}}</p>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <ul class="list-inline profile-menu">
+                    <li><a href="{% url 'exibir_minha_timeline' %}">Seguidores</a></li>
+                    <li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>
+                </ul>
+            <!--{% if user.id == user.id %}-->
+                <!--<ul class="list-inline profile-menu">-->
+                    <!--<li><a href="{% url 'exibir_minha_timeline' %}">Timeflash</a></li>-->
+                    <!--<li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>-->
+                    <!--<li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>-->
+                    <!--{% if bloqueado == False and eh_amigo %}-->
+                        <!--<li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>-->
+                    <!--{% endif %}-->
+                <!--</ul>-->
+            <!--{% else %}-->
+                <!--<ul class="list-inline profile-menu">-->
+                    <!--<li><a href="{% url 'exibir_user' user.id %}">Timeflash</a></li>-->
+                    <!--&lt;!&ndash;<li><a href="timeline-friends.html">Flash Friends</a></li>&ndash;&gt;-->
+                    <!--<li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>-->
+                    <!--{% if bloqueado == False and eh_amigo %}-->
+                        <!--<li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>-->
+                    <!--{% endif %}-->
+                <!--</ul>-->
+            <!--{% endif %}-->
+            <ul class="follow-me list-inline">
+            <li>
+                {% if colecao.autor == user.id %}
+                    <a href="" data-toggle="modal" data-target="#ExcluirAlert">
+                        <button class="btn-primary" style="background-color: #f7020e">Excluir Coleção</button>
+                    </a>
+
+                {% else %}
+                    {% if seguindo %}
+                        <a href="" data-toggle="modal" data-target="#DeixarAlert">
+                        <button class="btn-primary" style="background-color: #f7020e">Deixar de Seguir</button>
+                    </a>
+                    {% else %}
+                        <a href="{% url 'seguir_colecao' colecao.id %}">
+                            <button class="btn-primary">Seguir</button>
+                        </a>
+                    {% endif %}
+
+
+                {% endif %}
+
+
+                <!--{% if user.id == user.id%}-->
+                    <!--<a href="" data-toggle="modal" data-target="#DesativarAlert">-->
+                        <!--<button class="btn-primary" style="background-color: #f7020e">Desativar Perfil</button>-->
+                    <!--</a>-->
+                <!--{% else %}-->
+                    <!--{% if eh_amigo == True %}-->
+                        <!--{% if bloqueado %}-->
+                            <!--<a href="{% url 'desbloquear_user' user.id %}">-->
+                                <!--<button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button>-->
+                            <!--</a>-->
+                        <!--{% else %}-->
+                            <!--<a href="{% url 'desfazer_amizade' user.id %}">-->
+                                <!--<button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button>-->
+                            <!--</a>-->
+                        <!--{% endif %}-->
+                    <!--{% else %}-->
+                        <!--{% if solicitei %}-->
+                            <!--<a href="#">-->
+                                <!--<button class="btn-primary" style="background-color: #ddd; color: black;">Solicitação já enviada-->
+                                <!--</button>-->
+                            <!--</a>-->
+                        <!--{% else %}-->
+                            <!--<a href="{% url 'enviar_pedido' user.id %}">-->
+                                <!--<button class="btn-primary">Adicionar aos Flash Friends</button>-->
+                            <!--</a>-->
+                        <!--{% endif %}-->
+                    <!--{% endif %}-->
+                <!--{% endif %}-->
+            </li>
+        </ul>
+        </div>
+    </div>
+</div><!--Timeline Menu for Large Screens End-->
+
+<!--Timeline Menu for Small Screens-->
+<div class="navbar-mobile hidden-lg hidden-md">
+    <div class="profile-info">
+        <img src="{{colecao.foto_perfil}}" alt="" class="img-responsive profile-photo"/>
+        <h4>{{colecao.titulo}}</h4>
+        <p class="text-muted">@{{colecao.nome_autor}}</p>
+    </div>
+    <div class="mobile-menu">
+        <ul class="list-inline profile-menu">
+                    <li><a href="{% url 'exibir_minha_timeline' %}">Seguidores</a></li>
+                    <li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>
+                </ul>
+        <!--{% if user.id == user.id %}-->
+            <!--<ul class="list-inline profile-menu">-->
+                <!--<li><a href="{% url 'exibir_minha_timeline' %}">Timeflash</a></li>-->
+                <!--<li><a href="{% url 'exibir_flash_friends' %}">Flash Friends</a></li>-->
+                <!--<li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>-->
+                <!--{% if bloqueado == False and eh_amigo %}-->
+                    <!--<li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>-->
+                <!--{% endif %}-->
+            <!--</ul>-->
+        <!--{% else %}-->
+            <!--<ul class="list-inline profile-menu">-->
+                <!--<li><a href="{% url 'exibir_user' user.id %}">Timeflash</a></li>-->
+                <!--&lt;!&ndash;<li><a href="timeline-friends.html">Flash Friends</a></li>&ndash;&gt;-->
+                <!--<li><a href="{% url 'exibir_about' user.id %}" class="active">Sobre</a></li>-->
+                <!--{% if bloqueado == False and eh_amigo %}-->
+                    <!--<li><a href="" data-toggle="modal" data-target="#BlockAlert">Bloquear usuário</a></li>-->
+                <!--{% endif %}-->
+            <!--</ul>-->
+        <!--{% endif %}-->
+        <ul class="follow-me list-inline">
+            <li>
+                {% if colecao.autor == user.id %}
+                    <a href="" data-toggle="modal" data-target="#ExcluirAlert">
+                        <button class="btn-primary" style="background-color: #f7020e">Excluir Coleção</button>
+                    </a>
+                {% endif %}
+                <!--{% if user.id == user.id%}-->
+                    <!--<a href="" data-toggle="modal" data-target="#DesativarAlert">-->
+                        <!--<button class="btn-primary" style="background-color: #f7020e">Desativar Perfil</button>-->
+                    <!--</a>-->
+                <!--{% else %}-->
+                    <!--{% if eh_amigo == True %}-->
+                        <!--{% if bloqueado %}-->
+                            <!--<a href="{% url 'desbloquear_user' user.id %}">-->
+                                <!--<button class="btn-primary" style="background-color: #f7020e">Desbloquear usuário</button>-->
+                            <!--</a>-->
+                        <!--{% else %}-->
+                            <!--<a href="{% url 'desfazer_amizade' user.id %}">-->
+                                <!--<button class="btn-primary" style="background-color: #f7020e">Desfazer amizade</button>-->
+                            <!--</a>-->
+                        <!--{% endif %}-->
+                    <!--{% else %}-->
+                        <!--{% if solicitei %}-->
+                            <!--<a href="#">-->
+                                <!--<button class="btn-primary" style="background-color: #ddd; color: black;">Solicitação já enviada-->
+                                <!--</button>-->
+                            <!--</a>-->
+                        <!--{% else %}-->
+                            <!--<a href="{% url 'enviar_pedido' user.id %}">-->
+                                <!--<button class="btn-primary">Adicionar aos Flash Friends</button>-->
+                            <!--</a>-->
+                        <!--{% endif %}-->
+                    <!--{% endif %}-->
+                <!--{% endif %}-->
+            </li>
+        </ul>
+    </div>
+</div>
+<!--<div id="BlockAlert" class="modal fade" role="dialog">-->
+    <!--<div class="modal-dialog">-->
+        <!--<div class="modal-content">-->
+            <!--<div class="modal-header">Block</div>-->
+            <!--<div class="modal-body">Você deseja bloquear {{user.first_name}}?</div>-->
+            <!--<div class="modal-footer">-->
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>-->
+                <!--<a href="{% url 'bloquear_usuario' user.id %}">-->
+                    <!--<button type="button" class="btn btn-primary">Salvar alterações</button>-->
+                <!--</a>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+<div id="ExcluirAlert" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Desativar</div>
+            <div class="modal-body">Você realmente deseja excluir esta coleção?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <a href="#">
+                    <button type="button" class="btn btn-primary">Salvar alterações</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="DeixarAlert" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Desativar</div>
+            <div class="modal-body">Você realmente deseja deixar de seguir esta coleção?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                <a href="{% url 'deixar_seguir_colecao' colecao.id %}">
+                    <button type="button" class="btn btn-primary">Salvar alterações</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

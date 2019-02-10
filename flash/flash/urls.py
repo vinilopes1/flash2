@@ -66,6 +66,10 @@ urlpatterns = [
     path('settings/requests/usuario/<int:usuario_id>', views.gerenciar_friends_requests, name='gerenciar_solicitacoes'),
     path('settings/desativar-perfil/<int:usuario_id>', views.superuser_desativar_perfil, name='superuser_desativar_perfil'),
     path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
-    path('colecao/',views.exibir_colecao, name='exibir_colecao'),
+    path('colecoes', views.exibir_colecoes, name='exibir_colecoes'),
+    path('colecao/<int:colecao_id>',views.exibir_colecao, name='exibir_colecao'),
+    path('new-post-colecao/', views.AdicionaPostColecaoView.as_view(), name='add_post_colecao'),
+    path('seguir-colecao/<int:colecao_id>', views.seguir_colecao, name='seguir_colecao'),
+    path('deixar-seguir-colecao/<int:colecao_id>', views.deixar_seguir_colecao, name='deixar_seguir_colecao')
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
