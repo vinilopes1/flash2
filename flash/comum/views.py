@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import PostForm
+from .forms import PostForm, ColecaoForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
 from comum.models import User, Post, Perfil

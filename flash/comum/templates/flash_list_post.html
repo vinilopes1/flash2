@@ -14,44 +14,44 @@
     <div class="post-content">
         <div class="post-container">
             {% if post.colecao != None %}
-            <img src="{{post.colecao.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
-            <div class="post-detail">
-                <div class="user-info">
-                    <h5><a href="{% url 'exibir_colecao' post.colecao.id %}" class="profile-link">{{post.colecao.titulo}}</a></h5>
-                    <p class="text-muted">{{post.descricao}}</p>
-                </div>
+                <img src="{{post.colecao.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
             {% else %}
-            <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            {% endif %}
             <div class="post-detail">
                 <div class="user-info">
-
-                    {% if post.usuario.id == user.id %}
-                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}}</a></h5>
+                    {% if post.colecao != None %}
+                        <h5><a href="{% url 'exibir_colecao' post.colecao.id %}" class="profile-link">{{post.colecao.titulo}}</a></h5>
+                        <p class="text-muted">{{post.descricao}}</p>
                     {% else %}
-                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}}</a></h5>
+                        {% if post.usuario.id == user.id %}
+                            <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}}</a></h5>
+                        {% else %}
+                            <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}}</a></h5>
+                        {% endif %}
+                        <p class="text-muted">{{post.descricao}}</p>
                     {% endif %}
-                    <p class="text-muted">{{post.descricao}}</p>
                 </div>
                 <div class="reaction">
                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}}</a>
                     <a class="btn text-blue" href="" data-toggle="modal" data-target="#CompartilharPost"><i class="icon ion-ios-redo"></i></a>
                     {% if post.usuario.id == user.id %}
-                    <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
-                            class="fa fa-trash"></i></a>
-                    <div id="MyModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">Publicação #{{post.id}}</div>
-                                <div class="modal-body">Você deseja excluir essa publicação?</div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                    <a href="{% url 'delete_post' 'dn' post.id  %}">
-                                        <button type="button" class="btn btn-primary">Deletar publicação</button>
-                                    </a>
+                        <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
+                                class="fa fa-trash"></i></a>
+                        <div id="MyModal" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">Publicação #{{post.id}}</div>
+                                    <div class="modal-body">Você deseja excluir essa publicação?</div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                        <a href="{% url 'delete_post' 'dn' post.id  %}">
+                                            <button type="button" class="btn btn-primary">Deletar publicação</button>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     {% endif %}
                 </div>
                 <div class="line-divider"></div>
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         </div>
-                         {% if post.compartilhado.foto %}
+                        {% if post.compartilhado.foto %}
                         <img src="{{post.compartilhado.foto.url}}" alt="post-image" class="img-responsive post-image"/>
                         {% endif %}
                         {% if post.compartilhado.video %}
@@ -100,7 +100,6 @@
                                     class="em em-anguished"></i> <i class="em em-anguished"></i></p>
                     </div>
                 {% endif %}
-            </div>
             </div>
         </div>
         {% if post.foto %}
