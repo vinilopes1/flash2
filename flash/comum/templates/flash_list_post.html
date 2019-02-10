@@ -13,29 +13,28 @@
     {% for post in posts %}
     <div class="post-content">
         <div class="post-container">
-                    {% if post.colecao == None %}
-                        <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
-                        <div class="post-detail">
-                            <div class="user-info">
-                                {% if post.usuario.id == user.id %}
-                                <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}}</a></h5>
-                                {% else %}
-                                <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}}</a>
-                                </h5>
-                    {% endif %}
-                    {% else %}
-                                <img src="{{post.colecao.foto_perfil}}" alt="user"
-                                     class="profile-photo-md pull-left"/>
-                                <div class="post-detail">
-                                    <div class="user-info">
-                                        <h5><a href="{% url 'exibir_colecao' post.colecao.id %}" class="profile-link">{{post.colecao.titulo}}</a>
-                                        </h5>
-                    {% endif %}
+            {% if post.colecao != None %}
+            <img src="{{post.colecao.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
+            <div class="post-detail">
+                <div class="user-info">
+                    <h5><a href="{% url 'exibir_colecao' post.colecao.id %}" class="profile-link">{{post.colecao.titulo}}</a></h5>
+                    <p class="text-muted">{{post.descricao}}</p>
+                </div>
+            {% else %}
+            <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            <div class="post-detail">
+                <div class="user-info">
 
+                    {% if post.usuario.id == user.id %}
+                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}}</a></h5>
+                    {% else %}
+                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.usuario}}</a></h5>
+                    {% endif %}
                     <p class="text-muted">{{post.descricao}}</p>
                 </div>
                 <div class="reaction">
                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}}</a>
+                    <a class="btn text-blue" href="" data-toggle="modal" data-target="#CompartilharPost"><i class="icon ion-ios-redo"></i></a>
                     {% if post.usuario.id == user.id %}
                     <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
                             class="fa fa-trash"></i></a>
@@ -54,27 +53,88 @@
                         </div>
                     </div>
                     {% endif %}
-
                 </div>
                 <div class="line-divider"></div>
-                <div class="post-text">
-                    <p>{% for amigo in meus_amigos %}
-                        {{amigo}}
-                        {% endfor %}
-                        <i class="em em-anguished"></i> <i
-                                class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                {% if post.compartilhado != None %}
+                    <div class="post-content">
+                        <div class="post-container">
+                            <h5>Compartilhado de {{post.compartilhado.usuario}} </h5>
+                            <img src="{{post.compartilhado.usuario.foto_perfil.url" alt="user" class="profile-photo-md pull-left"/>
+                            <div class="post-detail">
+                                <div class="user-info">
+                                    {% if post.usuario.id == user.id %}
+                                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                    {% else %}
+                                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                    {% endif %}
+                                    <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                </div>
+                                <div class="reaction">
+                                    <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.compartilhado.aplausos}}</a>
+                                </div>
+                                <div class="line-divider"></div>
+                                <div class="post-text">
+                                    <p>{% for amigo in meus_amigos %}
+                                        {{amigo}}
+                                        {% endfor %}
+                                        <i class="em em-anguished"></i> <i
+                                                class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                         {% if post.compartilhado.foto %}
+                        <img src="{{post.compartilhado.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                        {% endif %}
+                        {% if post.compartilhado.video %}
+                        <video class="post-video" controls>
+                            <source src="{{ post.compartilhado.video.url }}{{ videofile }}" type="video/mp4">
+                        </video>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="post-text">
+                        <p>{% for amigo in meus_amigos %}
+                            {{amigo}}
+                            {% endfor %}
+                            <i class="em em-anguished"></i> <i
+                                    class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+        </div>
+        {% if post.foto %}
+            <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+        {% endif %}
+        {% if post.video %}
+            <video class="post-video" controls>
+                <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+            </video>
+        {% endif %}
+        </div>
+        <div id="CompartilharPost" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 align="center" class="text-blue">Compartilhar post de {{ post.usuario }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'compartilhar_post' post.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="create-post">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <textarea name="descricao" id="id_descricao" cols="50" rows="2" class="form-control"
+                                                  placeholder="Crie uma legenda ?!"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-primary">Compartilhar</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-         {% if post.foto %}
-        <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
-        {% endif %}
-        {% if post.video %}
-        <video class="post-video" controls>
-            <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
-        </video>
-        {% endif %}
-    </div>
     {% endfor %}
 {% endif %}
-        </div></div>

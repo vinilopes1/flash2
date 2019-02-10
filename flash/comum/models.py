@@ -59,7 +59,7 @@ class Post(Base):
     video = models.FileField('Vídeo', upload_to='arquivos/%Y/posts/', null=True, blank=True)
     aplausos = models.IntegerField('Aplausos', default=0, blank=False, null=False)
     editado = models.BooleanField('Editado', default=False, blank=False, null=False)
-    compartilhado = models.BooleanField('Compartilhado', default=False, blank=False, null=False)
+    compartilhado = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     usuario = models.ForeignKey(Perfil, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
@@ -67,12 +67,8 @@ class Post(Base):
     def get_id(self):
         return self.id
 
-    def __str__(self):
-        return self.descricao
-
     class Meta:
         ordering = ('criado_em',)
-
 
 class Comentario(Base):
 
@@ -103,8 +99,8 @@ class Colecao(Base):
     titulo = models.CharField('Título', max_length=255, null=False, blank=False)
     descricao = models. CharField('Descrição', max_length=255, null=False, blank=False)
     autor = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='minhas_colecoes')
-    foto_perfil = models.ImageField('Foto', upload_to='imagens/%Y/',default='default_foto.png',null=True,blank=True)
-    capa = models.ImageField('Capa', upload_to='imagens/%Y/',default='default_capa.jpg',null=True,blank=True)
+    foto_perfil = models.ImageField('Foto', upload_to='imagens/%Y/', default='default_foto.png', null=True, blank=True)
+    capa = models.ImageField('Capa', upload_to='imagens/%Y/', default='default_capa.jpg', null=True, blank=True)
     seguidores = models.ManyToManyField(Perfil, related_name='seguidores')
 
     def nome_autor(self):

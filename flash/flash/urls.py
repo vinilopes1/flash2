@@ -67,11 +67,12 @@ urlpatterns = [
     path('settings/desativar-perfil/<int:usuario_id>', views.superuser_desativar_perfil, name='superuser_desativar_perfil'),
     path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
     path('colecoes', views.exibir_colecoes, name='exibir_colecoes'),
-    path('colecao/<int:colecao_id>',views.exibir_colecao, name='exibir_colecao'),
+    path('colecao/<int:colecao_id>', views.exibir_colecao, name='exibir_colecao'),
     path('new-post-colecao/', views.AdicionaPostColecaoView.as_view(), name='add_post_colecao'),
     path('seguir-colecao/<int:colecao_id>', views.seguir_colecao, name='seguir_colecao'),
     path('deixar-seguir-colecao/<int:colecao_id>', views.deixar_seguir_colecao, name='deixar_seguir_colecao'),
     path('minhas-colecoes', views.exibir_minhas_colecoes, name='exibir_minhas_colecoes'),
     path('new-colecao/', views.AdicionaColecaoView.as_view(), name='add_colecao'),
+    path('compartilhar-post/<int:post_compartilhado_id>', views.CompartilhaPostView.as_view(), name = 'compartilhar_post'),
 
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

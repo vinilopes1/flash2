@@ -2,14 +2,14 @@ from django.shortcuts import render, redirect
 from .forms import PostForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
-from comum.models import User, Post, Perfil, Colecao
+from comum.models import User, Post, Perfil
 from friendship.models import Friend, Follow, Block
 from friendship.models import FriendshipRequest
 from django.utils import timezone
 from random import randint
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.contrib import messages
-from .forms import PostForm,ColecaoForm
+from .forms import PostForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
@@ -107,7 +107,7 @@ class AdicionaPostView(View):
                             foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
                             video=None,
                             editado=False,
-                            compartilhado=False,
+                            compartilhado=None,
                             colecao_id=None,
                             comunidade_id=None,
                             usuario_id=request.user.id)
@@ -120,7 +120,7 @@ class AdicionaPostView(View):
                                 video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
                                 foto=None,
                                 editado=False,
-                                compartilhado=False,
+                                compartilhado=None,
                                 colecao_id=None,
                                 comunidade_id=None,
                                 usuario_id=request.user.id)
@@ -131,7 +131,7 @@ class AdicionaPostView(View):
                             atualizado_em=timezone.now(),
                             aplausos=randint(0, 100),
                             editado=False,
-                            compartilhado=False,
+                            compartilhado=None,
                             colecao_id=None,
                             comunidade_id=None,
                             usuario_id=request.user.id)
@@ -675,4 +675,31 @@ class AdicionaColecaoView(View):
             return redirect('/')
 
         messages.error(request,'Algo deu errado.')
+        return redirect('/')
+
+class CompartilhaPostView(View):
+
+    def get(self, request):
+        return render(request, 'flash_newsfeed.html')
+
+    def post(self, request, post_compartilhado_id):
+        form = PostForm(request.POST)
+        if (form.is_valid()):
+            dados = form.data
+            post = Post(descricao=dados['descricao'],
+                        criado_em=timezone.now(),
+                        atualizado_em=timezone.now(),
+                        aplausos=randint(0, 100),
+                        foto=None,
+                        video=None,
+                        editado=False,
+                        compartilhado=Post.objects.get(pk=post_compartilhado_id),
+                        colecao_id=None,
+                        comunidade_id=None,
+                        usuario_id=request.user.id)
+            messages.success(request, 'Post compartilhado com sucesso!.')
+            post.save()
+            print(request)
+            return redirect('/')
+        messages.error(request,'O post NÃO foi compartilhado com êxito.')
         return redirect('/')
