@@ -1,0 +1,79 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+{% extends "flash_base.html" %}
+
+{% block title %}
+    News Feed | Rede Social Flash
+{% endblock title %}
+
+{% block body_container %}
+
+    <!-- Newsfeed Common Side Bar Left-->
+    <div class="col-md-3 static">
+            {% include 'flash_menu_opcoes.html' %}
+    </div>
+
+    <div class="col-md-7">
+            <!--Alerts-->
+            {% include 'flash_alert_msg.html' %}
+
+            <!-- Compartilha post box -->
+            <h3>Compartilhar post de {{post.compartilhado.usuario}}</h3>
+            <form method="post" action="{% url 'compartilhar_post' post_compartilhado.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="create-post">
+                    <div class="row">
+                        <div class="form-group">
+                            <textarea name="descricao" id="id_descricao" cols="50" rows="2" class="form-control"
+                                      placeholder="Crie uma legenda ?!"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <button class="btn btn-primary">Compartilhar</button>
+            </form>
+
+            <div class="post-content">
+                <div class="post-container">
+                    <h5>Compartilhado de {{post.compartilhado.usuario}} </h5>
+                    <img src="{{post.compartilhado.usuario.foto_perfil.url" alt="user" class="profile-photo-md pull-left"/>
+                    <div class="post-detail">
+                        <div class="user-info">
+                            {% if post.usuario.id == user.id %}
+                            <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                            {% else %}
+                            <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                            {% endif %}
+                            <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                        </div>
+                        <div class="reaction">
+                            <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.compartilhado.aplausos}}</a>
+                        </div>
+                        <div class="line-divider"></div>
+                        <div class="post-text">
+                            <p>{% for amigo in meus_amigos %}
+                                {{amigo}}
+                                {% endfor %}
+                                <i class="em em-anguished"></i> <i
+                                        class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                        </div>
+                    </div>
+                </div>
+                {% if post.compartilhado.foto %}
+                <img src="{{post.compartilhado.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                {% endif %}
+                {% if post.compartilhado.video %}
+                <video class="post-video" controls>
+                    <source src="{{ post.compartilhado.video.url }}{{ videofile }}" type="video/mp4">
+                </video>
+                {% endif %}
+            </div>
+
+            <!-- Paginação -->
+            {% include 'flash_posts_pagination.html' %}
+    </div>
+
+    <!-- Newsfeed Common Side Bar Right-->
+    <div class="col-md-2 static">
+        {% include 'flash_sugestoes.html' %}
+    </div>
+{% endblock body_container %}

@@ -19,11 +19,12 @@ from django.urls import path,include
 from comum import views
 from api import views as api_views
 from django.conf import settings
-
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     #API
     path('api/v1/', api_views.ApiRoot.as_view(), name=api_views.ApiRoot.name),
+    path('api/v1/token/', obtain_auth_token),
     path('api/v1/posts/',api_views.PostList.as_view(), name=api_views.PostList.name),
     path('api/v1/posts/<int:pk>', api_views.PostDetail.as_view(), name=api_views.PostDetail.name),
     path('api/v1/perfil/', api_views.PerfilList.as_view(), name=api_views.PerfilList.name),

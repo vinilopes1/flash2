@@ -90,11 +90,15 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
+
+
 class AdicionaPostView(View):
 
+    @login_required
     def get(self, request):
         return render(request, 'flash_newsfeed.html')
 
+    @login_required
     def post(self, request):
         form = PostForm(request.POST,request.FILES)
         if (form.is_valid()):
@@ -144,6 +148,8 @@ class AdicionaPostView(View):
         messages.error(request,'Seu post NÃO foi publicado com êxito.')
         return redirect('/')
 
+
+@login_required
 def delete_post(request,string , post_id):
     Post.objects.get(pk=post_id).delete()
     messages.success(request, 'A publicação foi excluída!')
@@ -191,6 +197,7 @@ def aceitar_pedido(request, solicitacao_id):
     messages.success(request, 'Você e %s agora são amigos(a)!' % friend_request.from_user.first_name)
     return redirect('/requests')
 
+
 @transaction.atomic(using=None, savepoint=True)
 def rejeitar_pedido(request, solicitacao_id):
     friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
@@ -198,6 +205,8 @@ def rejeitar_pedido(request, solicitacao_id):
     FriendshipRequest.delete(friend_request)
     return render(request, 'flash_newsfeed.html')
 
+
+@login_required
 def exibir_flash_friends(request):
     meus_amigos = lista_amigos(request.user)
     usuarios = todos_usuarios()
@@ -231,6 +240,7 @@ def exibir_flash_friends(request):
                    'usuario_logado': usuario_logado, 'bloqueados': bloqueados})
 
 
+@login_required
 def exibir_friends_requests(request):
     solicitacoes = FriendshipRequest.objects.filter(to_user=request.user)
     qtd_amigos = quant_amigos(request.user)
@@ -254,6 +264,7 @@ def quant_amigos(usuario):
     return qtd_amigos
 
 
+@login_required
 def exibir_usuario(request, usuario_id):
     usuario = User.objects.get(id=usuario_id)
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
@@ -312,10 +323,12 @@ def exibir_about(request, usuario_id):
     return render(request, 'flash_sobre.html', {'usuario': usuario})
 
 
+@login_required
 def alterar_senha(request):
     return render(request, 'flash_alterar_senha.html')
 
 
+@login_required
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -336,6 +349,7 @@ def change_password(request):
         'form': form
     })
 
+
 def nao_amigo(user):
     usuarios = todos_usuarios()
     amigos = lista_amigos(user)
@@ -350,6 +364,7 @@ def nao_amigo(user):
     return usuarios_nao_amigo
 
 
+@login_required
 def desfazer_amizade(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     Friend.objects.remove_friend(request.user, usuario)
@@ -367,7 +382,7 @@ def desbloquear_usuario(request, usuario_id):
     Block.objects.remove_block(request.user, usuario)
     return redirect('/usuario/%s' % usuario_id)
 
-
+@login_required
 def buscar_usuario(request):
     form = PostForm(request.POST)
     dados = form.data
@@ -387,7 +402,7 @@ def buscar_usuario(request):
     return render(request, 'flash_friends_search.html',
                   {'resultados': resultados, 'bloqueados': bloqueados, 'usuario_logado': usuario_logado,
                    'qtd_amigos': qtd_amigos, 'qtd_result': len(resultados)})
-
+@login_required
 def exibir_flash_settings(request):
     perfis = todos_perfis(request)
     usuarios_nao_amigo = nao_amigo(request.user)
@@ -423,7 +438,7 @@ def desativar_perfil(request):
     usuario.save()
     return redirect('logout')
 
-
+@login_required
 def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
     qtd_amigos = quant_amigos(request.user)
@@ -432,7 +447,7 @@ def gerenciar_posts(request, usuario_id):
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
     return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario,
                                                                    'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo})
-
+@login_required
 def gerenciar_flash_friends(request, usuario_id):
     usuario_gerenciado = User.objects.get(pk=usuario_id)
     usuarios = lista_amigos(usuario_gerenciado)
@@ -459,7 +474,7 @@ def gerenciar_flash_friends(request, usuario_id):
                    'usuario_logado': usuario_logado, 'bloqueados': bloqueados, 'usuario': usuario_gerenciado})
 
 
-
+@login_required
 def gerenciar_friends_requests(request, usuario_id):
 
     usuario = User.objects.get(pk=usuario_id)
@@ -491,7 +506,7 @@ def superuser_ativar_perfil(request, usuario_id):
     return redirect('/settings')
 
 ##MÓDULO API##
-
+@login_required
 def exibir_colecoes(request):
     url_colecoes = 'http://127.0.0.1:8000/api/v1/colecoes/'
     url_usuario = 'http://127.0.0.1:8000/api/v1/perfil/%s'%request.user.id
@@ -502,6 +517,7 @@ def exibir_colecoes(request):
 
     return render(request,'flash_colecoes.html',{'colecoes': colecoes, 'usuarios_nao_amigo':usuarios_nao_amigo[:6], 'qtd_amigos':qtd_amigos})
 
+@login_required
 def exibir_colecao(request,colecao_id):
     posts_colecao = []
     seguindo = False
@@ -526,11 +542,13 @@ def exibir_colecao(request,colecao_id):
 
     return render(request, 'flash_colecao.html',{'posts': posts_colecao, 'colecao':colecao, 'seguindo': seguindo})
 
-class AdicionaPostColecaoView(View):
 
+class AdicionaPostColecaoView(View):
+    @login_required
     def get(self, request):
         return render(request, 'flash_colecao.html')
 
+    @login_required
     def post(self, request):
         url = 'http://127.0.0.1:8000/api/v1/posts/'
         form = PostForm(request.POST,request.FILES)
@@ -585,6 +603,7 @@ class AdicionaPostColecaoView(View):
         messages.error(request,'Seu post NÃO foi publicado com êxito.')
         return redirect('/')
 
+
 def seguir_colecao(request, colecao_id):
     colecao = Colecao.objects.get(pk=colecao_id)
     colecao.seguidores.add(request.user.id)
@@ -616,9 +635,11 @@ def handle_uploaded_file_foto_colecao(file, filename):
 
 class AdicionaColecaoView(View):
 
+    @login_required
     def get(self, request):
         return render(request, 'flash_minhas_colecoes.html')
 
+    @login_required
     def post(self, request):
         url = 'http://127.0.0.1:8000/api/v1/colecoes/'
         form = ColecaoForm(request.POST,request.FILES)
@@ -678,10 +699,11 @@ class AdicionaColecaoView(View):
         return redirect('/')
 
 class CompartilhaPostView(View):
-
+    @login_required
     def get(self, request):
         return render(request, 'flash_newsfeed.html')
 
+    @login_required
     def post(self, request, post_compartilhado_id):
         form = PostForm(request.POST)
         if (form.is_valid()):
