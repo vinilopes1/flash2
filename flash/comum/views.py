@@ -47,7 +47,6 @@ def exibir_newsfeed(request):
         posts = paginator.page(page)
     except (EmptyPage, InvalidPage):
         posts = paginator.page(paginator.num_pages)
-
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
                                                    'posts': posts})
@@ -95,7 +94,7 @@ class AdicionaPostView(View):
                             foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
                             video=None,
                             editado=False,
-                            compartilhado=False,
+                            compartilhado=None,
                             colecao_id=None,
                             comunidade_id=None,
                             usuario_id=request.user.id)
@@ -108,7 +107,7 @@ class AdicionaPostView(View):
                                 video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
                                 foto=None,
                                 editado=False,
-                                compartilhado=False,
+                                compartilhado=None,
                                 colecao_id=None,
                                 comunidade_id=None,
                                 usuario_id=request.user.id)
@@ -119,7 +118,7 @@ class AdicionaPostView(View):
                             atualizado_em=timezone.now(),
                             aplausos=randint(0, 100),
                             editado=False,
-                            compartilhado=False,
+                            compartilhado=None,
                             colecao_id=None,
                             comunidade_id=None,
                             usuario_id=request.user.id)
@@ -481,3 +480,31 @@ def superuser_ativar_perfil(request, usuario_id):
 
 def exibir_colecao(request):
     return render(request, 'flash_colecao.html')
+
+
+class CompartilhaPostView(View):
+
+    def get(self, request):
+        return render(request, 'flash_newsfeed.html')
+
+    def post(self, request, post_compartilhado_id):
+        form = PostForm(request.POST)
+        if (form.is_valid()):
+            dados = form.data
+            post = Post(descricao=dados['descricao'],
+                        criado_em=timezone.now(),
+                        atualizado_em=timezone.now(),
+                        aplausos=randint(0, 100),
+                        foto=None,
+                        video=None,
+                        editado=False,
+                        compartilhado=Post.objects.get(pk=post_compartilhado_id),
+                        colecao_id=None,
+                        comunidade_id=None,
+                        usuario_id=request.user.id)
+            messages.success(request, 'Post compartilhado com sucesso!.')
+            post.save()
+            print(request)
+            return redirect('/')
+        messages.error(request,'O post NÃO foi compartilhado com êxito.')
+        return redirect('/')

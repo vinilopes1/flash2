@@ -67,5 +67,6 @@ urlpatterns = [
     path('settings/desativar-perfil/<int:usuario_id>', views.superuser_desativar_perfil, name='superuser_desativar_perfil'),
     path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
     path('colecao/',views.exibir_colecao, name='exibir_colecao'),
+    path('compartilhar-post/<int:post_compartilhado_id>', views.CompartilhaPostView.as_view(), name = 'compartilhar_post'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

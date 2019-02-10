@@ -55,8 +55,8 @@ class Post(Base):
     video = models.FileField('Vídeo', upload_to='arquivos/%Y/posts/', null=True, blank=True)
     aplausos = models.IntegerField('Aplausos', default=0, blank=False, null=False)
     editado = models.BooleanField('Editado', default=False, blank=False, null=False)
-    compartilhado = models.BooleanField('Compartilhado', default=False, blank=False, null=False)
-    usuario = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='posts')
+    compartilhado = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
+    usuario = models.ForeignKey(Perfil, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
 
