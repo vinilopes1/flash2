@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from comum.models import Perfil,Post,Colecao,Comunidade
+from comum.models import Perfil,Post,Colecao,Comunidade,Comentario
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,7 +22,17 @@ class PerfilSerializer(serializers.ModelSerializer):
             'qtd_amigos'
         )
 
+class ComentarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comentario
+        fields = (
+            'id',
+            'descricao',
+            'usuario'
+        )
+
 class PostSerializer(serializers.ModelSerializer):
+    comentarios = ComentarioSerializer(many=True, read_only=True)
     class Meta:
         model = Post
         fields = (
@@ -32,6 +42,7 @@ class PostSerializer(serializers.ModelSerializer):
             'usuario',
             'colecao',
             'compartilhado',
+            'comentarios',
         )
 
 class ColecaoSerializer(serializers.ModelSerializer):

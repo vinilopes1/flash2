@@ -1,10 +1,11 @@
 <form method="post" action="{% url 'comentar_post' post.id %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="create-post">
-        <div align="center" class="row">
-            <div class="col-md-7 col-sm-7">
+        <div class="row">
+            <div class="col-md-9 col-sm-5">
                 <div class="form-group">
-                    <img src="{{post.usuario.foto.url}}" alt="" class="profile-photo-sm pull-left"/>
+                    <img src="{{user.perfil.foto_perfil.url}}" alt="" class="profile-photo-sm pull-left"/>
+                    &nbsp;&nbsp;&nbsp;
                     <input type="text" name="descricao" id="id_descricao" cols="50" rows="1" class="form-control"
                               placeholder="Faça um comentário!">
                 </div>

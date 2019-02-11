@@ -4,7 +4,7 @@ from comum.models import Comentario
 from .forms import PostForm, ColecaoForm, ComentarPostForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
-from comum.models import User, Post, Perfil,Colecao
+from comum.models import User, Post, Perfil, Colecao
 from friendship.models import Friend, Follow, Block
 from friendship.models import FriendshipRequest
 from django.utils import timezone
@@ -19,6 +19,7 @@ from django.db import transaction
 import requests, json
 import os
 
+
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -29,6 +30,7 @@ def exibir_newsfeed(request):
     qtd_amigos = quant_amigos(request.user)
     usuarios_nao_amigo = nao_amigo(request.user)
     posts_amigos = []
+    comentarios = Comentario.objects.all()
 
     for post in posts_all:
         if post.usuario_id == request.user.id:
@@ -36,12 +38,11 @@ def exibir_newsfeed(request):
         else:
             for amigo in amigos:
                 if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo,
-                                                                            request.user) == False and post.usuario.usuario.is_active == True :
+                                                                            request.user) == False and post.usuario.usuario.is_active == True:
                     if post.colecao == None:
                         posts_amigos.append(post)
                     elif request.user.id in Colecao.objects.get(pk=post.colecao.id).seguidores.all():
                         posts_amigos.append(post)
-
 
     for post in posts_all:
         if post.colecao is not None and post not in posts_amigos:
@@ -68,7 +69,15 @@ def exibir_newsfeed(request):
 
     return render(request, "flash_newsfeed.html", {'usuario_logado': usuario_logado, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6],
-                                                   'posts': posts})
+                                                   'posts': posts, 'comentarios': comentarios})
+
+
+def post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    qtd_amigos = quant_amigos(request.user)
+    usuarios_nao_amigo = nao_amigo(request.user)
+    return render(request, "flash_post_detail.html",
+                  {'post': post, 'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo})
 
 
 @login_required(login_url='/login')
@@ -88,6 +97,7 @@ def exibir_minha_timeline(request):
 
     return render(request, "flash_timeline.html", {'usuario': usuario, 'posts': posts})
 
+
 def handle_uploaded_file(file, filename):
     if not os.path.exists('../media_cdn/arquivos/2019/posts'):
         os.mkdir('../media_cdn/arquivos/2019/posts/')
@@ -97,14 +107,13 @@ def handle_uploaded_file(file, filename):
             destination.write(chunk)
 
 
-
 class AdicionaPostView(View):
 
     def get(self, request):
         return render(request, 'flash_newsfeed.html')
 
     def post(self, request):
-        form = PostForm(request.POST,request.FILES)
+        form = PostForm(request.POST, request.FILES)
         if (form.is_valid()):
             dados = form.data
             if str(request.FILES)[19] == 'f':
@@ -112,7 +121,7 @@ class AdicionaPostView(View):
                             criado_em=timezone.now(),
                             atualizado_em=timezone.now(),
                             aplausos=randint(0, 100),
-                            foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
+                            foto="arquivos/2019/posts/%s" % (str(request.FILES['foto'])),
                             video=None,
                             editado=False,
                             compartilhado=None,
@@ -121,18 +130,18 @@ class AdicionaPostView(View):
                             usuario_id=request.user.id)
                 handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
             elif str(request.FILES)[19] == 'v':
-                    post = Post(descricao=dados['descricao'],
-                                criado_em=timezone.now(),
-                                atualizado_em=timezone.now(),
-                                aplausos=randint(0, 100),
-                                video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
-                                foto=None,
-                                editado=False,
-                                compartilhado=None,
-                                colecao_id=None,
-                                comunidade_id=None,
-                                usuario_id=request.user.id)
-                    handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
+                post = Post(descricao=dados['descricao'],
+                            criado_em=timezone.now(),
+                            atualizado_em=timezone.now(),
+                            aplausos=randint(0, 100),
+                            video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
+                            foto=None,
+                            editado=False,
+                            compartilhado=None,
+                            colecao_id=None,
+                            comunidade_id=None,
+                            usuario_id=request.user.id)
+                handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
             else:
                 post = Post(descricao=dados['descricao'],
                             criado_em=timezone.now(),
@@ -149,12 +158,12 @@ class AdicionaPostView(View):
             print(request)
             return redirect('/')
 
-        messages.error(request,'Seu post NÃO foi publicado com êxito.')
+        messages.error(request, 'Seu post NÃO foi publicado com êxito.')
         return redirect('/')
 
 
 @login_required
-def delete_post(request,string , post_id):
+def delete_post(request, string, post_id):
     Post.objects.get(pk=post_id).delete()
     messages.success(request, 'A publicação foi excluída!')
     if string == 'dt':
@@ -166,9 +175,9 @@ def delete_post(request,string , post_id):
 
 
 def lista_amigos(usuario):
-    #friends = Friend.objects.friends(request.user)
+    # friends = Friend.objects.friends(request.user)
     minhas_amizades = Friend.objects.filter(from_user=usuario)
-    amigos =[]
+    amigos = []
     for amizade in minhas_amizades:
         if amizade.to_user.is_active == True:
             amigos.append(amizade.to_user)
@@ -228,7 +237,8 @@ def exibir_flash_friends(request):
     for usuario in usuarios:
         if usuario not in amigos and usuario != request.user:
             if len(FriendshipRequest.objects.filter(from_user_id=request.user.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=request.user.id)) == 0 and usuario.is_active == True:
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id,
+                                                     to_user_id=request.user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
     try:
         page = int(request.GET.get('page', '1'))
@@ -313,13 +323,13 @@ def exibir_usuario(request, usuario_id):
 
         return render(request, "flash_timeline.html",
                       {'usuario': usuario, 'posts': posts, 'eh_amigo': eh_amigo,
-                       'bloqueado': bloqueado, 'solicitei':solicitei})
+                       'bloqueado': bloqueado, 'solicitei': solicitei})
     else:
         posts = []
 
         return render(request, "flash_timeline.html",
                       {'usuario': usuario, 'posts': posts, 'eh_amigo': eh_amigo,
-                       'bloqueado': bloqueado, 'solicitei':solicitei})
+                       'bloqueado': bloqueado, 'solicitei': solicitei})
 
 
 def exibir_about(request, usuario_id):
@@ -362,7 +372,8 @@ def nao_amigo(user):
     for usuario in usuarios:
         if usuario not in amigos and usuario != user:
             if len(FriendshipRequest.objects.filter(from_user_id=user.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=user.id)) == 0 and usuario.is_active == True:
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id,
+                                                     to_user_id=user.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return usuarios_nao_amigo
@@ -386,6 +397,7 @@ def desbloquear_usuario(request, usuario_id):
     Block.objects.remove_block(request.user, usuario)
     return redirect('/usuario/%s' % usuario_id)
 
+
 @login_required
 def buscar_usuario(request):
     form = PostForm(request.POST)
@@ -406,13 +418,16 @@ def buscar_usuario(request):
     return render(request, 'flash_friends_search.html',
                   {'resultados': resultados, 'bloqueados': bloqueados, 'usuario_logado': usuario_logado,
                    'qtd_amigos': qtd_amigos, 'qtd_result': len(resultados)})
+
+
 @login_required
 def exibir_flash_settings(request):
     perfis = todos_perfis(request)
     usuarios_nao_amigo = nao_amigo(request.user)
     qtd_amigos = quant_amigos(request.user)
-    return render(request, 'flash_settings.html',{'perfis': perfis , 'qtd_amigos': qtd_amigos,
+    return render(request, 'flash_settings.html', {'perfis': perfis, 'qtd_amigos': qtd_amigos,
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
+
 
 def definir_super_usuario(request, usuario_id):
     user = User.objects.get(pk=usuario_id)
@@ -442,6 +457,7 @@ def desativar_perfil(request):
     usuario.save()
     return redirect('logout')
 
+
 @login_required
 def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
@@ -449,8 +465,11 @@ def gerenciar_posts(request, usuario_id):
     usuarios_nao_amigo = nao_amigo(request.user)
 
     posts_usuario = Post.objects.filter(usuario_id=usuario_id).order_by('-criado_em')
-    return render(request,'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario,
-                                                                   'qtd_amigos': qtd_amigos, 'usuarios_nao_amigo': usuarios_nao_amigo})
+    return render(request, 'flash_superuser_gerenciar_posts.html', {'usuario': usuario, 'posts_usuario': posts_usuario,
+                                                                    'qtd_amigos': qtd_amigos,
+                                                                    'usuarios_nao_amigo': usuarios_nao_amigo})
+
+
 @login_required
 def gerenciar_flash_friends(request, usuario_id):
     usuario_gerenciado = User.objects.get(pk=usuario_id)
@@ -469,8 +488,10 @@ def gerenciar_flash_friends(request, usuario_id):
 
     for usuario in todos_users:
         if usuario not in amigos and usuario != usuario_gerenciado:
-            if len(FriendshipRequest.objects.filter(from_user_id=usuario_gerenciado.id, to_user_id=usuario.id)) == 0 and len(
-                    FriendshipRequest.objects.filter(from_user_id=usuario.id, to_user_id=usuario_gerenciado.id)) == 0 and usuario.is_active == True:
+            if len(FriendshipRequest.objects.filter(from_user_id=usuario_gerenciado.id,
+                                                    to_user_id=usuario.id)) == 0 and len(
+                    FriendshipRequest.objects.filter(from_user_id=usuario.id,
+                                                     to_user_id=usuario_gerenciado.id)) == 0 and usuario.is_active == True:
                 usuarios_nao_amigo.append(usuario)
 
     return render(request, 'flash_gerenciar_amigos.html',
@@ -480,7 +501,6 @@ def gerenciar_flash_friends(request, usuario_id):
 
 @login_required
 def gerenciar_friends_requests(request, usuario_id):
-
     usuario = User.objects.get(pk=usuario_id)
     solicitacoes = FriendshipRequest.objects.filter(to_user=usuario)
     qtd_amigos = quant_amigos(request.user)
@@ -492,7 +512,8 @@ def gerenciar_friends_requests(request, usuario_id):
 
     return render(request, 'flash_gerenciar_solicitacoes.html',
                   {'minhas_solicitacoes': minhas_solicitacoes, 'qtd_amigos': qtd_amigos,
-                   'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'usuario':usuario})
+                   'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'usuario': usuario})
+
 
 def superuser_desativar_perfil(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
@@ -509,56 +530,51 @@ def superuser_ativar_perfil(request, usuario_id):
     messages.success(request, 'O perfil selecionado foi ativado com sucesso!')
     return redirect('/settings')
 
+
 ##MÓDULO API##
 @login_required
 def exibir_colecoes(request):
     url_colecoes = 'http://127.0.0.1:8000/api/v1/colecoes/'
-    url_usuario = 'http://127.0.0.1:8000/api/v1/perfil/%s'%request.user.id
+    url_usuario = 'http://127.0.0.1:8000/api/v1/perfil/%s' % request.user.id
     colecoes = requests.get(url_colecoes).json()
     usuario = requests.get(url_usuario).json()
     qtd_amigos = usuario['qtd_amigos']
     usuarios_nao_amigo = nao_amigo(request.user)
 
-    return render(request,'flash_colecoes.html',{'colecoes': colecoes, 'usuarios_nao_amigo':usuarios_nao_amigo[:6], 'qtd_amigos':qtd_amigos})
+    return render(request, 'flash_colecoes.html',
+                  {'colecoes': colecoes, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'qtd_amigos': qtd_amigos})
+
 
 @login_required
-def exibir_colecao(request,colecao_id):
+def exibir_colecao(request, colecao_id):
     posts_colecao = []
     seguindo = False
     colecao = colecao_id
-    url = 'http://127.0.0.1:8000/api/v1/colecoes/%s'%colecao
+    url = 'http://127.0.0.1:8000/api/v1/colecoes/%s' % colecao
     colecao = requests.get(url).json()
     for iter in colecao['posts']:
         post = Post.objects.get(pk=iter['id'])
         posts_colecao.append(post)
 
-    if request.user.id in colecao['seguidores']:
-        seguindo = True
+    for seguidor in colecao['seguidores']:
+        if seguidor['id'] == request.user.id:
+            seguindo = True
 
-    #print(usuarios[0])
-    # data = {'username':'teste22',
-    #         'password': 'qwe123',
-    #         'first_name': 'Teste',
-    #         'last_name': '123'}
-
-    #print(data)
-    #requests.post(url,data=data)
-
-    return render(request, 'flash_colecao.html',{'posts': posts_colecao, 'colecao':colecao, 'seguindo': seguindo})
+    return render(request, 'flash_colecao.html', {'posts': posts_colecao, 'colecao': colecao, 'seguindo': seguindo})
 
 
 @login_required
 def add_post_colecao(request, colecao_id):
     url = 'http://127.0.0.1:8000/api/v1/posts/'
-    form = PostForm(request.POST,request.FILES)
+    form = PostForm(request.POST, request.FILES)
 
     if (form.is_valid()):
         dados = form.data
-        data = {'descricao':'%s'%dados['descricao'],
+        data = {'descricao': '%s' % dados['descricao'],
                 'usuario': request.user.id,
                 'colecao': colecao_id,
                 'compartilhado': None}
-        requests.post(url=url,data=data)
+        requests.post(url=url, data=data)
         #  if str(request.FILES)[19] == 'f':
         #     post = Post(descricao=dados['descricao'],
         #                 criado_em=timezone.now(),
@@ -600,19 +616,21 @@ def add_post_colecao(request, colecao_id):
         print(request)
         return redirect('/')
 
-    messages.error(request,'Seu post NÃO foi publicado com êxito.')
+    messages.error(request, 'Seu post NÃO foi publicado com êxito.')
     return redirect('/')
 
 
 def seguir_colecao(request, colecao_id):
     colecao = Colecao.objects.get(pk=colecao_id)
     colecao.seguidores.add(request.user.id)
-    return redirect('/colecao/%s'%colecao_id)
+    return redirect('/colecao/%s' % colecao_id)
+
 
 def deixar_seguir_colecao(request, colecao_id):
     colecao = Colecao.objects.get(pk=colecao_id)
     colecao.seguidores.remove(request.user.id)
-    return redirect('/colecao/%s'%colecao_id)
+    return redirect('/colecao/%s' % colecao_id)
+
 
 def exibir_minhas_colecoes(request):
     url = 'http://127.0.0.1:8000/api/v1/colecoes/'
@@ -623,7 +641,8 @@ def exibir_minhas_colecoes(request):
         if colecao['autor'] == request.user.id:
             minhas_colecoes.append(colecao)
 
-    return render(request, 'flash_minhas_colecoes.html',{'usuario':request.user,'minhas_colecoes':minhas_colecoes})
+    return render(request, 'flash_minhas_colecoes.html', {'usuario': request.user, 'minhas_colecoes': minhas_colecoes})
+
 
 def handle_uploaded_file_foto_colecao(file, filename):
     if not os.path.exists('../media_cdn/imagens/2019/'):
@@ -633,25 +652,26 @@ def handle_uploaded_file_foto_colecao(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
+
 @login_required
 def add_colecao(request):
     url = 'http://127.0.0.1:8000/api/v1/colecoes/'
-    form = ColecaoForm(request.POST,request.FILES)
+    form = ColecaoForm(request.POST, request.FILES)
 
-    if(form.is_valid()):
+    if (form.is_valid()):
         dados = form.data
-        data = {'titulo':'%s'%dados['titulo'],
+        data = {'titulo': '%s' % dados['titulo'],
                 'autor': request.user.id,
-                'foto_perfil': "http://127.0.0.1:8000/media/imagens/2019/%s"%(str(request.FILES['foto'])),
+                'foto_perfil': "http://127.0.0.1:8000/media/imagens/2019/%s" % (str(request.FILES['foto'])),
                 'capa': 'http://127.0.0.1:8000/media/imagens/2019/demo-bg.jpg'
                 }
-        requests.post(url=url,data=data)
+        requests.post(url=url, data=data)
         handle_uploaded_file_foto_colecao(request.FILES['foto'], str(request.FILES['foto']))
 
         messages.success(request, 'Seu coleção foi criada com êxito.')
         return redirect('/')
 
-    messages.error(request,'Algo deu errado.')
+    messages.error(request, 'Algo deu errado.')
     return redirect('/')
 
 
@@ -659,7 +679,7 @@ def compartilhar_post(request, post_compartilhado_id):
     url = 'http://127.0.0.1:8000/api/v1/posts/'
     form = PostForm(request.POST, request.FILES)
 
-    if(form.is_valid()):
+    if (form.is_valid()):
         dados = form.data
         data = {'descricao': '%s' % dados['descricao'],
                 'usuario': request.user.id,
@@ -700,9 +720,9 @@ class CompartilhaPostView(View):
             post.save()
             print(request)
             return redirect('/')
-        messages.error(request,'O post NÃO foi compartilhado com êxito.')
+        messages.error(request, 'O post NÃO foi compartilhado com êxito.')
         return redirect('/')
-    
+
 
 class ComentaPostView(View):
 
@@ -710,29 +730,27 @@ class ComentaPostView(View):
         return render(request, 'flash_newsfeed.html')
 
     def post(self, request, post_comentado_id):
-        post_comentado = Post.objects.get(pk = post_comentado_id)
+        post_comentado = Post.objects.get(pk=post_comentado_id)
         form = ComentarPostForm(request.POST)
         if (form.is_valid()):
             dados = form.data
             comentario = Comentario(descricao=dados['descricao'],
-                        criado_em=timezone.now(),
-                        atualizado_em=timezone.now(),
-                        editado=False,
-                        usuario_id=request.user.id,
-                        post = post_comentado)
+                                    criado_em=timezone.now(),
+                                    atualizado_em=timezone.now(),
+                                    editado=False,
+                                    usuario_id=request.user.id,
+                                    post=post_comentado)
             messages.success(request, 'Seu comentário foi realizado com êxito.')
 
             comentario.save()
             print(request)
             return redirect('/')
 
-        messages.error(request,'Seu comentário NÃO foi realizado com êxito.')
-        return redirect('/')
-
+        messages.error(request, 'Seu comentário NÃO foi realizado com êxito.')
+        return redirect('/post-detail/%s' % post_comentado_id)
 
 
 def exibir_comentarios_post(request, post_comentado_id):
-
     post_comentado = Post.objects.get(pk=post_comentado_id)
     comentarios = []
     comentarios_all = Comentario.objects.all()
@@ -740,4 +758,4 @@ def exibir_comentarios_post(request, post_comentado_id):
         if comentario.post == post_comentado:
             comentarios.append(comentario)
 
-    return redirect( '/', {'comentarios': comentarios})
+    return redirect('/', {'comentarios': comentarios})

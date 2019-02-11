@@ -76,19 +76,56 @@ TimeFlash | Meu perfil flash
                                     <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
                                 </div>
                                 <div class="reaction">
-                                    <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}} </a>
-                                    {%if request.user.id == usuario.id %}
-                                    <a class="btn text-red" href="" data-toggle="modal" data-target="#MyModal"><i
-                                            class="fa fa-trash"></i></a>
-                                    {% endif %}
+                                    <a class="btn" href="{% url 'post_detail' post.id %}">Ver publicação</a>
+                                </div>
+                                <p class="text-muted">{{post.descricao}}</p>
 
-                                </div>
+
+
                                 <div class="line-divider"></div>
-                                <div class="post-text">
-                                    <p>{{post.descricao}} <i
-                                            class="em em-anguished"></i> <i class="em em-anguished"></i> <i
-                                            class="em em-anguished"></i></p>
-                                </div>
+
+                {% if post.compartilhado != None %}
+                    <div class="post-content">
+                        <div class="post-container">
+                            {% if post.compartilhado.colecao == None %}
+                                <h6>Compartilhado de {{post.compartilhado.usuario}} </h6>
+                                <img src="{{post.compartilhado.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                                <div class="post-detail">
+                                    <div class="user-info">
+                                        {% if post.usuario.id == user.id %}
+                                        <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                        {% else %}
+                                        <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                        {% endif %}
+                                        <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                    </div>
+                                    {% else %}
+                                    <h5>Compartilhado de {{post.compartilhado.colecao.titulo}} </h5>
+                                    <img src="{{post.compartilhado.colecao.foto_perfil}}" alt="user"
+                                         class="profile-photo-md pull-left"/>
+                                    <div class="post-detail">
+                                        <div class="user-info">
+                                            <h5><a href="{% url 'exibir_colecao' post.compartilhado.colecao.id %}"
+                                                   class="profile-link">{{post.compartilhado.colecao.titulo}}</a></h5>
+                                            <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                        </div>
+                                        {% endif %}
+
+                                <!--<div class="reaction">-->
+                                    <!--<a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.compartilhado.aplausos}}</a>-->
+                                <!--</div>-->
+                            </div>
+                        </div>
+                        {% if post.compartilhado.foto %}
+                        <img src="{{post.compartilhado.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                        {% endif %}
+                        {% if post.compartilhado.video %}
+                        <video class="post-video" controls>
+                            <source src="{{ post.compartilhado.video.url }}{{ videofile }}" type="video/mp4">
+                        </video>
+                        {% endif %}
+                    </div>
+                {% endif %}
                             </div>
                         </div>
                         {% if post.foto %}

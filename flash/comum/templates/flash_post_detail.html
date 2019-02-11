@@ -1,0 +1,167 @@
+{% extends "flash_base.html" %}
+
+{% block title %}
+News Feed | Rede Social Flash
+{% endblock title %}
+
+{% block body_container %}
+
+<!-- Newsfeed Common Side Bar Left-->
+<div class="col-md-3 static">
+    {% include 'flash_menu_opcoes.html' %}
+</div>
+
+<div class="col-md-7">
+    <!--Alerts-->
+    {% include 'flash_alert_msg.html' %}
+    <div class="post-content">
+        <div class="post-container">
+            {% if post.colecao != None %}
+            <img src="{{post.colecao.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
+            {% else %}
+            <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            {% endif %}
+            <div class="post-detail">
+                <div class="user-info">
+                    {% if post.colecao != None %}
+                    <h5><a href="{% url 'exibir_colecao' post.colecao.id %}" class="profile-link">{{post.colecao.titulo}}</a>
+                    </h5>
+                    <p class="text-muted">{{post.descricao}}</p>
+                    {% else %}
+                    {% if post.usuario.id == user.id %}
+                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.usuario}}</a></h5>
+                    {% else %}
+                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}"
+                           class="profile-link">{{post.usuario}}</a></h5>
+                    {% endif %}
+                    <p class="text-muted">{{post.descricao}}</p>
+                    {% endif %}
+                </div>
+                <div class="reaction">
+                    <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.aplausos}}</a>
+                    <a class="btn text-blue" href="" data-toggle="modal" data-target="#ModalCompartilharPost"><i class="icon ion-ios-redo"></i></a>
+                    {% if post.usuario.id == user.id %}
+                        <a class="btn text-red" href="" data-toggle="modal" data-target="#ModalDeletePost"><i
+                                class="fa fa-trash"></i></a>
+                    {% endif %}
+                </div>
+                <div class="line-divider"></div>
+
+
+                {% if post.compartilhado != None %}
+                <div class="post-content">
+                    <div class="post-container">
+                        {% if post.compartilhado.colecao == None %}
+                        <h5>Compartilhado de {{post.compartilhado.usuario}} </h5>
+                        <img src="{{post.compartilhado.usuario.foto_perfil.url}}" alt="user"
+                             class="profile-photo-md pull-left"/>
+                        <div class="post-detail">
+                            <div class="user-info">
+                                {% if post.usuario.id == user.id %}
+                                <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a>
+                                </h5>
+                                {% else %}
+                                <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a>
+                                </h5>
+                                {% endif %}
+                                <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                            </div>
+                            {% else %}
+                            <h5>Compartilhado de {{post.compartilhado.colecao.titulo}} </h5>
+                            <img src="{{post.compartilhado.colecao.foto_perfil}}" alt="user"
+                                 class="profile-photo-md pull-left"/>
+                            <div class="post-detail">
+                                <div class="user-info">
+                                    <h5><a href="{% url 'exibir_colecao' post.compartilhado.colecao.id %}"
+                                           class="profile-link">{{post.compartilhado.colecao.titulo}}</a></h5>
+                                    <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                </div>
+                                {% endif %}
+
+                                <div class="reaction">
+                                    <a class="btn text-green"><i class="icon ion-thumbsup"></i>
+                                        {{post.compartilhado.aplausos}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% if post.compartilhado.foto %}
+                        <img src="{{post.compartilhado.foto.url}}" alt="post-image"
+                             class="img-responsive post-image"/>
+                        {% endif %}
+                        {% if post.compartilhado.video %}
+                        <video class="post-video" controls>
+                            <source src="{{ post.compartilhado.video.url }}{{ videofile }}" type="video/mp4">
+                        </video>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="post-text">
+                        <p>{% for amigo in meus_amigos %}
+                            {{amigo}}
+                            {% endfor %}
+                            <i class="em em-anguished"></i> <i
+                                    class="em em-anguished"></i> <i class="em em-anguished"></i></p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if post.foto %}
+                <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                {% endif %}
+                {% if post.video %}
+                <video class="post-video" controls>
+                    <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+                </video>
+                {% endif %}
+
+            </div>
+        </div>
+        {% include 'flash_add_comentario.html' %}
+
+        {% include 'flash_list_comentario.html' %}
+
+        </div>
+    <div class="col-md-2 static">
+            {% include 'flash_sugestoes.html' %}
+        </div>
+</div>
+        <!-- Newsfeed Common Side Bar Right-->
+<div id="ModalDeletePost" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Publicação #{{post.id}}</div>
+            <div class="modal-body">Você deseja excluir essa publicação?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                <a href="{% url 'delete_post' 'dt' post.id  %}">
+                    <button type="button" class="btn btn-primary">Deletar publicação</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="ModalCompartilharPost" class="modal fade" role="dialog" onselect="{% url 'exibir_comentarios_post' post.id %}">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 align="center" class="text-blue">Compartilhar post de {{ post.usuario }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'compartilhar_post' post.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="create-post">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <textarea name="descricao" id="id_descricao" cols="50" rows="2" class="form-control"
+                                                  placeholder="Crie uma legenda ?!"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-primary">Compartilhar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+</div>
+{% endblock body_container %}
