@@ -31,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
             'descricao',
             'usuario',
             'colecao',
+            'compartilhado',
         )
 
 class ColecaoSerializer(serializers.ModelSerializer):
