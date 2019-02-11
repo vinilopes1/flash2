@@ -58,17 +58,30 @@
                 {% if post.compartilhado != None %}
                     <div class="post-content">
                         <div class="post-container">
-                            <h5>Compartilhado de {{post.compartilhado.usuario}} </h5>
-                            <img src="{{post.compartilhado.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
-                            <div class="post-detail">
-                                <div class="user-info">
-                                    {% if post.usuario.id == user.id %}
-                                    <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                            {% if post.compartilhado.colecao == None %}
+                                <h5>Compartilhado de {{post.compartilhado.usuario}} </h5>
+                                <img src="{{post.compartilhado.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                                <div class="post-detail">
+                                    <div class="user-info">
+                                        {% if post.usuario.id == user.id %}
+                                        <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                        {% else %}
+                                        <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                        {% endif %}
+                                        <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                    </div>
                                     {% else %}
-                                    <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
-                                    {% endif %}
-                                    <p class="text-muted">{{post.compartilhado.descricao}}</p>
-                                </div>
+                                    <h5>Compartilhado de {{post.compartilhado.colecao.titulo}} </h5>
+                                    <img src="{{post.compartilhado.colecao.foto_perfil}}" alt="user"
+                                         class="profile-photo-md pull-left"/>
+                                    <div class="post-detail">
+                                        <div class="user-info">
+                                            <h5><a href="{% url 'exibir_colecao' post.compartilhado.colecao.id %}"
+                                                   class="profile-link">{{post.compartilhado.colecao.titulo}}</a></h5>
+                                            <p class="text-muted">{{post.compartilhado.descricao}}</p>
+                                        </div>
+                                        {% endif %}
+
                                 <div class="reaction">
                                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.compartilhado.aplausos}}</a>
                                 </div>

@@ -69,11 +69,11 @@ urlpatterns = [
     path('settings/ativar-perfil/<int:usuario_id>', views.superuser_ativar_perfil, name='superuser_ativar_perfil'),
     path('colecoes', views.exibir_colecoes, name='exibir_colecoes'),
     path('colecao/<int:colecao_id>', views.exibir_colecao, name='exibir_colecao'),
-    path('new-post-colecao/', views.AdicionaPostColecaoView.as_view(), name='add_post_colecao'),
+    path('new-post-colecao/<int:colecao_id>', views.add_post_colecao, name='add_post_colecao'),
     path('seguir-colecao/<int:colecao_id>', views.seguir_colecao, name='seguir_colecao'),
     path('deixar-seguir-colecao/<int:colecao_id>', views.deixar_seguir_colecao, name='deixar_seguir_colecao'),
     path('minhas-colecoes', views.exibir_minhas_colecoes, name='exibir_minhas_colecoes'),
-    path('new-colecao/', views.AdicionaColecaoView.as_view(), name='add_colecao'),
+    path('new-colecao/', views.add_colecao , name='add_colecao'),
     path('compartilhar-post/<int:post_compartilhado_id>', views.compartilhar_post, name ='compartilhar_post'),
     path('comentar-post/<int:post_comentado_id>', views.ComentaPostView.as_view(), name ='comentar_post'),
 

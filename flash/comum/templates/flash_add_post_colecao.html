@@ -3,7 +3,7 @@
 
 <!--BODY BOX DE NOVO POSTAGEM-->
 
-<form method="post" action="{% url 'add_post_colecao'%}" enctype="multipart/form-data">
+<form method="post" action="{% url 'add_post_colecao' colecao.id %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="create-post">
         <div class="row">
@@ -13,7 +13,6 @@
                     <textarea name="descricao" id="id_descricao" cols="30" rows="1" class="form-control"
                               placeholder="Que tal um post hein ?!"></textarea>
                 </div>
-                 <input type="text" name="colecao" id="id_colecao" class="form-control" value="{{colecao.id}}" style="visibility: hidden;"/>
             </div>
              <div class="col-md-5 col-sm-5">
                 <div class="tools">

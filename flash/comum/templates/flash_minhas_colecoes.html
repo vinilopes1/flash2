@@ -27,7 +27,7 @@ TimeFlash | Meu perfil flash
                                  class="profile-photo-md pull-left"/>
                             <div class="post-detail">
                                 <div class="user-info">
-                                    <h5><a href="timeline.html" class="profile-link">{{colecao.titulo}}</a></h5>
+                                    <h5><a href="{% url 'exibir_colecao' colecao.id %}" class="profile-link">{{colecao.titulo}}</a></h5>
                                     <p class="text-muted">@{{colecao.nome_autor}}</p>
                                 </div>
                             </div>
