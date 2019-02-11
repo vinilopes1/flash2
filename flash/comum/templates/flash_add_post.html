@@ -7,52 +7,31 @@
     {% csrf_token %}
     <div class="create-post">
         <div class="row">
-            <div class="col-md-6 col-sm-6">
+            <div class="col-md-7 col-sm-7">
                 <div class="form-group">
                     <img src="{{user.perfil.foto_perfil.url}}" alt="" class="profile-photo-md"/>
                     <textarea name="descricao" id="id_descricao" cols="30" rows="1" class="form-control"
                               placeholder="Que tal um post hein ?!"></textarea>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6">
-                <div class="form-group">
-                    <ul class="list-inline">
-                        <li>
-                            <a href="{% url 'buscar_usuario' %}">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <input type="text" class="form-control" placeholder="Buscar usuário" id="id_busca_usuario" name="busca_usuario">
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div align="right" class="col-md-12 col-sm-12">
-                <div class="form-group">
+            <div class="col-md-5 col-sm-5">
+                <div class="tools">
                     <ul class="publishing-tools list-inline">
                         <li>
                            <input type="file" id="id_foto" name="foto" style="display: none;"/>
                             <span id="custom-button-img"><img src="{% static 'images/icon_gallery.png' %}"></span>
                         </li>
+                    </ul>
+                    <ul class="publishing-tools list-inline">
                         <li>
                             <input type="file" id="id_video" name="video" style="display: none;"/>
                             <span id="custom-button-vid"><img src="{% static 'images/icon_video.png' %}"></span>
                         </li>
-                        <li>
-                            <span id="custom-text">Nenhum arquivo selecionado.</span>
-                        </li>
                     </ul>
-                </div>
-            </div>
-            <div align="center" class="col-md-12 col-sm-12">
-                <div class="form-group">
                     <button class="btn btn-primary pull-right">Publish</button>
                 </div>
+                <span id="custom-text">Nenhum arquivo selecionado.</span>
             </div>
         </div>
     </div><!-- Post Create Box End-->
 </form>
-
-
-
