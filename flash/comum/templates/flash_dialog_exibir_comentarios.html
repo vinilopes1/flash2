@@ -1,0 +1,45 @@
+<!--NOVO TAMPLATE (MAYELLE)-->
+
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="This is social network html5 template available in themeforest......"/>
+    <meta name="keywords" content="Social Network, Social Media, Make Friends, Newsfeed, Profile Page"/>
+    <meta name="robots" content="index, follow"/>
+    <title>{% block title %}News Feed | Check what your friends are doing{% endblock title %}</title>
+
+</head>
+<body>
+<div id="ExibirComentarios" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 align="center" class="text-blue">Comentários</h4>
+            </div>
+            <div class="modal-body">
+                {% for comentario in comentarios %}
+                    <div class="post-content">
+                        <div class="post-container">
+                            <div class="post-detail">
+                                <div class="user-info">
+                                    <img src="{{comentario.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                                    <p class="text-muted">{{comentario.usuario.usuario.first_name}} {{comentario.usuario.usuario.last_name}}</p>
+                                    <div align="left">
+                                        <ul class="list-inline">
+                                            <p>{{comentario.descricao}}</p>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

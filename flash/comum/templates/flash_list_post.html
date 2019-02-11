@@ -119,13 +119,13 @@
                         <h5>{{post.usuario}}</a></h5>
                         <ul class="list-inline">
                             <li><p class="text-muted">{{post.descricao}}</p></li>
-                            <li><a class="btn text-blue" href="{% url 'exibir_comentarios_post' post.id %}" data-toggle="modal" data-target="#ExibirComentarios">Ver mais</a></li>
+                            <li><a class="btn text-blue" href="" data-toggle="modal" data-target="#ExibirComentarios">Ver mais</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="CompartilharPost" class="modal fade" role="dialog">
+        <div id="CompartilharPost" class="modal fade" role="dialog" onselect="{% url 'exibir_comentarios_post' post.id %}">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -156,7 +156,24 @@
                         <h4 align="center" class="text-blue">Comentários</h4>
                     </div>
                     <div class="modal-body">
-
+                        <a href="{% url 'exibir_comentarios_post' post.id %}" onselect="{% url 'exibir_comentarios_post' post.id %}"></a>
+                        {% for comentario in comentarios %}
+                            <div class="post-content">
+                                <div class="post-container">
+                                    <div class="post-detail">
+                                        <div class="user-info">
+                                            <img src="{{comentario.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                                            <p class="text-muted">{{comentario.usuario.usuario.first_name}} {{comentario.usuario.usuario.last_name}}</p>
+                                            <div align="left">
+                                                <ul class="list-inline">
+                                                    <p>{{comentario.descricao}}</p>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

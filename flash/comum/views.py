@@ -773,3 +773,16 @@ class ComentaPostView(View):
 
         messages.error(request,'Seu comentário NÃO foi realizado com êxito.')
         return redirect('/')
+
+
+
+def exibir_comentarios_post(request, post_comentado_id):
+
+    post_comentado = Post.objects.get(pk=post_comentado_id)
+    comentarios = []
+    comentarios_all = Comentario.objects.all()
+    for comentario in comentarios_all:
+        if comentario.post == post_comentado:
+            comentarios.append(comentario)
+
+    return redirect( '/', {'comentarios': comentarios})
