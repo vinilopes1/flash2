@@ -557,7 +557,8 @@ class AdicionaPostColecaoView(View):
             dados = form.data
             data = {'descricao':'%s'%dados['descricao'],
                     'usuario': request.user.id,
-                    'colecao': '%s'%dados['colecao']}
+                    'colecao': '%s'%dados['colecao'],
+                    'compartilhado': None}
             requests.post(url=url,data=data)
             #  if str(request.FILES)[19] == 'f':
             #     post = Post(descricao=dados['descricao'],
@@ -698,6 +699,26 @@ class AdicionaColecaoView(View):
         messages.error(request,'Algo deu errado.')
         return redirect('/')
 
+
+def compartilhar_post(request, post_compartilhado_id):
+    url = 'http://127.0.0.1:8000/api/v1/posts/'
+    form = PostForm(request.POST, request.FILES)
+
+    if(form.is_valid()):
+        dados = form.data
+        data = {'descricao': '%s' % dados['descricao'],
+                'usuario': request.user.id,
+                'colecao': None,
+                'compartilhado': post_compartilhado_id}
+
+        requests.post(url=url, data=data)
+        messages.success(request, 'Post compartilhado com sucesso!.')
+        return redirect('/')
+
+    messages.error(request, 'O post NÃO foi compartilhado com êxito.')
+    return redirect('/')
+
+
 class CompartilhaPostView(View):
     @login_required
     def get(self, request):
@@ -706,6 +727,7 @@ class CompartilhaPostView(View):
     @login_required
     def post(self, request, post_compartilhado_id):
         form = PostForm(request.POST)
+        print(form)
         if (form.is_valid()):
             dados = form.data
             post = Post(descricao=dados['descricao'],
