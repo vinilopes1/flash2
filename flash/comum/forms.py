@@ -31,3 +31,8 @@ class EditarPerfilForm(forms.Form):
     telefone = forms.CharField(required=True)
     foto_perfil = forms.ImageField(required=False)
     foto_capa = forms.ImageField(required=False)
+
+
+class ComentarPostForm(forms.Form):
+
+    descricao = forms.CharField(required=True)

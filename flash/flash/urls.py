@@ -75,5 +75,6 @@ urlpatterns = [
     path('minhas-colecoes', views.exibir_minhas_colecoes, name='exibir_minhas_colecoes'),
     path('new-colecao/', views.AdicionaColecaoView.as_view(), name='add_colecao'),
     path('compartilhar-post/<int:post_compartilhado_id>', views.CompartilhaPostView.as_view(), name = 'compartilhar_post'),
+    path('comentar-post/<int:post_comentado_id>', views.ComentaPostView.as_view(), name = 'comentar_post'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

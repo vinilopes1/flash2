@@ -75,7 +75,7 @@ class Comentario(Base):
     descricao = models.CharField('Descricao', max_length=256, blank=False, null=False)
     usuario = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='meus_comentarios')
     editado = models.BooleanField('Editado', default=False, null=False, blank=False)
-    post = models.ForeignKey(Post, blank=False, null=False, on_delete = models.CASCADE, related_name = 'comentarios')
+    post = models.ForeignKey(Post, blank=True, null=True, on_delete = models.CASCADE, related_name = 'comentarios')
 
     class Meta:
         verbose_name = 'Comentário'

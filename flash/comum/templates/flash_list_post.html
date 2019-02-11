@@ -72,14 +72,14 @@
                                 <div class="reaction">
                                     <a class="btn text-green"><i class="icon ion-thumbsup"></i> {{post.compartilhado.aplausos}}</a>
                                 </div>
-                                <div class="line-divider"></div>
-                                <div class="post-text">
-                                    <p>{% for amigo in meus_amigos %}
-                                        {{amigo}}
-                                        {% endfor %}
-                                        <i class="em em-anguished"></i> <i
-                                                class="em em-anguished"></i> <i class="em em-anguished"></i></p>
-                                </div>
+                                <!--<div class="line-divider"></div>-->
+                                <!--<div class="post-text">-->
+                                    <!--<p>{% for amigo in meus_amigos %}-->
+                                        <!--{{amigo}}-->
+                                        <!--{% endfor %}-->
+                                        <!--<i class="em em-anguished"></i> <i-->
+                                                <!--class="em em-anguished"></i> <i class="em em-anguished"></i></p>-->
+                                <!--</div>-->
                             </div>
                         </div>
                         {% if post.compartilhado.foto %}
@@ -110,6 +110,7 @@
                 <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
             </video>
         {% endif %}
+        {% include 'flash_add_comentario.html' %}
         </div>
         <div id="CompartilharPost" class="modal fade" role="dialog">
             <div class="modal-dialog">

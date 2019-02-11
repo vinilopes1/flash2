@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from .forms import PostForm, ColecaoForm
+
+from comum.models import Comentario
+from .forms import PostForm, ColecaoForm, ComentarPostForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
 from comum.models import User, Post, Perfil
@@ -94,11 +96,9 @@ def handle_uploaded_file(file, filename):
 
 class AdicionaPostView(View):
 
-    @login_required
     def get(self, request):
         return render(request, 'flash_newsfeed.html')
 
-    @login_required
     def post(self, request):
         form = PostForm(request.POST,request.FILES)
         if (form.is_valid()):
@@ -724,4 +724,30 @@ class CompartilhaPostView(View):
             print(request)
             return redirect('/')
         messages.error(request,'O post NÃO foi compartilhado com êxito.')
+        return redirect('/')
+    
+
+class ComentaPostView(View):
+
+    def get(self, request):
+        return render(request, 'flash_newsfeed.html')
+
+    def post(self, request, post_comentado_id):
+        post_comentado = Post.objects.get(pk = post_comentado_id)
+        form = ComentarPostForm(request.POST)
+        if (form.is_valid()):
+            dados = form.data
+            comentario = Comentario(descricao=dados['descricao'],
+                        criado_em=timezone.now(),
+                        atualizado_em=timezone.now(),
+                        editado=False,
+                        usuario_id=request.user.id,
+                        post = post_comentado)
+            messages.success(request, 'Seu comentário foi realizado com êxito.')
+
+            comentario.save()
+            print(request)
+            return redirect('/')
+
+        messages.error(request,'Seu comentário NÃO foi realizado com êxito.')
         return redirect('/')
