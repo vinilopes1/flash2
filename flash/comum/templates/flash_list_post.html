@@ -101,40 +101,29 @@
                     </div>
                 {% endif %}
                 </div>
-            </div>
-            {% if post.foto %}
-                <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
-            {% endif %}
-            {% if post.video %}
-                <video class="post-video" controls>
-                    <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
-                </video>
-            {% endif %}
-                {% include 'flash_add_comentario.html' %}
-                <!--<div class="post-content">-->
-                    <!--<h4>Comentários</h4>-->
-                    <!---->
-                        <!--<h5>{{post.usuario}}</h5>-->
-                        <!--<ul class="list-inline">-->
-                            <!--<li><p class="text-muted">{{post.descricao}}</p></li>-->
-                            <!--<li><a href="#">Ver mais</a></li>-->
-                        <!--</ul>-->
-                <!--</div>-->
 
-                <h4 align="center">Comentários</h4>
-                <div class="post-content">
-                    <div class="post-container">
-                        <div class="post-detail">
-                            <div class="user-info">
-                                <h5>{{post.usuario}}</a></h5>
-                                <ul class="list-inline">
-                                    <li><p class="text-muted">{{post.descricao}}</p></li>
-                                    <li><a href="#">Ver mais</a></li>
-                                </ul>
-                            </div>
-                        </div>
+                {% if post.foto %}
+                    <img src="{{post.foto.url}}" alt="post-image" class="img-responsive post-image"/>
+                {% endif %}
+                {% if post.video %}
+                    <video class="post-video" controls>
+                        <source src="{{ post.video.url }}{{ videofile }}" type="video/mp4">
+                    </video>
+                {% endif %}
+                <div class="post-detail">
+                    <div class="user-info">
+                        {% include 'flash_add_comentario.html' %}
+                    </div>
+                    <h4 align="center">Comentários</h4>
+                    <div class="user-info">
+                        <h5>{{post.usuario}}</a></h5>
+                        <ul class="list-inline">
+                            <li><p class="text-muted">{{post.descricao}}</p></li>
+                            <li><a class="btn text-blue" href="{% url 'exibir_comentarios_post' post.id %}" data-toggle="modal" data-target="#ExibirComentarios">Ver mais</a></li>
+                        </ul>
                     </div>
                 </div>
+            </div>
         </div>
         <div id="CompartilharPost" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -156,6 +145,18 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                             <button class="btn btn-primary">Compartilhar</button>
                         </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ExibirComentarios" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 align="center" class="text-blue">Comentários</h4>
+                    </div>
+                    <div class="modal-body">
+
                     </div>
                 </div>
             </div>
