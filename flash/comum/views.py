@@ -4,7 +4,7 @@ from comum.models import Comentario
 from .forms import PostForm, ColecaoForm, ComentarPostForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import View
-from comum.models import User, Post, Perfil
+from comum.models import User, Post, Perfil,Colecao
 from friendship.models import Friend, Follow, Block
 from friendship.models import FriendshipRequest
 from django.utils import timezone
@@ -36,8 +36,12 @@ def exibir_newsfeed(request):
         else:
             for amigo in amigos:
                 if post.usuario_id == amigo.id and Block.objects.is_blocked(amigo,
-                                                                            request.user) == False and post.usuario.usuario.is_active == True:
-                    posts_amigos.append(post)
+                                                                            request.user) == False and post.usuario.usuario.is_active == True :
+                    if post.colecao == None:
+                        posts_amigos.append(post)
+                    elif request.user.id in Colecao.objects.get(pk=post.colecao.id).seguidores.all():
+                        posts_amigos.append(post)
+
 
     for post in posts_all:
         if post.colecao is not None and post not in posts_amigos:
@@ -524,8 +528,8 @@ def exibir_colecao(request,colecao_id):
     colecao = colecao_id
     url = 'http://127.0.0.1:8000/api/v1/colecoes/%s'%colecao
     colecao = requests.get(url).json()
-    for id in colecao['posts']:
-        post = Post.objects.get(pk=id)
+    for iter in colecao['posts']:
+        post = Post.objects.get(pk=iter['id'])
         posts_colecao.append(post)
 
     if request.user.id in colecao['seguidores']:
@@ -543,66 +547,61 @@ def exibir_colecao(request,colecao_id):
     return render(request, 'flash_colecao.html',{'posts': posts_colecao, 'colecao':colecao, 'seguindo': seguindo})
 
 
-class AdicionaPostColecaoView(View):
-    @login_required
-    def get(self, request):
-        return render(request, 'flash_colecao.html')
+@login_required
+def add_post_colecao(request, colecao_id):
+    url = 'http://127.0.0.1:8000/api/v1/posts/'
+    form = PostForm(request.POST,request.FILES)
 
-    @login_required
-    def post(self, request):
-        url = 'http://127.0.0.1:8000/api/v1/posts/'
-        form = PostForm(request.POST,request.FILES)
+    if (form.is_valid()):
+        dados = form.data
+        data = {'descricao':'%s'%dados['descricao'],
+                'usuario': request.user.id,
+                'colecao': colecao_id,
+                'compartilhado': None}
+        requests.post(url=url,data=data)
+        #  if str(request.FILES)[19] == 'f':
+        #     post = Post(descricao=dados['descricao'],
+        #                 criado_em=timezone.now(),
+        #                 atualizado_em=timezone.now(),
+        #                 aplausos=randint(0, 100),
+        #                 foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
+        #                 video=None,
+        #                 editado=False,
+        #                 compartilhado=False,
+        #                 colecao_id=None,
+        #                 comunidade_id=None,
+        #                 usuario_id=request.user.id)
+        #     handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
+        # elif str(request.FILES)[19] == 'v':
+        #         post = Post(descricao=dados['descricao'],
+        #                     criado_em=timezone.now(),
+        #                     atualizado_em=timezone.now(),
+        #                     aplausos=randint(0, 100),
+        #                     video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
+        #                     foto=None,
+        #                     editado=False,
+        #                     compartilhado=False,
+        #                     colecao_id=None,
+        #                     comunidade_id=None,
+        #                     usuario_id=request.user.id)
+        #         handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
+        # else:
+        #     post = Post(descricao=dados['descricao'],
+        #                 criado_em=timezone.now(),
+        #                 atualizado_em=timezone.now(),
+        #                 aplausos=randint(0, 100),
+        #                 editado=False,
+        #                 compartilhado=False,
+        #                 colecao_id=None,
+        #                 comunidade_id=None,
+        #                 usuario_id=request.user.id)
+        messages.success(request, 'Seu post foi publicado com êxito.')
 
-        if (form.is_valid()):
-            dados = form.data
-            data = {'descricao':'%s'%dados['descricao'],
-                    'usuario': request.user.id,
-                    'colecao': '%s'%dados['colecao'],
-                    'compartilhado': None}
-            requests.post(url=url,data=data)
-            #  if str(request.FILES)[19] == 'f':
-            #     post = Post(descricao=dados['descricao'],
-            #                 criado_em=timezone.now(),
-            #                 atualizado_em=timezone.now(),
-            #                 aplausos=randint(0, 100),
-            #                 foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
-            #                 video=None,
-            #                 editado=False,
-            #                 compartilhado=False,
-            #                 colecao_id=None,
-            #                 comunidade_id=None,
-            #                 usuario_id=request.user.id)
-            #     handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
-            # elif str(request.FILES)[19] == 'v':
-            #         post = Post(descricao=dados['descricao'],
-            #                     criado_em=timezone.now(),
-            #                     atualizado_em=timezone.now(),
-            #                     aplausos=randint(0, 100),
-            #                     video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
-            #                     foto=None,
-            #                     editado=False,
-            #                     compartilhado=False,
-            #                     colecao_id=None,
-            #                     comunidade_id=None,
-            #                     usuario_id=request.user.id)
-            #         handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
-            # else:
-            #     post = Post(descricao=dados['descricao'],
-            #                 criado_em=timezone.now(),
-            #                 atualizado_em=timezone.now(),
-            #                 aplausos=randint(0, 100),
-            #                 editado=False,
-            #                 compartilhado=False,
-            #                 colecao_id=None,
-            #                 comunidade_id=None,
-            #                 usuario_id=request.user.id)
-            messages.success(request, 'Seu post foi publicado com êxito.')
-
-            print(request)
-            return redirect('/')
-
-        messages.error(request,'Seu post NÃO foi publicado com êxito.')
+        print(request)
         return redirect('/')
+
+    messages.error(request,'Seu post NÃO foi publicado com êxito.')
+    return redirect('/')
 
 
 def seguir_colecao(request, colecao_id):
@@ -634,70 +633,26 @@ def handle_uploaded_file_foto_colecao(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
-class AdicionaColecaoView(View):
+@login_required
+def add_colecao(request):
+    url = 'http://127.0.0.1:8000/api/v1/colecoes/'
+    form = ColecaoForm(request.POST,request.FILES)
 
-    @login_required
-    def get(self, request):
-        return render(request, 'flash_minhas_colecoes.html')
+    if(form.is_valid()):
+        dados = form.data
+        data = {'titulo':'%s'%dados['titulo'],
+                'autor': request.user.id,
+                'foto_perfil': "http://127.0.0.1:8000/media/imagens/2019/%s"%(str(request.FILES['foto'])),
+                'capa': 'http://127.0.0.1:8000/media/imagens/2019/demo-bg.jpg'
+                }
+        requests.post(url=url,data=data)
+        handle_uploaded_file_foto_colecao(request.FILES['foto'], str(request.FILES['foto']))
 
-    @login_required
-    def post(self, request):
-        url = 'http://127.0.0.1:8000/api/v1/colecoes/'
-        form = ColecaoForm(request.POST,request.FILES)
-
-        if (form.is_valid()):
-            dados = form.data
-            data = {'titulo':'%s'%dados['titulo'],
-                    'autor': request.user.id,
-                    'foto_perfil': "http://127.0.0.1:8000/media/imagens/2019/%s"%(str(request.FILES['foto'])),
-                    'capa': 'http://127.0.0.1:8000/media/imagens/2019/demo-bg.jpg'
-                    }
-            requests.post(url=url,data=data)
-            handle_uploaded_file_foto_colecao(request.FILES['foto'], str(request.FILES['foto']))
-
-            #  if str(request.FILES)[19] == 'f':
-            #     post = Post(descricao=dados['descricao'],
-            #                 criado_em=timezone.now(),
-            #                 atualizado_em=timezone.now(),
-            #                 aplausos=randint(0, 100),
-            #                 foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
-            #                 video=None,
-            #                 editado=False,
-            #                 compartilhado=False,
-            #                 colecao_id=None,
-            #                 comunidade_id=None,
-            #                 usuario_id=request.user.id)
-            #     handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
-            # elif str(request.FILES)[19] == 'v':
-            #         post = Post(descricao=dados['descricao'],
-            #                     criado_em=timezone.now(),
-            #                     atualizado_em=timezone.now(),
-            #                     aplausos=randint(0, 100),
-            #                     video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
-            #                     foto=None,
-            #                     editado=False,
-            #                     compartilhado=False,
-            #                     colecao_id=None,
-            #                     comunidade_id=None,
-            #                     usuario_id=request.user.id)
-            #         handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
-            # else:
-            #     post = Post(descricao=dados['descricao'],
-            #                 criado_em=timezone.now(),
-            #                 atualizado_em=timezone.now(),
-            #                 aplausos=randint(0, 100),
-            #                 editado=False,
-            #                 compartilhado=False,
-            #                 colecao_id=None,
-            #                 comunidade_id=None,
-            #                 usuario_id=request.user.id)
-            messages.success(request, 'Seu coleção foi criada com êxito.')
-
-            print(request)
-            return redirect('/')
-
-        messages.error(request,'Algo deu errado.')
+        messages.success(request, 'Seu coleção foi criada com êxito.')
         return redirect('/')
+
+    messages.error(request,'Algo deu errado.')
+    return redirect('/')
 
 
 def compartilhar_post(request, post_compartilhado_id):
