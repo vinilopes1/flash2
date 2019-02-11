@@ -12,21 +12,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.views import logout_then_login
+from rest_framework.authtoken.models import Token
 import os
-
-# def logar(request):
-#     username = request.POST['username']
-#     password = request.POST['password']
-#     user = authenticate(request, username=username, password=password)
-#     if user is not None:
-#         # usuario = User.objects.get(username=username)
-#         # usuario.is_active = True
-#         # usuario.save()
-#         login(request, user)
-#         redirect('/index/')
-#     else:
-#         messages.error(request, 'username or password not correct')
-#         return redirect('login')
+import requests
 
 def login(request):
     if request.method == 'POST':
@@ -37,6 +26,7 @@ def login(request):
         match_check = check_password(password,usuario.password)
         if not match_check:
             messages.error(request, 'Usuário e/ou senha incorretos')
+
             return redirect('login')
         else:
             if usuario.is_active == False:
@@ -45,21 +35,24 @@ def login(request):
                 usuario.save()
             user = authenticate(username=username, password=password)
             if user is not None:
+                get_token(request)
                 auth_login(request, user)
                 return redirect('/')
-
 
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
+
+def logout(request):
+    Token.objects.get(user_id=request.user.id).delete()
+    return logout_then_login(request,login_url='/login')
+
 
 def change_password(request):
     return HttpResponseRedirect('/account/password-reset')
 
 def add_user(request):
     return render(request,'flash_add_user.html')
-
-
 
 class CadastraPerfilView(View):
 
@@ -149,3 +142,19 @@ def handle_uploaded_file(file, filename):
     with open('../media_cdn/imagens/2019/' + filename, 'wb+') as destination:
         for chunk in file.chunks():
             destination.write(chunk)
+
+def get_token(request):
+
+    body = {'username': request.POST['username'],
+            'password': request.POST['password']}
+
+    url = 'http://127.0.0.1:8000/api/v1/token/'
+    #
+    headers = {"Content-Type": "application/json",
+               "Accept-Language": "en",
+               "Date": "Wed, 19 Dec 2018 19:46:12 GMT",
+               "X-Api-Key": ""}
+
+    token = requests.post(url, json=body, headers=headers).json()['token']
+
+    return token
