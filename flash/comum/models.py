@@ -63,6 +63,7 @@ class Post(Base):
     usuario = models.ForeignKey(Perfil, default=None, null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     colecao = models.ForeignKey('Colecao', null=True, blank=True, on_delete=models.CASCADE, related_name='posts')
     comunidade = models.ForeignKey('Comunidade', null=True, blank=True, on_delete=models.CASCADE, related_name='comunidades')
+    usuario_marcado = models.ManyToManyField(Perfil,default=None, null=True, blank=True, related_name='post')
 
     def get_id(self):
         return self.id
@@ -76,6 +77,7 @@ class Comentario(Base):
     usuario = models.ForeignKey(Perfil, null=False, blank=False, on_delete=models.CASCADE, related_name='meus_comentarios')
     editado = models.BooleanField('Editado', default=False, null=False, blank=False)
     post = models.ForeignKey(Post, blank=True, null=True, on_delete = models.CASCADE, related_name = 'comentarios')
+    usuario_marcado = models.ManyToManyField(Perfil, default=None, blank=True, null=True, related_name='comentario')
 
     class Meta:
         verbose_name = 'Comentário'
