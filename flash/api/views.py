@@ -3,7 +3,9 @@ from rest_framework.reverse import reverse
 from rest_framework import generics
 from comum.models import Post,Perfil,Comunidade,Colecao
 from .serializers import *
+from .permissions import IsFriend
 from rest_framework import authentication,permissions
+from friendship.models import FriendshipRequest
 
 class DefaultMixin(object):
 
@@ -31,11 +33,12 @@ class ApiRoot(generics.GenericAPIView):
             'comunidades': reverse(ComunidadeList.name,
                                 request=request),
             'colecoes': reverse(ColecaoList.name,
+                                request=request),
+            'friendship_requests': reverse(FriendshipRequestList.name,
                                 request=request)
-
         })
 
-class PostList(generics.ListCreateAPIView):
+class PostList(DefaultMixin, generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     name = 'post-list'
@@ -84,4 +87,23 @@ class ColecaoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Colecao.objects.all()
     serializer_class = ColecaoSerializer
     name = 'colecao-detail'
+
+class FriendshipRequestList(generics.ListCreateAPIView):
+    queryset = FriendshipRequest.objects.all()
+    serializer_class = FriendshipRequestSerializer
+    name = 'friendship-request-list'
+
+class FriendshipRequestDetail(DefaultMixin, generics.RetrieveUpdateDestroyAPIView):
+    queryset = FriendshipRequest.objects.all()
+    serializer_class = FriendshipRequestSerializer
+    name = 'friendship-request-detail'
+    #
+    # authentication_classes = (
+    #     authentication.TokenAuthentication,
+    # )
+    #
+    # permission_classes = (
+    #     IsFriend,
+    # )
+    #
 

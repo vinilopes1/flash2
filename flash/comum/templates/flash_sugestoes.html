@@ -8,7 +8,7 @@
         <h5>Sem sugestões de amizade.</h5>
         {% else %}
             {% for usuario in usuarios_nao_amigo %}
-            <img src="{{usuario.perfil.foto_perfil.url}}" alt="" class="profile-photo-sm pull-left"/>
+            <img src="{{usuario.perfil.foto_perfil}}" alt="" class="profile-photo-sm pull-left"/>
             <div>
                 <h5><a href="{% url 'exibir_usuario' usuario.id %}">{{usuario.first_name}}
                     {{usuario.last_name}}</a></h5>

@@ -6,7 +6,7 @@
         <label>Foto do Perfil: </label>
         <div class="form-group">
             <div class="profile-info" align="left">
-                <img src="{{user.perfil.foto_perfil.url}}" alt="foto perfil" class="img-responsive profile-photo"/>
+                <img src="{{user.perfil.foto_perfil}}" alt="foto perfil" class="img-responsive profile-photo"/>
                 <input type="file" id="id_foto_perfil" name="foto_perfil" value="{{ user.perfil.foto_perfil.url }}">
             </div>
         </div>
@@ -14,8 +14,8 @@
         <label>Foto da Capa: </label>
         <div class="form-group">
             <div class="profile-info" align="left">
-                <img src="{{user.perfil.capa.url}}" alt="foto perfil" class="img-responsive profile-photo"/>
-                <input  type="file" id="id_foto_capa" name="foto_capa" value="{{ user.perfil.capa.url }}">
+                <img src="{{user.perfil.capa}}" alt="foto perfil" class="img-responsive profile-photo"/>
+                <input type="file" id="id_foto_capa" name="foto_capa" value="{{ user.perfil.capa.url }}">
             </div>
         </div>
 

@@ -107,62 +107,6 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
-
-class AdicionaPostView(View):
-
-    def get(self, request):
-        return render(request, 'flash_newsfeed.html')
-
-    def post(self, request):
-        form = PostForm(request.POST, request.FILES)
-        if (form.is_valid()):
-            dados = form.data
-            if str(request.FILES)[19] == 'f':
-                post = Post(descricao=dados['descricao'],
-                            criado_em=timezone.now(),
-                            atualizado_em=timezone.now(),
-                            aplausos=randint(0, 100),
-                            foto="arquivos/2019/posts/%s" % (str(request.FILES['foto'])),
-                            video=None,
-                            editado=False,
-                            compartilhado=None,
-                            colecao_id=None,
-                            comunidade_id=None,
-                            usuario_id=request.user.id)
-                handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
-            elif str(request.FILES)[19] == 'v':
-                post = Post(descricao=dados['descricao'],
-                            criado_em=timezone.now(),
-                            atualizado_em=timezone.now(),
-                            aplausos=randint(0, 100),
-                            video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
-                            foto=None,
-                            editado=False,
-                            compartilhado=None,
-                            colecao_id=None,
-                            comunidade_id=None,
-                            usuario_id=request.user.id)
-                handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
-            else:
-                post = Post(descricao=dados['descricao'],
-                            criado_em=timezone.now(),
-                            atualizado_em=timezone.now(),
-                            aplausos=randint(0, 100),
-                            editado=False,
-                            compartilhado=None,
-                            colecao_id=None,
-                            comunidade_id=None,
-                            usuario_id=request.user.id)
-                messages.success(request, 'Seu post foi publicado com êxito.')
-
-            post.save()
-            print(request)
-            return redirect('/')
-
-        messages.error(request, 'Seu post NÃO foi publicado com êxito.')
-        return redirect('/')
-
-
 @login_required
 def delete_post(request, string, post_id):
     Post.objects.get(pk=post_id).delete()
@@ -210,15 +154,6 @@ def aceitar_pedido(request, solicitacao_id):
     friend_request.accept()
     messages.success(request, 'Você e %s agora são amigos(a)!' % friend_request.from_user.first_name)
     return redirect('/requests')
-
-
-@transaction.atomic(using=None, savepoint=True)
-def rejeitar_pedido(request, solicitacao_id):
-    friend_request = FriendshipRequest.objects.get(pk=solicitacao_id)
-    friend_request.reject()
-    FriendshipRequest.delete(friend_request)
-    return render(request, 'flash_newsfeed.html')
-
 
 @login_required
 def exibir_flash_friends(request):
@@ -452,13 +387,6 @@ def definir_usuario_comum(request, usuario_id):
                                                    'usuarios_nao_amigo': usuarios_nao_amigo[:6]})
 
 
-def desativar_perfil(request):
-    usuario = User.objects.get(pk=request.user.id)
-    usuario.is_active = False
-    usuario.save()
-    return redirect('logout')
-
-
 @login_required
 def gerenciar_posts(request, usuario_id):
     usuario = User.objects.get(pk=usuario_id)
@@ -531,8 +459,62 @@ def superuser_ativar_perfil(request, usuario_id):
     messages.success(request, 'O perfil selecionado foi ativado com sucesso!')
     return redirect('/settings')
 
+@transaction.atomic(using=None, savepoint=True)
+def rejeitar_pedido(request, solicitacao_id):
+    url = 'http://127.0.0.1:8000/api/v1/friendship-requests/%s'%solicitacao_id
+    token = Token.objects.get(user_id=request.user.id)
+    auth_token = "token %s"%token
+
+    headers = {"Content-Type": "application/json",
+               "Authorization": auth_token}
+
+    print(headers)
+
+    requests.delete(url,headers=headers)
+    messages.success(request,"A solicitação foi rejeitada com sucesso!")
+
+    return redirect('/')
+
 
 ##MÓDULO API##
+
+#POST WITH TOKEN
+class AdicionaPostView(View):
+
+    def get(self, request):
+        return render(request, 'flash_newsfeed.html')
+
+    def post(self, request):
+        url = 'http://127.0.0.1:8000/api/v1/posts/'
+        token = Token.objects.get(user_id=request.user.id)
+        auth_token = 'token %s'%token
+
+        headers = {'Content-Type': 'application/json',
+                   'Authorization': auth_token}
+
+        form = PostForm(request.POST, request.FILES)
+        if (form.is_valid()):
+            dados = form.data
+
+            data = {'descricao': '%s' % dados['descricao'],
+                    'usuario': request.user.id,
+                    'colecao': None,
+                    'compartilhado': None}
+
+            requests.post(url,json=data,headers=headers)
+
+            messages.success(request, 'Seu post foi publicado com êxito.')
+
+            #post.save()
+            print(request)
+            return redirect('/')
+
+        messages.error(request, 'Seu post NÃO foi publicado com êxito.')
+        return redirect('/')
+
+
+#TELEGRAM
+#GET WITH TOKEN
 @login_required
 def exibir_colecoes(request):
     usuarios_nao_amigo = nao_amigo(request.user)
@@ -551,13 +533,49 @@ def exibir_colecoes(request):
                   {'colecoes': colecoes, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'qtd_amigos': qtd_amigos})
 
 
+def compartilhar_post(request, post_compartilhado_id):
+    url = 'http://127.0.0.1:8000/api/v1/posts/'
+    token = Token.objects.get(user_id=request.user.id)
+    auth_token = 'token %s' % token
+
+    headers = {'Content-Type': 'application/json',
+               'Authorization': auth_token}
+    form = PostForm(request.POST, request.FILES)
+
+    if (form.is_valid()):
+        dados = form.data
+        data = {'descricao': '%s' % dados['descricao'],
+                'usuario': request.user.id,
+                'colecao': None,
+                'compartilhado': post_compartilhado_id}
+
+        requests.post(url=url, json=data, headers=headers)
+        messages.success(request, 'Post compartilhado com sucesso!.')
+        return redirect('/')
+
+    messages.error(request, 'O post NÃO foi compartilhado com êxito.')
+    return redirect('/')
+
+#PATCH
+def desativar_perfil(request):
+    url = 'http://127.0.0.1:8000/api/v1/usuarios/%s' % request.user.id
+
+    data = {
+        'is_active': False
+    }
+    requests.patch(url,data)
+
+    return redirect('logout')
+
+#GET IN COLEÇÕES
 @login_required
 def exibir_colecao(request, colecao_id):
     posts_colecao = []
     seguindo = False
     colecao = colecao_id
-    url = 'http://127.0.0.1:8000/api/v1/colecoes/%s' % colecao
-    colecao = requests.get(url).json()
+    url_colecao = 'http://127.0.0.1:8000/api/v1/colecoes/%s' % colecao
+    colecao = requests.get(url_colecao).json()
+
     for iter in colecao['posts']:
         post = Post.objects.get(pk=iter['id'])
         posts_colecao.append(post)
@@ -568,7 +586,7 @@ def exibir_colecao(request, colecao_id):
 
     return render(request, 'flash_colecao.html', {'posts': posts_colecao, 'colecao': colecao, 'seguindo': seguindo})
 
-
+#POST
 @login_required
 def add_post_colecao(request, colecao_id):
     url = 'http://127.0.0.1:8000/api/v1/posts/'
@@ -581,42 +599,6 @@ def add_post_colecao(request, colecao_id):
                 'colecao': colecao_id,
                 'compartilhado': None}
         requests.post(url=url, data=data)
-        #  if str(request.FILES)[19] == 'f':
-        #     post = Post(descricao=dados['descricao'],
-        #                 criado_em=timezone.now(),
-        #                 atualizado_em=timezone.now(),
-        #                 aplausos=randint(0, 100),
-        #                 foto="arquivos/2019/posts/%s"%(str(request.FILES['foto'])),
-        #                 video=None,
-        #                 editado=False,
-        #                 compartilhado=False,
-        #                 colecao_id=None,
-        #                 comunidade_id=None,
-        #                 usuario_id=request.user.id)
-        #     handle_uploaded_file(request.FILES['foto'], str(request.FILES['foto']))
-        # elif str(request.FILES)[19] == 'v':
-        #         post = Post(descricao=dados['descricao'],
-        #                     criado_em=timezone.now(),
-        #                     atualizado_em=timezone.now(),
-        #                     aplausos=randint(0, 100),
-        #                     video="arquivos/2019/posts/%s" % (str(request.FILES['video'])),
-        #                     foto=None,
-        #                     editado=False,
-        #                     compartilhado=False,
-        #                     colecao_id=None,
-        #                     comunidade_id=None,
-        #                     usuario_id=request.user.id)
-        #         handle_uploaded_file(request.FILES['video'], str(request.FILES['video']))
-        # else:
-        #     post = Post(descricao=dados['descricao'],
-        #                 criado_em=timezone.now(),
-        #                 atualizado_em=timezone.now(),
-        #                 aplausos=randint(0, 100),
-        #                 editado=False,
-        #                 compartilhado=False,
-        #                 colecao_id=None,
-        #                 comunidade_id=None,
-        #                 usuario_id=request.user.id)
         messages.success(request, 'Seu post foi publicado com êxito.')
 
         print(request)
@@ -678,25 +660,6 @@ def add_colecao(request):
         return redirect('/')
 
     messages.error(request, 'Algo deu errado.')
-    return redirect('/')
-
-
-def compartilhar_post(request, post_compartilhado_id):
-    url = 'http://127.0.0.1:8000/api/v1/posts/'
-    form = PostForm(request.POST, request.FILES)
-
-    if (form.is_valid()):
-        dados = form.data
-        data = {'descricao': '%s' % dados['descricao'],
-                'usuario': request.user.id,
-                'colecao': None,
-                'compartilhado': post_compartilhado_id}
-
-        requests.post(url=url, data=data)
-        messages.success(request, 'Post compartilhado com sucesso!.')
-        return redirect('/')
-
-    messages.error(request, 'O post NÃO foi compartilhado com êxito.')
     return redirect('/')
 
 

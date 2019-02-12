@@ -10,7 +10,7 @@ TimeFlash | Meu perfil flash
 <div class="container">
 
     <div class="timeline">
-        <div class="timeline-cover" style="background: url('{{usuario.perfil.capa.url}}');">
+        <div class="timeline-cover" style="background: url('{{usuario.perfil.capa}}');">
             {% include 'flash_perfil_cabecalho.html' %}
         </div>
             <div id="page-contents">
@@ -67,11 +67,11 @@ TimeFlash | Meu perfil flash
                         <!-- Imagem de post !-->
                         <!-- <img src="images/post-images/12.jpg" alt="post-image" class="img-responsive post-image"/> !-->
                         <div class="post-container">
-                            <img src="{{usuario.perfil.foto_perfil.url}}" alt="user"
+                            <img src="{{usuario.perfil.foto_perfil}}" alt="user"
                                  class="profile-photo-md pull-left"/>
                             <div class="post-detail">
                                 <div class="user-info">
-                                    <h5><a href="timeline.html" class="profile-link">{{usuario.first_name}}
+                                    <h5><a href="{% url 'exibir_usuario' post.usuario.id %}" class="profile-link">{{usuario.first_name}}
                                         {{usuario.last_name}}</a></h5>
                                     <p class="text-muted">Publicação feita em {{post.criado_em}}</p>
                                 </div>
@@ -89,13 +89,13 @@ TimeFlash | Meu perfil flash
                         <div class="post-container">
                             {% if post.compartilhado.colecao == None %}
                                 <h6>Compartilhado de {{post.compartilhado.usuario}} </h6>
-                                <img src="{{post.compartilhado.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+                                <img src="{{post.compartilhado.usuario.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
                                 <div class="post-detail">
                                     <div class="user-info">
-                                        {% if post.usuario.id == user.id %}
+                                        {% if post.compartilhado.usuario.id == user.id %}
                                         <h5><a href="{% url 'exibir_minha_timeline'%}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
                                         {% else %}
-                                        <h5><a href="{% url 'exibir_usuario' post.usuario_id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
+                                        <h5><a href="{% url 'exibir_usuario' post.compartilhado.usuario.id %}" class="profile-link">{{post.compartilhado.usuario}}</a></h5>
                                         {% endif %}
                                         <p class="text-muted">{{post.compartilhado.descricao}}</p>
                                     </div>

@@ -38,6 +38,9 @@ def login(request):
                 get_token(request)
                 auth_login(request, user)
                 return redirect('/')
+            else:
+                messages.error(request, 'Usuário não existe!')
+                return redirect('/login')
 
     else:
         form = AuthenticationForm()
@@ -61,6 +64,7 @@ class CadastraPerfilView(View):
 
     @transaction.atomic(using=None, savepoint=True)
     def post(self,request):
+        url_media = 'http://127.0.0.1:8000/media/imagens/2019/'
         form = CriarPerfilForm(request.POST)
         print(form)
         if(form.is_valid()):
@@ -85,8 +89,8 @@ class CadastraPerfilView(View):
                         atualizado_em=timezone.now(),
                         sexo='F',
                         telefone='32194422',
-                        foto_perfil='imagens/2019/default_foto.png',
-                        capa='imagens/2019/default_capa.jpg',
+                        foto_perfil='%sdefault_foto.png'%url_media,
+                        capa='%sdefault_capa.jpg'%url_media,
                         usuario_id=usuario.id)
 
             perfil.save()
@@ -104,34 +108,48 @@ class EditaPerfilView(View):
 
     @transaction.atomic(using=None, savepoint=True)
     def post(self,request):
-        usuario_logado = User.objects.get(id=request.user.id)
-        perfil_logado = Perfil.objects.get(id=request.user.id)
+        url_media = 'http://127.0.0.1:8000/media/imagens/2019/'
+        url_usuario = 'http://127.0.0.1:8000/api/v1/usuarios/%s'%request.user.id
+        url_perfil = 'http://127.0.0.1:8000/api/v1/perfil/%s'%request.user.id
+        token = Token.objects.get(user_id=request.user.id)
+        auth_token = "token %s" % token
+
+        headers = {"Content-Type": "application/json",
+                   "Authorization": auth_token}
+
         if request.method == "POST":
             form = EditarPerfilForm(request.POST,request.FILES)
             dados = form.data
             if(form.is_valid()):
                 if request.FILES:
-                    print(str(request.FILES))
-
                     if str(request.FILES)[24] == 'p':
-                        perfil_logado.foto_perfil = "imagens/2019/%s"%(str(request.FILES['foto_perfil']))
+                        foto = {
+                            'foto_perfil': "%s%s"%(url_media,(str(request.FILES['foto_perfil'])))
+                        }
+                        requests.patch(url_perfil,data=foto)
                         handle_uploaded_file(request.FILES['foto_perfil'], str(request.FILES['foto_perfil']))
 
-
                     elif str(request.FILES)[24] == 'c':
-                        perfil_logado.capa = "imagens/2019/%s" % (str(request.FILES['foto_capa']))
+                        capa = {
+                            'capa': "%s%s"%(url_media,(str(request.FILES['foto_capa'])))
+                        }
+                        requests.patch(url_perfil, data=capa)
                         handle_uploaded_file(request.FILES['foto_capa'], str(request.FILES['foto_capa']))
 
+                usuario = {
+                    'first_name' : dados['first_name'],
+                    'last_name' : dados['last_name']
+                }
+                perfil = {
+                    'telefone': dados['telefone']
+                }
+                print(headers)
+                requests.patch(url_usuario, data=usuario).headers.update(headers)
+                requests.patch(url_perfil, data=perfil).headers.update(headers)
 
-                usuario_logado.first_name = dados['first_name']
-                usuario_logado.last_name = dados['last_name']
-                perfil_logado.telefone = dados['telefone']
-                usuario_logado.save()
-                perfil_logado.save()
-
-            return redirect('/about/%s' % usuario_logado.id)
+            return redirect('/about/%s' % request.user.id)
         else:
-            form = EditarPerfilForm(instance=usuario_logado)
+            form = EditarPerfilForm(instance=request.user.id)
 
         return render(request, 'flash_edit_perfil.html',{'form':form})
 
@@ -149,7 +167,7 @@ def get_token(request):
             'password': request.POST['password']}
 
     url = 'http://127.0.0.1:8000/api/v1/token/'
-    #
+
     headers = {"Content-Type": "application/json",
                "Accept-Language": "en",
                "Date": "Wed, 19 Dec 2018 19:46:12 GMT",

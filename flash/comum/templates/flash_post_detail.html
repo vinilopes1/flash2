@@ -19,7 +19,7 @@ News Feed | Rede Social Flash
             {% if post.colecao != None %}
             <img src="{{post.colecao.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
             {% else %}
-            <img src="{{post.usuario.foto_perfil.url}}" alt="user" class="profile-photo-md pull-left"/>
+            <img src="{{post.usuario.foto_perfil}}" alt="user" class="profile-photo-md pull-left"/>
             {% endif %}
             <div class="post-detail">
                 <div class="user-info">

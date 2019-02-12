@@ -35,6 +35,8 @@ urlpatterns = [
     path('api/v1/colecoes/<int:pk>', api_views.ColecaoDetail.as_view(), name=api_views.ColecaoDetail.name),
     path('api/v1/comunidades/', api_views.ComunidadeList.as_view(), name=api_views.ComunidadeList.name),
     path('api/v1/comunidades/<int:pk>', api_views.ComunidadeDetail.as_view(),name=api_views.ComunidadeDetail.name),
+    path('api/v1/friendship-requests/', api_views.FriendshipRequestList.as_view(), name=api_views.FriendshipRequestList.name),
+    path('api/v1/friendship-requests/<int:pk>', api_views.FriendshipRequestDetail.as_view(),name=api_views.FriendshipRequestDetail.name),
 
     #WEB
     path('admin/', admin.site.urls),

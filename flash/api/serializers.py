@@ -1,15 +1,24 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from comum.models import Perfil,Post,Colecao,Comunidade,Comentario
+from friendship.models import Friend,FriendshipRequest
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'password', 'first_name', 'last_name')
+        fields = ('url',
+                  'id',
+                  'username',
+                  'password',
+                  'first_name',
+                  'last_name',
+                  'is_active')
 
 
 class PerfilSerializer(serializers.ModelSerializer):
+    foto_perfil = serializers.CharField()
+    capa = serializers.CharField()
     usuario = UserSerializer()
     class Meta:
         model = Perfil
@@ -75,3 +84,8 @@ class ComunidadeSerializer(serializers.ModelSerializer):
             'titulo',
             'autor',
         )
+
+class FriendshipRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendshipRequest
+        fields = '__all__'

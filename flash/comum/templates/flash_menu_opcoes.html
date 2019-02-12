@@ -1,7 +1,7 @@
 <!--NOVO TAMPLATE (MAYELLE)-->
 
 <div class="profile-card">
-    <img src="{{user.perfil.foto_perfil.url}}" alt="user" class="profile-photo"/>
+    <img src="{{user.perfil.foto_perfil}}" alt="user" class="profile-photo"/>
     <h5><a href="{% url 'exibir_minha_timeline' %}" class="text-white">{{user.first_name}}
         {{user.last_name}}</a></h5>
     {% if qtd_amigos == 1 %}
