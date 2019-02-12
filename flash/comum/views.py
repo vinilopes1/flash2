@@ -16,6 +16,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from django.db import transaction
+from rest_framework.authtoken.models import Token
 import requests, json
 import os
 
@@ -534,12 +535,17 @@ def superuser_ativar_perfil(request, usuario_id):
 ##MÓDULO API##
 @login_required
 def exibir_colecoes(request):
-    url_colecoes = 'http://127.0.0.1:8000/api/v1/colecoes/'
-    url_usuario = 'http://127.0.0.1:8000/api/v1/perfil/%s' % request.user.id
-    colecoes = requests.get(url_colecoes).json()
-    usuario = requests.get(url_usuario).json()
-    qtd_amigos = usuario['qtd_amigos']
     usuarios_nao_amigo = nao_amigo(request.user)
+    url_colecoes = 'http://127.0.0.1:8000/api/v1/colecoes/'
+    token = Token.objects.get(user_id=request.user.id)
+
+    headers = {"X-Auth-Token": token,
+               "Accept-Language": "en",
+               "Date": "Tue, 11 Feb 2019 20:00:00 GMT",
+               "X-Api-Key": ""}
+
+    colecoes = requests.get(url_colecoes,headers).json()
+    qtd_amigos = quant_amigos(request.user)
 
     return render(request, 'flash_colecoes.html',
                   {'colecoes': colecoes, 'usuarios_nao_amigo': usuarios_nao_amigo[:6], 'qtd_amigos': qtd_amigos})
@@ -759,3 +765,6 @@ def exibir_comentarios_post(request, post_comentado_id):
             comentarios.append(comentario)
 
     return redirect('/', {'comentarios': comentarios})
+
+
+

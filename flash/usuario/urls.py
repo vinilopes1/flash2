@@ -8,7 +8,7 @@ from django.views.generic import RedirectView,TemplateView
 urlpatterns = [
     ##Usuario##
     path('login/', views_usuario.login, name='login'),
-    path('logout/', logout_then_login, {'login_url': 'login'},name= 'logout'),
+    path('logout/', views_usuario.logout, name= 'logout'),
     path('reset-password', views_usuario.change_password ,name='reset-password'),
     path('account/password-reset/', password_reset , name='password_reset' ),
     path('account/password-reset/done/', password_reset_done,name='password_reset_done'),
