@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 from django.contrib.messages import constants as message_constants
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -65,6 +66,7 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.AllowAllUsersModelBacke
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -133,7 +135,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+# Defina o idioma padrão do seu site.
+LANGUAGE_CODE = 'pt-BR'
+
+LANGUAGES = (
+    ('en', _('English')),
+    ('pt-br', _('Brazilian portuguese')),
+)
+# Diga ao Django onde os arquivos de tradução do projeto devem estar.
+LOCALE_PATHS = (
+    os.path.join (BASE_DIR, 'locale'),
+)
+
+
 
 TIME_ZONE = 'UTC'
 
@@ -152,6 +166,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+#
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#     'django.contrib.auth.context_processors.auth',
+#     'django.core.context_processors.debug',
+#     'django.core.context_processors.i18n', # this one
+#     'django.core.context_processors.request',
+#     'django.core.context_processors.static',
+#     'django.contrib.messages.context_processors.messages',
+# )
 
 STATIC_ROOT =  os.path.join(os.path.dirname(BASE_DIR), 'static_cdn')
 

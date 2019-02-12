@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load i18n%}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -7,7 +8,7 @@
 		<meta name="description" content="This is social network html5 template available in themeforest......" />
 		<meta name="keywords" content="Social Network, Social Media, Make Friends, Newsfeed, Profile Page" />
 		<meta name="robots" content="index, follow" />
-		<title>{% block title %}Flash | Social Network{% endblock title %}</title>
+		<title>{% block title %}{% trans 'Flash | Social Network' %}{% endblock title %}</title>
 
         <!-- Stylesheets-->
 		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
@@ -42,7 +43,7 @@
               {% endblock footer_container %}
           </div>
           <div class="copyright">
-            <p>copyright Flash Social Network. Todos os direitos reservados</p>
+            <p>{% trans 'copyright Flash Social Network. Todos os direitos reservados' %}</p>
           </div>
 		</footer>
 
